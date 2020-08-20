@@ -41,32 +41,12 @@ mixin BlocListenerInterface<C extends Cubit<S>, S> on CubitComposer<C> {
 }
 
 extension _BlocListenerX<C extends Cubit<S>, S> on BlocListenerInterface<C, S> {
-  void _listen() => useBloc<C, S>(cubit: cubit, listener: listenerCallback);
-}
-
-abstract class BlocListenerItemBase<C extends Cubit<S>, S>
-    with CubitComposer<C>, BlocListenerInterface<C, S> {}
-
-class BlocListenerItem<C extends Cubit<S>, S>
-    with CubitComposer<C>, BlocListenerInterface<C, S> {
-  const BlocListenerItem({
-    this.cubit,
-    this.listenWhen,
-    @required this.listener,
-  }) : assert(listener != null);
-
-  @override
-  final C cubit;
-
-  @override
-  final BlocListenerCondition<S> listenWhen;
-
-  @override
-  final BlocWidgetListener<S> listener;
+  void _listen() => useBloc(cubit: cubit, listener: listenerCallback);
 }
 
 class BlocListener<C extends Cubit<S>, S> extends HookWidget
-    with CubitComposer<C>, BlocListenerInterface<C, S> {
+    with CubitComposer<C>, BlocListenerInterface<C, S>
+    implements BlocListenableBase {
   const BlocListener({
     Key key,
     this.cubit,
@@ -91,5 +71,15 @@ class BlocListener<C extends Cubit<S>, S> extends HookWidget
   Widget build(BuildContext context) {
     _listen();
     return child;
+  }
+
+  /// `listen` allows [MultiBlocProvider] to verify if
+  @override
+  void listen() {
+    assert(
+      child == null,
+      'In MultiBlocProvider, BlocListener.child must be null.',
+    );
+    return _listen();
   }
 }
