@@ -23,10 +23,15 @@ class BlocListenable<C extends Cubit<S>, S>
 
   @override
   void listen() => _listen();
+
+  @override
+  bool get hasNoChild => true;
 }
 
 abstract class BlocListenableBase {
   void listen();
+
+  bool get hasNoChild;
 }
 
 mixin BlocListenerInterface<C extends Cubit<S>, S> on CubitComposer<C> {
@@ -75,11 +80,8 @@ class BlocListener<C extends Cubit<S>, S> extends HookWidget
 
   /// `listen` allows [MultiBlocProvider] to verify if
   @override
-  void listen() {
-    assert(
-      child == null,
-      'In MultiBlocProvider, BlocListener.child must be null.',
-    );
-    return _listen();
-  }
+  void listen() => _listen();
+
+  @override
+  bool get hasNoChild => child == null;
 }
