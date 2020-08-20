@@ -9,11 +9,16 @@ class BlocListenable<C extends Cubit<S>, S>
   const BlocListenable({
     this.cubit,
     this.listenWhen,
-    this.listener,
+    @required this.listener,
   }) : assert(listener != null);
 
+  @override
   final BlocListenerCondition<S> listenWhen;
+
+  @override
   final BlocWidgetListener<S> listener;
+
+  @override
   final C cubit;
 
   @override
@@ -44,11 +49,19 @@ abstract class BlocListenerItemBase<C extends Cubit<S>, S>
 
 class BlocListenerItem<C extends Cubit<S>, S>
     with CubitComposer<C>, BlocListenerInterface<C, S> {
-  const BlocListenerItem({this.cubit, this.listenWhen, this.listener})
-      : assert(listener != null);
+  const BlocListenerItem({
+    this.cubit,
+    this.listenWhen,
+    @required this.listener,
+  }) : assert(listener != null);
 
+  @override
   final C cubit;
+
+  @override
   final BlocListenerCondition<S> listenWhen;
+
+  @override
   final BlocWidgetListener<S> listener;
 }
 
@@ -58,14 +71,20 @@ class BlocListener<C extends Cubit<S>, S> extends HookWidget
     Key key,
     this.cubit,
     this.listenWhen,
-    this.listener,
+    @required this.listener,
     this.child,
   })  : assert(listener != null),
         super(key: key);
 
+  @override
   final BlocListenerCondition<S> listenWhen;
+
+  @override
   final BlocWidgetListener<S> listener;
+
+  @override
   final C cubit;
+
   final Widget child;
 
   @override

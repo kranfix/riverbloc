@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 class MultiBlocListener extends HookWidget {
-  const MultiBlocListener({this.listeners, this.child})
+  const MultiBlocListener({@required this.listeners, @required this.child})
       : assert(listeners != null),
         assert(child != null);
 

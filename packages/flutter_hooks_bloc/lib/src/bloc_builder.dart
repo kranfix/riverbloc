@@ -19,8 +19,13 @@ class BlocBuilder<C extends Cubit<S>, S> extends HookWidget
   })  : assert(builder != null),
         super(key: key);
 
+  @override
   final C cubit;
+
+  @override
   final BlocWidgetBuilder<S> builder;
+
+  @override
   final BlocBuilderCondition<S> buildWhen;
 
   @override

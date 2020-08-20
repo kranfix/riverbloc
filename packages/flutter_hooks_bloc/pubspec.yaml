@@ -1,7 +1,8 @@
 name: flutter_hooks_bloc
-description:
-  - A flutter_bloc complement based on flutter_hooks .
-version: 0.0.1
+description: >-
+  A flutter_bloc reimplementation based on flutter_hooks
+  with almost the same API.
+version: 0.4.0
 homepage: https://github.com/kranfix/riverbloc
 
 environment:
@@ -17,5 +18,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  pedantic: ^1.9.0
 
 flutter:

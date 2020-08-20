@@ -15,17 +15,26 @@ class BlocConsumer<C extends Cubit<S>, S> extends HookWidget
     Key key,
     this.cubit,
     this.listenWhen,
-    this.listener,
+    @required this.listener,
     this.buildWhen,
     @required this.builder,
   })  : assert(listener != null),
         assert(builder != null),
         super(key: key);
 
+  @override
   final C cubit;
+
+  @override
   final BlocListenerCondition<S> listenWhen;
+
+  @override
   final BlocWidgetListener<S> listener;
+
+  @override
   final BlocBuilderCondition<S> buildWhen;
+
+  @override
   final BlocWidgetBuilder<S> builder;
 
   @override
