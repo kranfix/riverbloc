@@ -55,12 +55,6 @@ class _BlocHookState<C extends Cubit<S>, S>
   @override
   C build(BuildContext context) => _cubit;
 
-  /// Current state from cubit
-  S get current => _cubit?.state;
-
-  /// Current cubit
-  C get cubit => _cubit;
-
   @override
   void initHook() {
     super.initHook();
