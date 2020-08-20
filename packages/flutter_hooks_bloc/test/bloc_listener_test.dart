@@ -448,4 +448,18 @@ void main() {
       expect(states, expectedStates);
     });
   });
+
+  group('BlocListenable', () {
+    test('throws if initialized with null cubit, listener', () {
+      try {
+        BlocListenable<Cubit, dynamic>(
+          cubit: null,
+          listener: null,
+        );
+        fail('should throw AssertionError');
+      } on dynamic catch (error) {
+        expect(error, isAssertionError);
+      }
+    });
+  });
 }
