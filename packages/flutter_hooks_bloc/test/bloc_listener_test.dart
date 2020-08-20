@@ -73,7 +73,7 @@ class _MyAppState extends State<MyApp> {
 }
 
 void main() {
-  group('BlocHookListener', () {
+  group('BlocListener', () {
     testWidgets('throws if initialized with null cubit, listener, and child',
         (tester) async {
       try {

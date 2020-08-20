@@ -132,7 +132,7 @@ class CounterCubit extends Cubit<int> {
 }
 
 void main() {
-  group('BlocHookBuilder', () {
+  group('BlocBuilder', () {
     testWidgets('throws if initialized with null cubit and builder',
         (tester) async {
       try {
