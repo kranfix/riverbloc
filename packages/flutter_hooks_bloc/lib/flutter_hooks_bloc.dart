@@ -5,3 +5,4 @@ export 'package:flutter_bloc/flutter_bloc.dart'
 export 'package:flutter_hooks/flutter_hooks.dart';
 export 'src/bloc_hook.dart' show useBloc;
 export 'src/bloc_builder.dart';
+export 'src/bloc_listener.dart';
