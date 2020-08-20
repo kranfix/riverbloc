@@ -32,10 +32,33 @@ void main() {
       }
     });
 
-    testWidgets('throws if initialized with no child', (tester) async {
+    testWidgets('throws if initialized listeners list is empty',
+        (tester) async {
       try {
         await tester.pumpWidget(
-          MultiBlocListener(listeners: [], child: null),
+          MultiBlocListener(
+            listeners: [],
+            child: const SizedBox(),
+          ),
+        );
+      } on dynamic catch (error) {
+        expect(error, isAssertionError);
+      }
+    });
+
+    testWidgets('throws if initialized with no child', (tester) async {
+      try {
+        final counterCubit = CounterCubit();
+        await tester.pumpWidget(
+          MultiBlocListener(
+            listeners: [
+              BlocListenable<CounterCubit, int>(
+                cubit: counterCubit,
+                listener: (context, state) {},
+              )
+            ],
+            child: null,
+          ),
         );
       } on dynamic catch (error) {
         expect(error, isAssertionError);
@@ -119,6 +142,28 @@ void main() {
 
       expect(statesA, expectedStatesA);
       expect(statesB, expectedStatesB);
+    });
+
+    testWidgets('throws error on non-null BlocListener.child', (tester) async {
+      final counterCubit = CounterCubit();
+
+      try {
+        await tester.pumpWidget(
+          MultiBlocListener(
+            listeners: [
+              BlocListener(
+                cubit: counterCubit,
+                listener: (BuildContext context, int state) {},
+                child: const SizedBox(),
+              ),
+            ],
+            child: const SizedBox(key: Key('multiCubitListener_child')),
+          ),
+        );
+        fail('should throw AssertionError');
+      } on dynamic catch (error) {
+        expect(error, isAssertionError);
+      }
     });
   });
 }
