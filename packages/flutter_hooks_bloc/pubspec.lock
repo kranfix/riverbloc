@@ -9,7 +9,7 @@ packages:
     source: hosted
     version: "2.5.0-nullsafety"
   bloc:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: bloc
       url: "https://pub.dartlang.org"
