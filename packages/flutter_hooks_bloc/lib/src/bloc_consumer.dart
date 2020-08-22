@@ -109,12 +109,7 @@ class BlocConsumer<C extends Cubit<S>, S> extends HookWidget
   /// [builder] with the current `state`.
   @override
   Widget build(BuildContext context) {
-    final _cubit = useBloc<C, S>(
-      cubit: cubit,
-      listener: listenerCallback,
-      buildWhen: buildWhen,
-      allowRebuild: true,
-    );
+    final _cubit = listen(buildWhen: buildWhen, allowRebuild: true);
     return builder(context, _cubit.state);
   }
 }

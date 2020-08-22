@@ -22,9 +22,6 @@ class BlocListenable<C extends Cubit<S>, S>
   final C cubit;
 
   @override
-  void listen() => _listen();
-
-  @override
   bool get hasNoChild => true;
 }
 
@@ -38,15 +35,20 @@ mixin BlocListenerInterface<C extends Cubit<S>, S> on CubitComposer<C> {
   BlocListenerCondition<S> get listenWhen;
   BlocWidgetListener<S> get listener;
 
-  void listenerCallback(BuildContext context, S prev, S state) {
+  C listen({BlocBuilderCondition<S> buildWhen, bool allowRebuild}) {
+    return useBloc(
+      cubit: cubit,
+      listener: _onListen,
+      buildWhen: buildWhen,
+      allowRebuild: allowRebuild,
+    );
+  }
+
+  void _onListen(BuildContext context, S prev, S state) {
     if (listenWhen?.call(prev, state) ?? true) {
       listener.call(context, state);
     }
   }
-}
-
-extension _BlocListenerX<C extends Cubit<S>, S> on BlocListenerInterface<C, S> {
-  void _listen() => useBloc(cubit: cubit, listener: listenerCallback);
 }
 
 class BlocListener<C extends Cubit<S>, S> extends HookWidget
@@ -74,13 +76,9 @@ class BlocListener<C extends Cubit<S>, S> extends HookWidget
 
   @override
   Widget build(BuildContext context) {
-    _listen();
+    listen();
     return child;
   }
-
-  /// `listen` allows [MultiBlocProvider] to verify if
-  @override
-  void listen() => _listen();
 
   @override
   bool get hasNoChild => child == null;
