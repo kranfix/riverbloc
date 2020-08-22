@@ -32,9 +32,17 @@ abstract class BlocListenableBase {
 }
 
 mixin BlocListenerInterface<C extends Cubit<S>, S> on CubitComposer<C> {
+  /// Takes the previous `state` and the current `state` and is responsible for
+  /// returning a [bool] which determines whether or not to call [listener]
+  /// with the current `state`.
   BlocListenerCondition<S> get listenWhen;
+
+  /// Takes the `BuildContext` along with the [cubit] `state`
+  /// and is responsible for executing in response to `state` changes.
   BlocWidgetListener<S> get listener;
 
+  /// Helps to subscribe to a [cubit] and optianly rebuild depending on
+  /// if [allowRebuild] or [buildWhen] invocation returns true
   C listen({BlocBuilderCondition<S> buildWhen, bool allowRebuild}) {
     return useBloc(
       cubit: cubit,
