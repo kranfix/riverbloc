@@ -1,3 +1,9 @@
+## [0.6.0]
+
+- Unexporting `flutter_hooks` by default
+- Removing BlocBuilderInterface
+- Fixing useBloc description in README
+
 ## [0.5.0]
 
 - Some documentation added
