@@ -6,7 +6,7 @@ class MultiBlocListener extends HookWidget {
   MultiBlocListener({@required this.listeners, @required this.child})
       : assert(listeners != null),
         assert(listeners.isNotEmpty),
-        assert(listeners.debugBlocListenerWithNoChild()),
+        assert(listeners._debugBlocListenerWithNoChild()),
         assert(child != null);
 
   final List<BlocListenableBase> listeners;
@@ -20,7 +20,5 @@ class MultiBlocListener extends HookWidget {
 }
 
 extension _DebugBlocListenerWithNoChildX on List<BlocListenableBase> {
-  @visibleForTesting
-  bool debugBlocListenerWithNoChild() =>
-      fold(true, (prev, it) => prev && it.hasNoChild);
+  bool _debugBlocListenerWithNoChild() => every((it) => it.hasNoChild);
 }
