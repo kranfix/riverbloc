@@ -19,6 +19,40 @@ abstract class CubitComposer<C> {
   C get cubit;
 }
 
+/// Subscribes to a Cubit and handles a listener or a rebuild.
+///
+/// Whenever [Cubit.state] updates, it will mark the caller [HookWidget]
+/// as needing build if either [allowRebuild] is `true` or [buildWhen]
+/// invocation returns [true].
+///
+/// if [cubit] is null, it will be inherited with `context.bloc()`
+///
+/// The following example showcase a basic counter application.
+///
+/// ```dart
+/// class CounterCubit extends Cubit<int> {
+///   CounterCubit() : super(0);
+///
+///   void increment() => emit(state + 1);
+/// }
+///
+/// class Counter extends HookWidget {
+///   @override
+///   Widget build(BuildContext context) {
+///     // automatically triggers a rebuild of Counter widget
+///     final counterCubit = useBloc<CounterCubit, int>(allowRebuild: true);
+///
+///     return GestureDetector(
+///       onTap: () => counterCubit.increment(),
+///       child: Text('${counter.state}'),
+///     );
+///   }
+/// }
+/// ```
+///
+/// See also:
+///
+///  * [Cubit]
 C useBloc<C extends Cubit<S>, S>({
   C cubit,
   BlocHookListener<S> listener,
