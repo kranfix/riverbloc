@@ -22,8 +22,8 @@ abstract class CubitComposer<C> {
 /// Subscribes to a Cubit and handles a listener or a rebuild.
 ///
 /// Whenever [Cubit.state] updates, it will mark the caller [HookWidget]
-/// as needing build if either [allowRebuild] is `true` or [buildWhen] invoke
-/// returns [true].
+/// as needing build if either [allowRebuild] is `true` or [buildWhen]
+/// invocation returns [true].
 ///
 /// if [cubit] is null, it will be inherited with `context.bloc()`
 ///
