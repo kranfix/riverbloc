@@ -14,7 +14,8 @@ They work exactly the same as the original. See the `flutter_bloc`
 
 ### useBloc
 
-The `useBloc` function allow
+The `useBloc` hook function allows to listen state changes and rebuild
+the widget if necessary.
 
 ```dart
 C useBloc<C extends Cubit<S>, S>({
