@@ -1,5 +1,4 @@
 import 'bloc_hook.dart';
-import 'bloc_builder.dart';
 import 'bloc_listener.dart';
 
 import 'package:flutter/widgets.dart';
@@ -64,10 +63,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 /// ```
 /// {@endtemplate}
 class BlocConsumer<C extends Cubit<S>, S> extends HookWidget
-    with
-        CubitComposer<C>,
-        BlocListenerInterface<C, S>,
-        BlocBuilderInterface<C, S> {
+    with CubitComposer<C>, BlocListenerInterface<C, S> {
   const BlocConsumer({
     Key key,
     this.cubit,
@@ -94,14 +90,12 @@ class BlocConsumer<C extends Cubit<S>, S> extends HookWidget
   /// Takes the previous `state` and the current `state` and is responsible for
   /// returning a [bool] which determines whether or not to call [listener] of
   /// [BlocConsumer] with the current `state`.
-  @override
   final BlocBuilderCondition<S> buildWhen;
 
   /// The [builder] function which will be invoked on each widget build.
   /// The [builder] takes the `BuildContext` and current `state` and
   /// must return a widget.
   /// This is analogous to the [builder] function in [StreamBuilder].
-  @override
   final BlocWidgetBuilder<S> builder;
 
   /// Takes the previous `state` and the current `state` and is responsible

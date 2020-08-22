@@ -4,11 +4,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' hide BlocBuilder;
 import 'package:flutter_hooks/flutter_hooks.dart';
 
-mixin BlocBuilderInterface<C extends Cubit<S>, S> on CubitComposer<C> {
-  BlocWidgetBuilder<S> get builder;
-  BlocBuilderCondition<S> get buildWhen;
-}
-
 /// Please refer to `BlocListener` if you want to "do" anything in response to
 /// `state` changes such as navigation, showing a dialog, etc...
 ///
@@ -59,7 +54,7 @@ mixin BlocBuilderInterface<C extends Cubit<S>, S> on CubitComposer<C> {
 /// ```
 /// {@endtemplate}
 class BlocBuilder<C extends Cubit<S>, S> extends HookWidget
-    with CubitComposer<C>, BlocBuilderInterface<C, S> {
+    with CubitComposer<C> {
   const BlocBuilder({
     Key key,
     this.cubit,
@@ -78,18 +73,13 @@ class BlocBuilder<C extends Cubit<S>, S> extends HookWidget
   /// The [builder] takes the `BuildContext` and current `state` and
   /// must return a widget.
   /// This is analogous to the [builder] function in [StreamBuilder].
-  @override
   final BlocWidgetBuilder<S> builder;
 
-  /// {@template bloc_builder_base}
-  /// Base class for widgets that build themselves based on interaction with
-  /// a specified [cubit].
+  /// The [buildWhen] invocation decide if the [BlocBuilder] will be rebuilt
+  /// if it does not return `false`.
   ///
-  /// A [BlocBuilderBase] is stateful and maintains the state of the interaction
-  /// so far. The type of the state and how it is updated with each interaction
-  /// is defined by sub-classes.
-  /// {@endtemplate}
-  @override
+  /// Otherwise, If [buildWhen] is null, [BlocBuilder] will rebuild on every
+  /// state changes
   final BlocBuilderCondition<S> buildWhen;
 
   @override
