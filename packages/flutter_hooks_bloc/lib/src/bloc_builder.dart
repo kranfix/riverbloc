@@ -52,7 +52,7 @@ import 'package:flutter/widgets.dart';
 ///)
 /// ```
 /// {@endtemplate}
-class BlocBuilder<C extends Cubit<S>, S> extends BlocWidget<C> {
+class BlocBuilder<C extends Cubit<S>, S> extends BlocWidget<C, S> {
   const BlocBuilder({
     Key key,
 
@@ -63,7 +63,7 @@ class BlocBuilder<C extends Cubit<S>, S> extends BlocWidget<C> {
     @required this.builder,
     this.buildWhen,
   })  : assert(builder != null),
-        super(key: key);
+        super(key: key, cubit: cubit);
 
   /// The [builder] function which will be invoked on each widget build.
   /// The [builder] takes the `BuildContext` and current `state` and
@@ -76,8 +76,7 @@ class BlocBuilder<C extends Cubit<S>, S> extends BlocWidget<C> {
 
   @override
   Widget build(BuildContext context) {
-    final _cubit =
-        useBloc<C, S>(cubit: cubit, buildWhen: buildWhen, allowRebuild: true);
+    final _cubit = use(buildWhen: buildWhen);
     return builder(context, _cubit.state);
   }
 }
