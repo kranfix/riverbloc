@@ -33,7 +33,7 @@ C useBloc<C extends Cubit<S>, S>({
 
   /// If `allowRebuild`, the widget will rebuild if `buildWhen` is null or
   /// if its evaluation result is `true`.
-  bool allowRebuild = false, //
+  bool allowRebuild = true,
 });
 ```
 
@@ -44,7 +44,6 @@ HookBuilder(builder: (ctx) {
   print('HookBuilder');
   final counter = useBloc<CounterCubit, int>(
     listener: (_, prev, curr) => print('listener: $prev $curr'),
-    allowRebuild: true,
   ).state;
   return Text(
     '$counter',
@@ -77,42 +76,8 @@ class BlocBuilder<C extends Cubit<S>, S> extends HookWidget
 
   @override
   Widget build(BuildContext context) {
-    final _cubit =
-        useBloc<C, S>(cubit: cubit, buildWhen: buildWhen, allowRebuild: true);
+    final _cubit = useBloc<C, S>(cubit: cubit, buildWhen: buildWhen);
     return builder(context, _cubit.state);
   }
 }
-```
-
-### BlocListenable
-
-In `flutter_bloc`, `MultiBlocListener` listeners are `BlocListener`s,
-but it is unnecessarily a `Widget` and has an overload of functionalities.
-An alternative could be `BlocListenable`, that has the same API than
-`BlocListener`, but it has a light implementation and can be used indifferently.
-
-```dart
-MultiBlocListener(
-  listeners: [
-    BlocListenable<CubitA, StateA>(
-      cubit: cubitA,
-      lisenWhen: (StateA previousState, StateA state){
-        // return `true` for listen
-      }
-      listener: (BuildContext context, StateA state){
-        // your implementation
-      }
-    ),
-    BlocListenable<CubitB, StateB>(
-      cubit: cubitA,
-      lisenWhen: (StateB previousState, StateB state){
-        // return `true` for listen
-      }
-      listener: (BuildContext context, StateB state){
-        // your implementation
-      }
-    ),
-  ],
-  child: const YourCustomWidet(),
-)
 ```

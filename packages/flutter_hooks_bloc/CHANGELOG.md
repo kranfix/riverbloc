@@ -1,3 +1,11 @@
+## [0.7.0]
+
+- Removing BlocListenable in favor of only BlocListener
+- Removing CubitComposer in favor of BlocWidget
+- Dedicating a file `flutter_bloc.dart` for reexport wished widgets
+- `flutter_hooks` dependency updated
+- `useBloc` rebuilds `HookWidget` by default
+
 ## [0.6.0]
 
 - Unexporting `flutter_hooks` by default
