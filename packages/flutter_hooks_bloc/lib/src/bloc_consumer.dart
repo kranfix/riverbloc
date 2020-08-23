@@ -1,9 +1,7 @@
-import 'bloc_hook.dart';
 import 'bloc_listener.dart';
 import 'flutter_bloc.dart';
 
 import 'package:flutter/widgets.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 
 /// {@template bloc_consumer}
 /// [BlocConsumer] exposes a [builder] and [listener] in order react to new
@@ -62,30 +60,26 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 /// )
 /// ```
 /// {@endtemplate}
-class BlocConsumer<C extends Cubit<S>, S> extends HookWidget
-    with CubitComposer<C>, BlocListenerInterface<C, S> {
+class BlocConsumer<C extends Cubit<S>, S> extends BlocListenerBase<C, S> {
   const BlocConsumer({
     Key key,
-    this.cubit,
-    this.listenWhen,
-    @required this.listener,
+
+    /// The [cubit] that the [BlocConsumer] will interact with.
+    /// If omitted, [BlocConsumer] will automatically perform a lookup using
+    /// `BlocProvider` and the current `BuildContext`.
+    C cubit,
+    BlocListenerCondition<S> listenWhen,
+    @required BlocWidgetListener<S> listener,
     this.buildWhen,
     @required this.builder,
   })  : assert(listener != null),
         assert(builder != null),
-        super(key: key);
-
-  /// The [cubit] that the [BlocConsumer] will interact with.
-  /// If omitted, [BlocConsumer] will automatically perform a lookup using
-  /// `BlocProvider` and the current `BuildContext`.
-  @override
-  final C cubit;
-
-  @override
-  final BlocListenerCondition<S> listenWhen;
-
-  @override
-  final BlocWidgetListener<S> listener;
+        super(
+          key: key,
+          cubit: cubit,
+          listenWhen: listenWhen,
+          listener: listener,
+        );
 
   /// Takes the previous `state` and the current `state` and is responsible for
   /// returning a [bool] which determines whether or not to call [listener] of

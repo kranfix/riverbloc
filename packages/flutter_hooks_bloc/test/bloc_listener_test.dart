@@ -453,7 +453,7 @@ void main() {
   group('BlocListenable', () {
     test('throws if initialized with null cubit, listener', () {
       try {
-        BlocListenable<Cubit, dynamic>(
+        BlocListener<Cubit, dynamic>(
           cubit: null,
           listener: null,
         );
