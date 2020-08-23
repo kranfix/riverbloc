@@ -15,10 +15,22 @@ typedef BlocHookListener<S> = void Function(
   S current,
 );
 
-abstract class BlocWidget<C extends Cubit<Object>> extends HookWidget {
+abstract class BlocWidget<C extends Cubit<S>, S> extends HookWidget {
   const BlocWidget({Key key, this.cubit}) : super(key: key);
 
   final C cubit;
+
+  C use({
+    BlocHookListener<S> listener,
+    BlocBuilderCondition<S> buildWhen,
+    bool allowRebuild = true,
+  }) =>
+      useBloc<C, S>(
+        cubit: cubit,
+        listener: listener,
+        buildWhen: buildWhen,
+        allowRebuild: allowRebuild ?? true,
+      );
 }
 
 /// Subscribes to a Cubit and handles a listener or a rebuild.
