@@ -16,20 +16,17 @@ typedef BlocHookListener<S> = void Function(
 );
 
 abstract class BlocWidget<C extends Cubit<S>, S> extends HookWidget {
-  const BlocWidget({Key key, this.cubit}) : super(key: key);
+  const BlocWidget({Key key, this.cubit, this.allowRebuild}) : super(key: key);
 
   final C cubit;
+  final bool allowRebuild;
 
-  C use({
-    BlocHookListener<S> listener,
-    BlocBuilderCondition<S> buildWhen,
-    bool allowRebuild = true,
-  }) =>
+  C use({BlocHookListener<S> listener, BlocBuilderCondition<S> buildWhen}) =>
       useBloc<C, S>(
         cubit: cubit,
         listener: listener,
         buildWhen: buildWhen,
-        allowRebuild: allowRebuild ?? true,
+        allowRebuild: allowRebuild,
       );
 }
 
@@ -71,7 +68,7 @@ C useBloc<C extends Cubit<S>, S>({
   C cubit,
   BlocHookListener<S> listener,
   BlocBuilderCondition<S> buildWhen,
-  bool allowRebuild = false,
+  bool allowRebuild,
 }) =>
     use(_BlocHook<C, S>(cubit, listener, buildWhen, allowRebuild));
 
@@ -81,7 +78,7 @@ class _BlocHook<C extends Cubit<S>, S> extends Hook<C> {
     this.listener,
     this.buildWhen,
     bool allowRebuild,
-  ) : allowRebuild = (buildWhen != null) || (allowRebuild ?? false);
+  ) : allowRebuild = allowRebuild ?? true;
 
   final C cubit;
   final BlocHookListener<S> listener;
