@@ -1,8 +1,8 @@
 import 'bloc_hook.dart';
 import 'bloc_listener.dart';
+import 'flutter_bloc.dart';
 
 import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart' hide BlocConsumer;
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 /// {@template bloc_consumer}

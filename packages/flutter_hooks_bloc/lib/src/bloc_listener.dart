@@ -1,6 +1,7 @@
 import 'bloc_hook.dart';
+import 'flutter_bloc.dart';
+
 import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart' hide BlocListener;
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 class BlocListenable<C extends Cubit<S>, S>
