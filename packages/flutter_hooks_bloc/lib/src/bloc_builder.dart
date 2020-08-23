@@ -1,9 +1,9 @@
 import 'bloc_hook.dart';
-
+import 'flutter_bloc.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart' hide BlocBuilder;
 import 'package:flutter_hooks/flutter_hooks.dart';
 
+/// {@template bloc_builder}
 /// Please refer to `BlocListener` if you want to "do" anything in response to
 /// `state` changes such as navigation, showing a dialog, etc...
 ///
@@ -75,11 +75,7 @@ class BlocBuilder<C extends Cubit<S>, S> extends HookWidget
   /// This is analogous to the [builder] function in [StreamBuilder].
   final BlocWidgetBuilder<S> builder;
 
-  /// The [buildWhen] invocation decide if the [BlocBuilder] will be rebuilt
-  /// if it does not return `false`.
-  ///
-  /// Otherwise, If [buildWhen] is null, [BlocBuilder] will rebuild on every
-  /// state changes
+  ///{@macro bloc_builder_build_when}
   final BlocBuilderCondition<S> buildWhen;
 
   @override
