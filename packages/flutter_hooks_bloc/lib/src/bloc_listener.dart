@@ -2,7 +2,6 @@ import 'bloc_hook.dart';
 import 'flutter_bloc.dart';
 
 import 'package:flutter/widgets.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 
 abstract class BlocListenableBase {
   void listen();
@@ -10,7 +9,7 @@ abstract class BlocListenableBase {
   bool get hasNoChild;
 }
 
-mixin BlocListenerInterface<C extends Cubit<S>, S> on CubitComposer<C> {
+mixin BlocListenerInterface<C extends Cubit<S>, S> on BlocWidget<C> {
   /// Takes the previous `state` and the current `state` and is responsible for
   /// returning a [bool] which determines whether or not to call [listener]
   /// with the current `state`.
@@ -38,8 +37,8 @@ mixin BlocListenerInterface<C extends Cubit<S>, S> on CubitComposer<C> {
   }
 }
 
-class BlocListener<C extends Cubit<S>, S> extends HookWidget
-    with CubitComposer<C>, BlocListenerInterface<C, S>
+class BlocListener<C extends Cubit<S>, S> extends BlocWidget<C>
+    with BlocListenerInterface<C, S>
     implements BlocListenableBase {
   const BlocListener({
     Key key,

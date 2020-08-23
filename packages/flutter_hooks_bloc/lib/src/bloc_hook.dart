@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
+
 import 'flutter_bloc.dart';
 
 import 'package:flutter/widgets.dart' show BuildContext;
@@ -13,8 +15,10 @@ typedef BlocHookListener<S> = void Function(
   S current,
 );
 
-abstract class CubitComposer<C> {
-  C get cubit;
+abstract class BlocWidget<C extends Cubit<Object>> extends HookWidget {
+  const BlocWidget({Key key, this.cubit}) : super(key: key);
+
+  final C cubit;
 }
 
 /// Subscribes to a Cubit and handles a listener or a rebuild.

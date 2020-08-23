@@ -1,7 +1,6 @@
 import 'bloc_hook.dart';
 import 'flutter_bloc.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 
 /// {@template bloc_builder}
 /// Please refer to `BlocListener` if you want to "do" anything in response to
@@ -53,21 +52,18 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 ///)
 /// ```
 /// {@endtemplate}
-class BlocBuilder<C extends Cubit<S>, S> extends HookWidget
-    with CubitComposer<C> {
+class BlocBuilder<C extends Cubit<S>, S> extends BlocWidget<C> {
   const BlocBuilder({
     Key key,
-    this.cubit,
+
+    /// The [cubit] that the [BlocBuilder] will interact with.
+    /// If omitted, [BlocBuilder] will automatically perform a lookup using
+    /// [BlocProvider] and the current `BuildContext`.
+    C cubit,
     @required this.builder,
     this.buildWhen,
   })  : assert(builder != null),
         super(key: key);
-
-  /// The [cubit] that the [BlocBuilder] will interact with.
-  /// If omitted, [BlocBuilder] will automatically perform a lookup using
-  /// [BlocProvider] and the current `BuildContext`.
-  @override
-  final C cubit;
 
   /// The [builder] function which will be invoked on each widget build.
   /// The [builder] takes the `BuildContext` and current `state` and
