@@ -23,7 +23,7 @@ C useBloc<C extends Cubit<S>, S>({
   C cubit,
 
   /// If `listener` callback is not null, every time the state changes, it will
-  /// be executed and the contect, the previus and current state will be passed
+  /// be executed and the context, the previus and current state will be passed
   /// as parameters
   BlocHookListener<S> listener,
 
