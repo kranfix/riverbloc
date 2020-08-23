@@ -11,8 +11,13 @@ abstract class BlocListenableBase {
 
 abstract class BlocListenerBase<C extends Cubit<S>, S>
     extends BlocWidget<C, S> {
-  const BlocListenerBase({Key key, C cubit, this.listenWhen, this.listener})
-      : super(key: key, cubit: cubit);
+  const BlocListenerBase({
+    Key key,
+    C cubit,
+    this.listenWhen,
+    this.listener,
+    bool allowRebuild = false,
+  }) : super(key: key, cubit: cubit, allowRebuild: allowRebuild ?? false);
 
   /// Takes the previous `state` and the current `state` and is responsible for
   /// returning a [bool] which determines whether or not to call [listener]
@@ -25,12 +30,8 @@ abstract class BlocListenerBase<C extends Cubit<S>, S>
 
   /// Helps to subscribe to a [cubit] and optianly rebuild depending on
   /// if [allowRebuild] or [buildWhen] invocation returns `true`
-  C listen({BlocBuilderCondition<S> buildWhen, bool allowRebuild = false}) =>
-      use(
-        listener: _onListen,
-        buildWhen: buildWhen,
-        allowRebuild: allowRebuild ?? false,
-      );
+  C listen({BlocBuilderCondition<S> buildWhen}) =>
+      use(listener: _onListen, buildWhen: buildWhen);
 
   void _onListen(BuildContext context, S prev, S state) {
     if (listenWhen?.call(prev, state) ?? true) {

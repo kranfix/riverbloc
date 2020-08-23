@@ -79,6 +79,7 @@ class BlocConsumer<C extends Cubit<S>, S> extends BlocListenerBase<C, S> {
           cubit: cubit,
           listenWhen: listenWhen,
           listener: listener,
+          allowRebuild: true,
         );
 
   /// Takes the previous `state` and the current `state` and is responsible for
@@ -97,7 +98,7 @@ class BlocConsumer<C extends Cubit<S>, S> extends BlocListenerBase<C, S> {
   /// [builder] with the current `state`.
   @override
   Widget build(BuildContext context) {
-    final _cubit = listen(buildWhen: buildWhen, allowRebuild: true);
+    final _cubit = listen(buildWhen: buildWhen);
     return builder(context, _cubit.state);
   }
 }
