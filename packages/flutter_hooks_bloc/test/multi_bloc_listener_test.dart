@@ -52,7 +52,7 @@ void main() {
         await tester.pumpWidget(
           MultiBlocListener(
             listeners: [
-              BlocListenable<CounterCubit, int>(
+              BlocListener<CounterCubit, int>(
                 cubit: counterCubit,
                 listener: (context, state) {},
               )
@@ -77,7 +77,7 @@ void main() {
       await tester.pumpWidget(
         MultiBlocListener(
           listeners: [
-            BlocListenable<CounterCubit, int>(
+            BlocListener<CounterCubit, int>(
               cubit: counterCubitA,
               listener: (context, state) => statesA.add(state),
             ),
@@ -121,7 +121,7 @@ void main() {
               cubit: counterCubitA,
               listener: (BuildContext context, int state) => statesA.add(state),
             ),
-            BlocListenable(
+            BlocListener(
               cubit: counterCubitB,
               listener: (BuildContext context, int state) => statesB.add(state),
             ),

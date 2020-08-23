@@ -4,28 +4,6 @@ import 'flutter_bloc.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
-class BlocListenable<C extends Cubit<S>, S>
-    with CubitComposer<C>, BlocListenerInterface<C, S>
-    implements BlocListenableBase {
-  const BlocListenable({
-    this.cubit,
-    this.listenWhen,
-    @required this.listener,
-  }) : assert(listener != null);
-
-  @override
-  final BlocListenerCondition<S> listenWhen;
-
-  @override
-  final BlocWidgetListener<S> listener;
-
-  @override
-  final C cubit;
-
-  @override
-  bool get hasNoChild => true;
-}
-
 abstract class BlocListenableBase {
   void listen();
 
