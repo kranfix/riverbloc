@@ -42,8 +42,9 @@ class _MyAppState extends State<MyApp> {
           builder: (context) {
             useBloc<CounterCubit, int>(
               cubit: _counterCubit,
-              listener: (context, _, state) {
+              onEmitted: (context, _, state) {
                 widget.onListenerCalled?.call(context, state);
+                return false;
               },
             );
             return Column(
