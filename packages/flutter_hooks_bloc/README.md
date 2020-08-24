@@ -7,12 +7,12 @@ A flutter_bloc reimplementation based on flutter_hooks for
 
 ## Usage
 
-### MultiBlocListener, BlocBuilder, BlocListener and BlocConsumer
+**MultiBlocListener, BlocBuilder, BlocListener and BlocConsumer**
 
 They work exactly the same as the original. See the `flutter_bloc`
 [documentation](https://bloclibrary.dev/#/flutterbloccoreconcepts).
 
-### useBloc
+**useBloc**
 
 The `useBloc` hook function allows to listen state changes and rebuild
 the widget if necessary.
