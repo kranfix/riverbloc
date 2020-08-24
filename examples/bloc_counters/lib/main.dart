@@ -1,8 +1,7 @@
 import 'cubit/counter_cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-//import 'package:flutter_hooks_bloc/flutter_hooks_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
+//import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks_bloc/flutter_hooks_bloc.dart';
 import 'package:flutter/foundation.dart';
 
 void main() {
@@ -66,12 +65,6 @@ class MyHomePage extends StatelessWidget {
               BlocConsumer<CounterCubit3, int>(
                 listener: (_, state) => print('CounterCubit3: $state'),
                 builder: (_, state) => CounterItem<CounterCubit3>(state: state),
-              ),
-              HookBuilder(
-                builder: (context) {
-                  final state = useState<int>(12);
-                  return Text('${state.value}');
-                },
               ),
             ],
           ),
