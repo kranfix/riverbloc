@@ -9,25 +9,22 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 /// Signature for the `listener` function which takes the `BuildContext` along
 /// with the `current` and `previous` state and is responsible for executing in
 /// response to `state` changes.
-typedef BlocHookListener<S> = void Function(
+typedef BlocHookListener<S> = bool Function(
   BuildContext context,
   S previous,
   S current,
 );
 
 abstract class BlocWidget<C extends Cubit<S>, S> extends HookWidget {
-  const BlocWidget({Key key, this.cubit, this.allowRebuild}) : super(key: key);
+  const BlocWidget({Key key, this.cubit}) : super(key: key);
 
   final C cubit;
-  final bool allowRebuild;
 
-  C use({BlocHookListener<S> listener, BlocBuilderCondition<S> buildWhen}) =>
-      useBloc<C, S>(
-        cubit: cubit,
-        listener: listener,
-        buildWhen: buildWhen,
-        allowRebuild: allowRebuild,
-      );
+  C use() => useBloc<C, S>(cubit: cubit, onEmitted: onStateEmitted);
+
+  @protected
+  @mustCallSuper
+  bool onStateEmitted(BuildContext context, S previous, S state) => true;
 }
 
 /// Subscribes to a Cubit and handles a listener or a rebuild.
@@ -64,26 +61,14 @@ abstract class BlocWidget<C extends Cubit<S>, S> extends HookWidget {
 /// See also:
 ///
 ///  * [Cubit]
-C useBloc<C extends Cubit<S>, S>({
-  C cubit,
-  BlocHookListener<S> listener,
-  BlocBuilderCondition<S> buildWhen,
-  bool allowRebuild,
-}) =>
-    use(_BlocHook<C, S>(cubit, listener, buildWhen, allowRebuild));
+C useBloc<C extends Cubit<S>, S>({C cubit, BlocHookListener<S> onEmitted}) =>
+    use(_BlocHook<C, S>(cubit, onEmitted));
 
 class _BlocHook<C extends Cubit<S>, S> extends Hook<C> {
-  const _BlocHook(
-    this.cubit,
-    this.listener,
-    this.buildWhen,
-    bool allowRebuild,
-  ) : allowRebuild = allowRebuild ?? true;
+  const _BlocHook(this.cubit, this.onEmitted);
 
   final C cubit;
-  final BlocHookListener<S> listener;
-  final BlocBuilderCondition<S> buildWhen;
-  final bool allowRebuild;
+  final BlocHookListener<S> onEmitted;
 
   @override
   HookState<C, Hook<C>> createState() => _BlocHookState<C, S>();
@@ -133,8 +118,7 @@ class _BlocHookState<C extends Cubit<S>, S>
   void _subscribe() {
     if (_cubit != null) {
       _subscription = _cubit.listen((state) {
-        hook.listener?.call(context, _previous, state);
-        if (hook.buildWhen?.call(_previous, state) ?? hook.allowRebuild) {
+        if (hook.onEmitted?.call(context, _previous, state) ?? true) {
           setState(() {});
         }
         _previous = state;

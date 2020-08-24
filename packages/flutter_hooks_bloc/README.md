@@ -7,12 +7,12 @@ A flutter_bloc reimplementation based on flutter_hooks for
 
 ## Usage
 
-### MultiBlocListener, BlocBuilder, BlocListener and BlocConsumer
+**MultiBlocListener, BlocBuilder, BlocListener and BlocConsumer**
 
 They work exactly the same as the original. See the `flutter_bloc`
 [documentation](https://bloclibrary.dev/#/flutterbloccoreconcepts).
 
-### useBloc
+**useBloc**
 
 The `useBloc` hook function allows to listen state changes and rebuild
 the widget if necessary.
@@ -22,18 +22,9 @@ C useBloc<C extends Cubit<S>, S>({
   /// cubit to subscribe. if it is null, it will be infered
   C cubit,
 
-  /// If `listener` callback is not null, every time the state changes, it will
-  /// be executed and the contect, the previus and current state will be passed
-  /// as parameters
-  BlocHookListener<S> listener,
-
-  /// If `buildWhen` callback is not null, will return a `bool` that
-  /// indicates wheter the widget will rebuild on state changes.
-  BlocBuilderCondition<S> buildWhen,
-
-  /// If `allowRebuild`, the widget will rebuild if `buildWhen` is null or
-  /// if its evaluation result is `true`.
-  bool allowRebuild = true,
+  /// If `onEmitted` is not provided or its invocation returns `true`,
+  /// the widget will rebuild.
+  BlocHookListener<S> onEmitted,
 });
 ```
 
@@ -43,7 +34,10 @@ It can be used into a HookBuilder:
 HookBuilder(builder: (ctx) {
   print('HookBuilder');
   final counter = useBloc<CounterCubit, int>(
-    listener: (_, prev, curr) => print('listener: $prev $curr'),
+    onEmitted: (_, prev, curr) {
+      print('listener: $prev $curr');
+      return true;
+    }
   ).state;
   return Text(
     '$counter',
@@ -76,7 +70,12 @@ class BlocBuilder<C extends Cubit<S>, S> extends HookWidget
 
   @override
   Widget build(BuildContext context) {
-    final _cubit = useBloc<C, S>(cubit: cubit, buildWhen: buildWhen);
+    final _cubit = useBloc<C, S>(
+      cubit: cubit,
+      onEmitted: (context, previous, state) {
+        return buildWhen?.call(previous, state) ?? true;
+      }
+    );
     return builder(context, _cubit.state);
   }
 }
