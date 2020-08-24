@@ -1,3 +1,4 @@
+import 'bloc_builder.dart';
 import 'bloc_listener.dart';
 import 'flutter_bloc.dart';
 
@@ -60,7 +61,8 @@ import 'package:flutter/widgets.dart';
 /// )
 /// ```
 /// {@endtemplate}
-class BlocConsumer<C extends Cubit<S>, S> extends BlocListenerBase<C, S> {
+class BlocConsumer<C extends Cubit<S>, S> extends BlocListenerBase<C, S>
+    with BuildWhenOnStateEmittedMixin<C, S> {
   const BlocConsumer({
     Key key,
 
@@ -79,12 +81,12 @@ class BlocConsumer<C extends Cubit<S>, S> extends BlocListenerBase<C, S> {
           cubit: cubit,
           listenWhen: listenWhen,
           listener: listener,
-          allowRebuild: true,
         );
 
   /// Takes the previous `state` and the current `state` and is responsible for
   /// returning a [bool] which determines whether or not to call [listener] of
   /// [BlocConsumer] with the current `state`.
+  @override
   final BlocBuilderCondition<S> buildWhen;
 
   /// The [builder] function which will be invoked on each widget build.
@@ -98,7 +100,7 @@ class BlocConsumer<C extends Cubit<S>, S> extends BlocListenerBase<C, S> {
   /// [builder] with the current `state`.
   @override
   Widget build(BuildContext context) {
-    final _cubit = listen(buildWhen: buildWhen);
+    final _cubit = use();
     return builder(context, _cubit.state);
   }
 }
