@@ -1,3 +1,7 @@
+## [0.8.0]
+
+- `useBloc` use `onEmitted` instead `listener` and `buildWhen`
+
 ## [0.7.0]
 
 - Removing BlocListenable in favor of only BlocListener
