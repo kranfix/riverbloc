@@ -103,6 +103,7 @@ extension _DebugBlocListenerWithNoChildX on List<NesteableBlocListener> {
   bool _debugBlocListenerWithNoChild() => every((it) => it.hasNoChild);
 }
 
+@visibleForTesting
 class BlocListenerTree extends DiagnosticableTree {
   const BlocListenerTree({@required this.listeners})
       : assert(listeners != null);
