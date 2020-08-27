@@ -48,7 +48,7 @@ abstract class BlocWidget<C extends Cubit<S>, S> extends HookWidget {
 ///   @override
 ///   Widget build(BuildContext context) {
 ///     // automatically triggers a rebuild of Counter widget
-///     final counterCubit = useBloc<CounterCubit, int>(allowRebuild: true);
+///     final counterCubit = useBloc<CounterCubit, int>();
 ///
 ///     return GestureDetector(
 ///       onTap: () => counterCubit.increment(),
