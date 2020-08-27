@@ -9,6 +9,12 @@ class CounterCubit extends Cubit<int> {
   void increment() => emit(state + 1);
 }
 
+mixin _DecrementerMixin on CounterCubit {
+  void decrement() => emit(state - 1);
+}
+
+class CounterCubit2 = CounterCubit with _DecrementerMixin;
+
 void main() {
   group('MultiBlocListener', () {
     testWidgets('throws if initialized with no listeners and no child',
