@@ -2,11 +2,14 @@ import 'bloc_hook.dart';
 import 'flutter_bloc.dart';
 
 import 'package:flutter/widgets.dart';
+import 'package:flutter/foundation.dart';
 
 abstract class NesteableBlocListener {
   void listen();
 
   bool get hasNoChild;
+
+  DiagnosticsNode asDiagnosticsNode();
 }
 
 abstract class BlocListenerBase<C extends Cubit<S>, S>
@@ -59,4 +62,18 @@ class BlocListener<C extends Cubit<S>, S> extends BlocListenerBase<C, S>
 
   @override
   bool get hasNoChild => child == null;
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(asDiagnosticsNode());
+  }
+
+  @override
+  DiagnosticsNode asDiagnosticsNode() => DiagnosticsProperty<S>(
+        '$runtimeType',
+        cubit?.state,
+        ifNull: '',
+        showSeparator: cubit?.state != null,
+      );
 }
