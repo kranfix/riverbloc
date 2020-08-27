@@ -457,9 +457,7 @@ void main() {
         listener: (context, state) {},
         child: const SizedBox(),
       );
-      debugPrint(
-        blocListener.toDiagnosticsNode(name: 'CounterBlocListener').toString(),
-      );
+
       expect(
         blocListener.asDiagnosticsNode().toString(),
         'BlocListener<CounterCubit, int>',
@@ -473,9 +471,7 @@ void main() {
         listener: (context, state) {},
         child: const SizedBox(),
       );
-      debugPrint(
-        blocListener.toDiagnosticsNode(name: 'CounterBlocListener').toString(),
-      );
+
       expect(
         blocListener.asDiagnosticsNode().toString(),
         'BlocListener<CounterCubit, int>: 0',
