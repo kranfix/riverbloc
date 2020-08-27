@@ -3,7 +3,7 @@ import 'flutter_bloc.dart';
 
 import 'package:flutter/widgets.dart';
 
-abstract class BlocListenableBase {
+abstract class NesteableBlocListener {
   void listen();
 
   bool get hasNoChild;
@@ -34,7 +34,7 @@ abstract class BlocListenerBase<C extends Cubit<S>, S>
 }
 
 class BlocListener<C extends Cubit<S>, S> extends BlocListenerBase<C, S>
-    implements BlocListenableBase {
+    implements NesteableBlocListener {
   const BlocListener({
     Key key,
     C cubit,

@@ -73,7 +73,7 @@ class MultiBlocListener extends HookWidget {
         assert(listeners._debugBlocListenerWithNoChild()),
         assert(child != null);
 
-  final List<BlocListenableBase> listeners;
+  final List<NesteableBlocListener> listeners;
   final Widget child;
 
   @override
@@ -83,6 +83,6 @@ class MultiBlocListener extends HookWidget {
   }
 }
 
-extension _DebugBlocListenerWithNoChildX on List<BlocListenableBase> {
+extension _DebugBlocListenerWithNoChildX on List<NesteableBlocListener> {
   bool _debugBlocListenerWithNoChild() => every((it) => it.hasNoChild);
 }
