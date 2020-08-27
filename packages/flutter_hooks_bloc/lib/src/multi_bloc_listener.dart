@@ -82,6 +82,21 @@ class MultiBlocListener extends HookWidget {
     listeners.forEach((it) => it.listen());
     return child;
   }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(
+      BlocListenerTree(listeners: listeners).toDiagnosticsNode(
+        name: 'listeners',
+        style: DiagnosticsTreeStyle.dense,
+      ),
+    );
+  }
+
+  @override
+  List<DiagnosticsNode> debugDescribeChildren() =>
+      [for (final listener in listeners) listener.asDiagnosticsNode()];
 }
 
 extension _DebugBlocListenerWithNoChildX on List<NesteableBlocListener> {
