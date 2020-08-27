@@ -451,17 +451,19 @@ void main() {
     });
   });
 
-  group('BlocListenable', () {
-    test('throws if initialized with null cubit, listener', () {
-      try {
-        BlocListener<Cubit, dynamic>(
-          cubit: null,
-          listener: null,
-        );
-        fail('should throw AssertionError');
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
+  group('BlocListener diagnostics', () {
+    test('does not prints the state after the widget runtimeType', () async {
+      final blocListener = BlocListener<CounterCubit, int>(
+        listener: (context, state) {},
+        child: const SizedBox(),
+      );
+      debugPrint(
+        blocListener.toDiagnosticsNode(name: 'CounterBlocListener').toString(),
+      );
+      expect(
+        blocListener.asDiagnosticsNode().toString(),
+        'BlocListener<CounterCubit, int>',
+      );
     });
   });
 }
