@@ -465,5 +465,28 @@ void main() {
         'BlocListener<CounterCubit, int>',
       );
     });
+
+    test('prints the state after the widget runtimeType', () async {
+      final cubit = CounterCubit();
+      final blocListener = BlocListener<CounterCubit, int>(
+        cubit: cubit,
+        listener: (context, state) {},
+        child: const SizedBox(),
+      );
+      debugPrint(
+        blocListener.toDiagnosticsNode(name: 'CounterBlocListener').toString(),
+      );
+      expect(
+        blocListener.asDiagnosticsNode().toString(),
+        'BlocListener<CounterCubit, int>: 0',
+      );
+
+      cubit.increment();
+
+      expect(
+        blocListener.asDiagnosticsNode().toString(),
+        'BlocListener<CounterCubit, int>: 1',
+      );
+    });
   });
 }
