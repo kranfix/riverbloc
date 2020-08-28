@@ -190,13 +190,6 @@ void main() {
         child: const SizedBox(),
       );
 
-      debugPrint(
-        multiListener
-            .toDiagnosticsNode(
-                name: 'MyMultiBlocListener',
-                style: DiagnosticsTreeStyle.singleLine)
-            .toStringDeep(),
-      );
       expect(
         multiListener
             .toDiagnosticsNode(
@@ -211,8 +204,6 @@ void main() {
           '  )',
         ),
       );
-
-      //cubit2.increment();
     });
   });
 }
