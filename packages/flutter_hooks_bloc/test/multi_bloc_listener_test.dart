@@ -174,6 +174,17 @@ void main() {
     });
   });
 
+  group('BlocListenerTree', () {
+    testWidgets('throws assertion on null listeners', (tester) async {
+      try {
+        BlocListenerTree(listeners: null);
+        fail('BlocListenerTree should not have null listener');
+      } catch (e) {
+        expect(e, isAssertionError);
+      }
+    });
+  });
+
   group('MultiBlocListener diagnostics', () {
     test('prints a tree', () async {
       final cubit2 = CounterCubit2();
