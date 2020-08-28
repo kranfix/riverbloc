@@ -473,15 +473,15 @@ void main() {
       );
 
       expect(
-        blocListener.asDiagnosticsNode().toString(),
-        'BlocListener<CounterCubit, int>: 0',
+        blocListener.toDiagnosticsNode().toStringDeep(),
+        'BlocListener<CounterCubit, int>(state: 0)\n',
       );
 
       cubit.increment();
 
       expect(
-        blocListener.asDiagnosticsNode().toString(),
-        'BlocListener<CounterCubit, int>: 1',
+        blocListener.toDiagnosticsNode().toStringDeep(),
+        'BlocListener<CounterCubit, int>(state: 1)\n',
       );
     });
   });
