@@ -80,3 +80,43 @@ class BlocBuilder<C extends Cubit<S>, S> extends HookWidget
   }
 }
 ```
+
+# Alternative to MultiBlocBuilder
+
+The issue with `MultiBlocBuilder` is that it could be either type safety or
+have an unliminit number of inputs (expending to much code).
+But with `useBloc` comes to the rescue.
+
+```dart
+class MyMultiBlocBuilder extends HookWidget {
+  const MyMultiBlocBuilder({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context){
+    // onEmitted is called every time that the state is emitter in a cubit/bloc
+    final cubitA = useBloc<CubitA, int>(onEmitted: (context, previousState, state){
+      // with true, the widget rebuild, otherwise, it behave like a BlocListener
+      return buildWhenA?.call(previousState, state) ?? true;
+    });
+
+    final blocB = useBloc<BlocB, String>(onEmitted: (context, previousState, state){
+      // If you also want to have a BlocListener behavior, you can add some code here
+      if(listenWhen?.call(previousState, state) ?? true){
+        listener(context, state);
+      }
+      return buildWhenB?.call(previousState, state) ?? true;
+    });
+
+    // always rebuild when cubit emits a new state
+    final cubitC = useBloc<CubitC, double>();
+
+    return Column(
+      children: [
+        Text('${cubitA.state}'),
+        Text('${blocB.state}'),
+        Text('${cubitC.state}'),
+      ],
+    );
+  }
+}
+```
