@@ -66,7 +66,14 @@ class BlocListener<C extends Cubit<S>, S> extends BlocListenerBase<C, S>
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(asDiagnosticsNode());
+    if (cubit != null) {
+      properties.add(DiagnosticsProperty<S>(
+        'state',
+        cubit.state,
+        ifNull: '<null>',
+        showSeparator: cubit.state != null,
+      ));
+    }
   }
 
   @override
