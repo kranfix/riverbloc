@@ -1,3 +1,9 @@
+## [0.10.0]
+
+- Adding documentation for a imaginary `MultiBlocBuilder`.
+- Refactor class templates to depends on state runtimeType.
+- Protecting HookWidget.use()
+
 ## [0.9.0]
 
 - Renaming `BlocListenableBase` to `NesteableBlocListener`.
