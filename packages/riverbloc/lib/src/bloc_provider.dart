@@ -43,10 +43,10 @@ class BlocStateProvider<S> extends AlwaysAliveProviderBase<Cubit<S>, S> {
   }
 
   @override
-  BlocStateProviderState<S> createState() => BlocStateProviderState();
+  _BlocStateProviderState<S> createState() => _BlocStateProviderState();
 }
 
-class BlocStateProviderState<S> extends ProviderStateBase<Cubit<S>, S> {
+class _BlocStateProviderState<S> extends ProviderStateBase<Cubit<S>, S> {
   StreamSubscription<S> _subscription;
 
   @override
