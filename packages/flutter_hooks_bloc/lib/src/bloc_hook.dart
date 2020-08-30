@@ -85,16 +85,13 @@ class _BlocHookState<C extends Cubit<S>, S>
   /// Previous state from cubit
   S _previous;
 
-  C _cubit;
-
   @override
-  C build(BuildContext context) => _cubit;
+  C build(BuildContext context) => hook.cubit;
 
   @override
   void initHook() {
     super.initHook();
-    _cubit = hook.cubit;
-    _previous = _cubit?.state;
+    _previous = hook.cubit.state;
     _subscribe();
   }
 
@@ -106,8 +103,7 @@ class _BlocHookState<C extends Cubit<S>, S>
     if (oldCubit != currentCubit) {
       if (_subscription != null) {
         _unsubscribe();
-        _cubit = hook.cubit ?? context.bloc<C>();
-        _previous = _cubit?.state;
+        _previous = hook.cubit.state;
       }
       _subscribe();
     }
@@ -120,14 +116,12 @@ class _BlocHookState<C extends Cubit<S>, S>
   }
 
   void _subscribe() {
-    if (_cubit != null) {
-      _subscription = _cubit.listen((state) {
-        if (hook.onEmitted?.call(context, _previous, state) ?? true) {
-          setState(() {});
-        }
-        _previous = state;
-      });
-    }
+    _subscription = hook.cubit.listen((state) {
+      if (hook.onEmitted?.call(context, _previous, state) ?? true) {
+        setState(() {});
+      }
+      _previous = state;
+    });
   }
 
   void _unsubscribe() {
