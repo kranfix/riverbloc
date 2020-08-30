@@ -52,8 +52,8 @@ import 'package:flutter/widgets.dart';
 ///)
 /// ```
 /// {@endtemplate}
-class BlocBuilder<C extends Cubit<S>, S> extends BlocWidget<C, S>
-    with BuildWhenOnStateEmittedMixin<C, S> {
+class BlocBuilder<C extends Cubit<S>, S> extends BlocWidget<S>
+    with BuildWhenOnStateEmittedMixin<S> {
   const BlocBuilder({
     Key key,
 
@@ -78,12 +78,12 @@ class BlocBuilder<C extends Cubit<S>, S> extends BlocWidget<C, S>
 
   @override
   Widget build(BuildContext context) {
-    final _cubit = use();
+    final _cubit = use<C>();
     return builder(context, _cubit.state);
   }
 }
 
-mixin BuildWhenOnStateEmittedMixin<C extends Cubit<S>, S> on BlocWidget<C, S> {
+mixin BuildWhenOnStateEmittedMixin<S> on BlocWidget<S> {
   BlocBuilderCondition<S> get buildWhen;
 
   @override

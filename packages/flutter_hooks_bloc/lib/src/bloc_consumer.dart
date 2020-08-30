@@ -61,8 +61,8 @@ import 'package:flutter/widgets.dart';
 /// )
 /// ```
 /// {@endtemplate}
-class BlocConsumer<C extends Cubit<S>, S> extends BlocListenerBase<C, S>
-    with BuildWhenOnStateEmittedMixin<C, S> {
+class BlocConsumer<C extends Cubit<S>, S> extends BlocListenerBase<S>
+    with BuildWhenOnStateEmittedMixin<S> {
   const BlocConsumer({
     Key key,
 

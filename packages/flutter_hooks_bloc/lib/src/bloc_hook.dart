@@ -15,12 +15,13 @@ typedef BlocHookListener<S> = bool Function(
   S current,
 );
 
-abstract class BlocWidget<C extends Cubit<S>, S> extends HookWidget {
+abstract class BlocWidget<S> extends HookWidget {
   const BlocWidget({Key key, this.cubit}) : super(key: key);
 
-  final C cubit;
+  final Cubit<S> cubit;
 
-  C use() => useBloc<C, S>(cubit: cubit, onEmitted: onStateEmitted);
+  C use<C extends Cubit<S>>() =>
+      useBloc<C, S>(cubit: cubit, onEmitted: onStateEmitted);
 
   @protected
   @mustCallSuper
