@@ -6,6 +6,45 @@ import 'package:riverpod/riverpod.dart';
 // ignore: implementation_imports
 import 'package:riverpod/src/framework.dart';
 
+/// Similar to Provider but for bloc
+///
+/// ```
+/// class CounterCubit extends Cubit<int> {
+///   CounterCubit(int state) : super(state);
+///
+///   void increment() => emit(state + 1);
+/// }
+///
+/// final counterProvider = BlocProvider((ref) => CounterCubit(0));
+///
+/// class MyHomePage extends ConsumerWidget {
+///   const MyHomePage({Key key, this.title}) : super(key: key);
+///
+///   final String title;
+///
+///   @override
+///   Widget build(BuildContext context, ScopedReader watch) {
+///     // Rebuilds the widget if the cubit/bloc changes.
+///     // But does not rebuild if the state changes with the same cubit/bloc
+///     final counterCubit = watch(counterProvider);
+///     return Scaffold(
+///       appBar: AppBar(
+///         title: Text(title),
+///       ),
+///       body: Center(
+///         child: Text(
+///           'counterCubit.state: ${counterCubit.state}',
+///         ),
+///       ),
+///       floatingActionButton: FloatingActionButton(
+///         onPressed: () => context.read(counterProvider).increment(),
+///         tooltip: 'Increment',
+///         child: Icon(Icons.add),
+///       ),
+///     );
+///   }
+/// }
+/// ```
 class BlocProvider<C extends Cubit<Object>> extends Provider<C> {
   BlocProvider(
     Create<C, ProviderReference> create, {
@@ -15,7 +54,20 @@ class BlocProvider<C extends Cubit<Object>> extends Provider<C> {
   BlocStateProvider<Object> _state;
 }
 
-/// Adds [state] to [BlocProvider.autoDispose].
+/// Adds [state] to [BlocProvider].
+///
+/// Usasge:
+///
+/// ```dart
+/// Consumer(builder: (context, watch, __) {
+///   // Rebuilds in every emitted state
+///   final _counter = watch(counterProvider.state);
+///   return Text(
+///     '$_counter',
+///     style: Theme.of(context).textTheme.headline4,
+///   );
+/// }),
+/// ```
 extension BlocStateProviderX<S> on BlocProvider<Cubit<S>> {
   BlocStateProvider<S> get state {
     _state ??= BlocStateProvider<S>._(this);
@@ -23,6 +75,8 @@ extension BlocStateProviderX<S> on BlocProvider<Cubit<S>> {
   }
 }
 
+/// The [BlocStateProvider] watch a [cubit] or [bloc] and subscribe to its
+/// `state` and rebuilds every time that it is emitted.
 class BlocStateProvider<S> extends AlwaysAliveProviderBase<Cubit<S>, S> {
   BlocStateProvider._(this._provider)
       : super(
