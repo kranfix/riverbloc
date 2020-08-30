@@ -16,10 +16,10 @@ class BlocProvider<C extends Cubit<Object>> extends Provider<C> {
 BlocStateProvider<Object> _state;
 
 /// Adds [state] to [BlocProvider.autoDispose].
-extension BlocStateProviderX<C extends Cubit<S>, S> on BlocProvider<C> {
+extension BlocStateProviderX<S> on BlocProvider<Cubit<S>> {
   BlocStateProvider<S> get state {
     _state ??= BlocStateProvider<S>._(this);
-    return _state;
+    return _state as BlocStateProvider<S>;
   }
 }
 
