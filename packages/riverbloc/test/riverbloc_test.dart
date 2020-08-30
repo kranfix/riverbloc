@@ -23,4 +23,21 @@ void main() {
 
     expect(counterCubit.state, 1);
   });
+
+  test('defaults to 0 and notify listeners when value changes', () async {
+    final container = ProviderContainer();
+
+    final counterCubit = container.read(counterProvider);
+
+    expect(counterCubit.state, 0);
+    expect(container.read(counterProvider.state), 0);
+
+    for (var count = 0; count < 10; count++) {
+      container.read(counterProvider).increment();
+      expect(container.read(counterProvider.state), count);
+      expect(counterCubit.state, count + 1);
+      await Future.value();
+      expect(container.read(counterProvider.state), count + 1);
+    }
+  });
 }
