@@ -39,6 +39,8 @@ class MyHomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
+    // Rebuilds the widget if the cubit/bloc changes.
+    // But does not rebuild if the state changes with the same cubit/bloc
     final counterCubit = watch(counterProvider);
     return Scaffold(
       appBar: AppBar(
@@ -52,6 +54,7 @@ class MyHomePage extends ConsumerWidget {
               'counterCubit.state: ${counterCubit.state}',
             ),
             Consumer(builder: (context, watch, __) {
+              // Rebuilds in every emitted state
               final _counter = watch(counterProvider.state);
               return Text(
                 '$_counter',
