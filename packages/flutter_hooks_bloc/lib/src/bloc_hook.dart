@@ -65,28 +65,27 @@ abstract class BlocWidget<S> extends HookWidget {
 C useBloc<C extends Cubit<S>, S>({C cubit, BlocHookListener<S> onEmitted}) {
   final context = useContext();
   final _cubit = cubit ?? context.bloc<C>();
-  return use(_BlocHook<C, S>(_cubit, onEmitted));
+  return use(_BlocHook<S>(_cubit, onEmitted)) as C;
 }
 
-class _BlocHook<C extends Cubit<S>, S> extends Hook<C> {
+class _BlocHook<S> extends Hook<Cubit<S>> {
   const _BlocHook(this.cubit, this.onEmitted);
 
-  final C cubit;
+  final Cubit<S> cubit;
   final BlocHookListener<S> onEmitted;
 
   @override
-  HookState<C, Hook<C>> createState() => _BlocHookState<C, S>();
+  HookState<Cubit<S>, _BlocHook<S>> createState() => _BlocHookState<S>();
 }
 
-class _BlocHookState<C extends Cubit<S>, S>
-    extends HookState<C, _BlocHook<C, S>> {
+class _BlocHookState<S> extends HookState<Cubit<S>, _BlocHook<S>> {
   StreamSubscription<S> _subscription;
 
   /// Previous state from cubit
   S _previous;
 
   @override
-  C build(BuildContext context) => hook.cubit;
+  Cubit<S> build(BuildContext context) => hook.cubit;
 
   @override
   void initHook() {
@@ -96,7 +95,7 @@ class _BlocHookState<C extends Cubit<S>, S>
   }
 
   @override
-  void didUpdateHook(_BlocHook<C, S> oldWidget) {
+  void didUpdateHook(_BlocHook<S> oldWidget) {
     super.didUpdateHook(oldWidget);
     final oldCubit = oldWidget.cubit;
     final currentCubit = hook.cubit ?? oldCubit;
