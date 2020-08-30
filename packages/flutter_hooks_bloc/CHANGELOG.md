@@ -1,3 +1,14 @@
+## [0.9.0]
+
+- Renaming `BlocListenableBase` to `NesteableBlocListener`.
+- `BlocListener` is has `debugFillProperties`.
+- `MultiBlocListener` is has `debugFillProperties`.
+- Fix in `useBloc` documentation.
+
+## [0.8.0]
+
+- `useBloc` use `onEmitted` instead `listener` and `buildWhen`
+
 ## [0.7.0]
 
 - Removing BlocListenable in favor of only BlocListener

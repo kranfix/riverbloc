@@ -1,5 +1,6 @@
 import 'bloc_listener.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 /// {@template multi_bloc_listener}
@@ -73,7 +74,7 @@ class MultiBlocListener extends HookWidget {
         assert(listeners._debugBlocListenerWithNoChild()),
         assert(child != null);
 
-  final List<BlocListenableBase> listeners;
+  final List<NesteableBlocListener> listeners;
   final Widget child;
 
   @override
@@ -81,8 +82,35 @@ class MultiBlocListener extends HookWidget {
     listeners.forEach((it) => it.listen());
     return child;
   }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(
+      BlocListenerTree(listeners: listeners).toDiagnosticsNode(
+        name: 'listeners',
+        style: DiagnosticsTreeStyle.dense,
+      ),
+    );
+  }
+
+  @override
+  List<DiagnosticsNode> debugDescribeChildren() =>
+      [for (final listener in listeners) listener.asDiagnosticsNode()];
 }
 
-extension _DebugBlocListenerWithNoChildX on List<BlocListenableBase> {
+extension _DebugBlocListenerWithNoChildX on List<NesteableBlocListener> {
   bool _debugBlocListenerWithNoChild() => every((it) => it.hasNoChild);
+}
+
+@visibleForTesting
+class BlocListenerTree extends DiagnosticableTree {
+  const BlocListenerTree({@required this.listeners})
+      : assert(listeners != null);
+
+  final List<NesteableBlocListener> listeners;
+
+  @override
+  List<DiagnosticsNode> debugDescribeChildren() =>
+      [for (final listener in listeners) listener.asDiagnosticsNode()];
 }

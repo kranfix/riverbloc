@@ -2,22 +2,20 @@ import 'bloc_hook.dart';
 import 'flutter_bloc.dart';
 
 import 'package:flutter/widgets.dart';
+import 'package:flutter/foundation.dart';
 
-abstract class BlocListenableBase {
+abstract class NesteableBlocListener {
   void listen();
 
   bool get hasNoChild;
+
+  DiagnosticsNode asDiagnosticsNode();
 }
 
 abstract class BlocListenerBase<C extends Cubit<S>, S>
     extends BlocWidget<C, S> {
-  const BlocListenerBase({
-    Key key,
-    C cubit,
-    this.listenWhen,
-    this.listener,
-    bool allowRebuild = false,
-  }) : super(key: key, cubit: cubit, allowRebuild: allowRebuild ?? false);
+  const BlocListenerBase({Key key, C cubit, this.listenWhen, this.listener})
+      : super(key: key, cubit: cubit);
 
   /// Takes the previous `state` and the current `state` and is responsible for
   /// returning a [bool] which determines whether or not to call [listener]
@@ -28,20 +26,18 @@ abstract class BlocListenerBase<C extends Cubit<S>, S>
   /// and is responsible for executing in response to `state` changes.
   final BlocWidgetListener<S> listener;
 
-  /// Helps to subscribe to a [cubit] and optianly rebuild depending on
-  /// if [allowRebuild] or [buildWhen] invocation returns `true`
-  C listen({BlocBuilderCondition<S> buildWhen}) =>
-      use(listener: _onListen, buildWhen: buildWhen);
-
-  void _onListen(BuildContext context, S prev, S state) {
-    if (listenWhen?.call(prev, state) ?? true) {
+  @override
+  bool onStateEmitted(BuildContext context, S previous, S state) {
+    super.onStateEmitted(context, previous, state);
+    if (listenWhen?.call(previous, state) ?? true) {
       listener.call(context, state);
     }
+    return false;
   }
 }
 
 class BlocListener<C extends Cubit<S>, S> extends BlocListenerBase<C, S>
-    implements BlocListenableBase {
+    implements NesteableBlocListener {
   const BlocListener({
     Key key,
     C cubit,
@@ -56,10 +52,35 @@ class BlocListener<C extends Cubit<S>, S> extends BlocListenerBase<C, S>
 
   @override
   Widget build(BuildContext context) {
-    listen();
+    use();
     return child;
   }
 
+  /// Helps to subscribe to a [cubit]
+  @override
+  void listen() => use();
+
   @override
   bool get hasNoChild => child == null;
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    if (cubit != null) {
+      properties.add(DiagnosticsProperty<S>(
+        'state',
+        cubit.state,
+        ifNull: '<null>',
+        showSeparator: cubit.state != null,
+      ));
+    }
+  }
+
+  @override
+  DiagnosticsNode asDiagnosticsNode() => DiagnosticsProperty<S>(
+        '$runtimeType',
+        cubit?.state,
+        ifNull: '',
+        showSeparator: cubit?.state != null,
+      );
 }

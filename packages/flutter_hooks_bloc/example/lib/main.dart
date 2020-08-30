@@ -47,14 +47,14 @@ class MyHomePage extends HookWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
+            Text('You have pushed the button this many times:'),
             HookBuilder(builder: (ctx) {
               print('HookBuilder');
               final counter = useBloc<CounterCubit, int>(
-                listener: (_, prev, curr) => print('listener: $prev $curr'),
-                allowRebuild: true,
+                onEmitted: (_, prev, curr) {
+                  print('listener: $prev $curr');
+                  return true; // allows rebuild
+                },
               ).state;
               return Text(
                 '$counter',

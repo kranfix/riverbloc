@@ -42,8 +42,9 @@ class _MyAppState extends State<MyApp> {
           builder: (context) {
             useBloc<CounterCubit, int>(
               cubit: _counterCubit,
-              listener: (context, _, state) {
+              onEmitted: (context, _, state) {
                 widget.onListenerCalled?.call(context, state);
+                return false;
               },
             );
             return Column(
@@ -450,17 +451,38 @@ void main() {
     });
   });
 
-  group('BlocListenable', () {
-    test('throws if initialized with null cubit, listener', () {
-      try {
-        BlocListener<Cubit, dynamic>(
-          cubit: null,
-          listener: null,
-        );
-        fail('should throw AssertionError');
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
+  group('BlocListener diagnostics', () {
+    test('does not prints the state after the widget runtimeType', () async {
+      final blocListener = BlocListener<CounterCubit, int>(
+        listener: (context, state) {},
+        child: const SizedBox(),
+      );
+
+      expect(
+        blocListener.asDiagnosticsNode().toString(),
+        'BlocListener<CounterCubit, int>',
+      );
+    });
+
+    test('prints the state after the widget runtimeType', () async {
+      final cubit = CounterCubit();
+      final blocListener = BlocListener<CounterCubit, int>(
+        cubit: cubit,
+        listener: (context, state) {},
+        child: const SizedBox(),
+      );
+
+      expect(
+        blocListener.toDiagnosticsNode().toStringDeep(),
+        'BlocListener<CounterCubit, int>(state: 0)\n',
+      );
+
+      cubit.increment();
+
+      expect(
+        blocListener.toDiagnosticsNode().toStringDeep(),
+        'BlocListener<CounterCubit, int>(state: 1)\n',
+      );
     });
   });
 }
