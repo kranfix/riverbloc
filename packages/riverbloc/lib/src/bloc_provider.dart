@@ -65,6 +65,7 @@ class _BlocStateProviderState<S> extends ProviderStateBase<Cubit<S>, S> {
 
   void _subscribe() {
     if (createdValue != null) {
+      exposedValue ??= createdValue.state;
       _subscription = createdValue.listen(_listener);
     }
   }
