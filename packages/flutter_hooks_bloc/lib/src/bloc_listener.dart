@@ -12,10 +12,13 @@ abstract class NesteableBlocListener {
   DiagnosticsNode asDiagnosticsNode();
 }
 
-abstract class BlocListenerBase<C extends Cubit<S>, S>
-    extends BlocWidget<C, S> {
-  const BlocListenerBase({Key key, C cubit, this.listenWhen, this.listener})
-      : super(key: key, cubit: cubit);
+abstract class BlocListenerBase<S> extends BlocWidget<S> {
+  const BlocListenerBase({
+    Key key,
+    Cubit<S> cubit,
+    this.listenWhen,
+    this.listener,
+  }) : super(key: key, cubit: cubit);
 
   /// Takes the previous `state` and the current `state` and is responsible for
   /// returning a [bool] which determines whether or not to call [listener]
@@ -36,7 +39,7 @@ abstract class BlocListenerBase<C extends Cubit<S>, S>
   }
 }
 
-class BlocListener<C extends Cubit<S>, S> extends BlocListenerBase<C, S>
+class BlocListener<C extends Cubit<S>, S> extends BlocListenerBase<S>
     implements NesteableBlocListener {
   const BlocListener({
     Key key,
@@ -52,13 +55,13 @@ class BlocListener<C extends Cubit<S>, S> extends BlocListenerBase<C, S>
 
   @override
   Widget build(BuildContext context) {
-    use();
+    use<C>();
     return child;
   }
 
   /// Helps to subscribe to a [cubit]
   @override
-  void listen() => use();
+  void listen() => use<C>();
 
   @override
   bool get hasNoChild => child == null;
