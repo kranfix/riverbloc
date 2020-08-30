@@ -1,5 +1,7 @@
 # riverbloc
 
+![Coverage](https://raw.githubusercontent.com/kranfix/riverbloc/master/packages/riverbloc/coverage_badge.svg?sanitize=true)
+
 An implementation of BlocProvider based on riverpod providers.
 The goal of this package is to make easy the migration from `flutter_bloc`
 `flutter_riverpod`.
