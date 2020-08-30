@@ -20,6 +20,7 @@ abstract class BlocWidget<S> extends HookWidget {
 
   final Cubit<S> cubit;
 
+  @protected
   C use<C extends Cubit<S>>() =>
       useBloc<C, S>(cubit: cubit, onEmitted: onStateEmitted);
 
