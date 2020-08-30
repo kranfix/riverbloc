@@ -13,6 +13,16 @@ class BlocProvider<C extends Cubit<Object>> extends Provider<C> {
   }) : super(create, name: name);
 }
 
+BlocStateProvider<Object> _state;
+
+/// Adds [state] to [BlocProvider.autoDispose].
+extension BlocStateProviderX<C extends Cubit<S>, S> on BlocProvider<C> {
+  BlocStateProvider<S> get state {
+    _state ??= BlocStateProvider<S>._(this);
+    return _state;
+  }
+}
+
 class BlocStateProvider<S> extends AlwaysAliveProviderBase<Cubit<S>, S> {
   BlocStateProvider._(this._provider)
       : super(
