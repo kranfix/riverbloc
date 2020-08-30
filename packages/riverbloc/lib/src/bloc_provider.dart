@@ -1,9 +1,17 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:riverpod/riverpod.dart';
 
 // ignore: implementation_imports
 import 'package:riverpod/src/framework.dart';
+
+class BlocProvider<C extends Cubit<Object>> extends Provider<C> {
+  BlocProvider(
+    Create<C, ProviderReference> create, {
+    String name,
+  }) : super(create, name: name);
+}
 
 class BlocStateProviderState<S> extends ProviderStateBase<Cubit<S>, S> {
   StreamSubscription<S> _subscription;
