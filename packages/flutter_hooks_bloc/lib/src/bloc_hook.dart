@@ -62,8 +62,11 @@ abstract class BlocWidget<S> extends HookWidget {
 /// See also:
 ///
 ///  * [Cubit]
-C useBloc<C extends Cubit<S>, S>({C cubit, BlocHookListener<S> onEmitted}) =>
-    use(_BlocHook<C, S>(cubit, onEmitted));
+C useBloc<C extends Cubit<S>, S>({C cubit, BlocHookListener<S> onEmitted}) {
+  final context = useContext();
+  final _cubit = cubit ?? context.bloc<C>();
+  return use(_BlocHook<C, S>(_cubit, onEmitted));
+}
 
 class _BlocHook<C extends Cubit<S>, S> extends Hook<C> {
   const _BlocHook(this.cubit, this.onEmitted);
@@ -90,7 +93,7 @@ class _BlocHookState<C extends Cubit<S>, S>
   @override
   void initHook() {
     super.initHook();
-    _cubit = hook.cubit ?? context.bloc<C>();
+    _cubit = hook.cubit;
     _previous = _cubit?.state;
     _subscribe();
   }
@@ -98,7 +101,7 @@ class _BlocHookState<C extends Cubit<S>, S>
   @override
   void didUpdateHook(_BlocHook<C, S> oldWidget) {
     super.didUpdateHook(oldWidget);
-    final oldCubit = oldWidget.cubit ?? context.bloc<C>();
+    final oldCubit = oldWidget.cubit;
     final currentCubit = hook.cubit ?? oldCubit;
     if (oldCubit != currentCubit) {
       if (_subscription != null) {
