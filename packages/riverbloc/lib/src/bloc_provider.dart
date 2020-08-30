@@ -11,9 +11,9 @@ class BlocProvider<C extends Cubit<Object>> extends Provider<C> {
     Create<C, ProviderReference> create, {
     String name,
   }) : super(create, name: name);
-}
 
-BlocStateProvider<Object> _state;
+  BlocStateProvider<Object> _state;
+}
 
 /// Adds [state] to [BlocProvider.autoDispose].
 extension BlocStateProviderX<S> on BlocProvider<Cubit<S>> {
