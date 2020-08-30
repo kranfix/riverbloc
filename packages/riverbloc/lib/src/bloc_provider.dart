@@ -13,6 +13,29 @@ class BlocProvider<C extends Cubit<Object>> extends Provider<C> {
   }) : super(create, name: name);
 }
 
+class BlocStateProvider<S> extends AlwaysAliveProviderBase<Cubit<S>, S> {
+  BlocStateProvider._(this._provider)
+      : super(
+          (ref) => ref.watch(_provider),
+          _provider.name != null ? '${_provider.name}.state' : null,
+        );
+
+  final BlocProvider<Cubit<S>> _provider;
+
+  @override
+  Override overrideWithValue(S value) {
+    return ProviderOverride(
+      ValueProvider<Cubit<S>, S>((ref) {
+        return ref.watch(_provider);
+      }, value),
+      this,
+    );
+  }
+
+  @override
+  BlocStateProviderState<S> createState() => BlocStateProviderState();
+}
+
 class BlocStateProviderState<S> extends ProviderStateBase<Cubit<S>, S> {
   StreamSubscription<S> _subscription;
 
