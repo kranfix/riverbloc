@@ -40,4 +40,25 @@ void main() {
       expect(container.read(counterProvider.state), count + 1);
     }
   });
+
+  test('bloc resubscribe', () async {
+    final container = ProviderContainer();
+    final counterCubit = container.read(counterProvider);
+
+    expect(counterCubit.state, 0);
+    expect(container.read(counterProvider.state), 0);
+
+    for (var i = 0; i < 2; i++) {
+      counterCubit.increment();
+      await Future.value();
+    }
+    expect(container.read(counterProvider.state), 2);
+
+    final counterCubit2 = container.refresh(counterProvider);
+    expect(counterCubit2, isNot(equals(counterCubit)));
+    expect(container.read(counterProvider), equals(counterCubit2));
+
+    expect(counterCubit2.state, 0);
+    expect(container.read(counterProvider.state), 0);
+  });
 }
