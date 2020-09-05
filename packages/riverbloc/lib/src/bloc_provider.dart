@@ -52,6 +52,11 @@ class BlocProvider<C extends Cubit<Object>> extends Provider<C> {
   }) : super(create, name: name);
 
   BlocStateProvider<Object> _state;
+
+  @override
+  ProviderOverride overrideWithProvider(covariant BlocProvider<C> provider) {
+    return ProviderOverride(provider, this);
+  }
 }
 
 /// Adds [state] to [BlocProvider].

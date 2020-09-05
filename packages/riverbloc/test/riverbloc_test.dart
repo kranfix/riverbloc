@@ -61,4 +61,18 @@ void main() {
     expect(counterCubit2.state, 0);
     expect(container.read(counterProvider.state), 0);
   });
+
+  group('BlocProvider override', () {
+    test('with provider', () async {
+      final counterCubit = CounterCubit(0);
+      final counterProvider2 = BlocProvider((ref) => counterCubit);
+      final container = ProviderContainer(
+        overrides: [
+          counterProvider.overrideWithProvider(counterProvider2),
+        ],
+      );
+
+      expect(container.read(counterProvider), counterCubit);
+    });
+  });
 }
