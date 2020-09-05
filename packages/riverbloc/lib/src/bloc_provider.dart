@@ -53,6 +53,42 @@ class BlocProvider<C extends Cubit<Object>> extends Provider<C> {
 
   BlocStateProvider<Object> _state;
 
+  ///
+  /// With pure dart:
+  ///
+  /// ```dart
+  /// final counterProvider = BlocProvider((ref) => CounterCubit(0));
+  /// final counterCubit = CounterCubit(0);
+  /// final counterProvider2 = BlocProvider((ref) => counterCubit);
+  /// final container = ProviderContainer(
+  ///   overrides: [
+  ///     counterProvider.overrideWithProvider(counterProvider2),
+  ///   ],
+  /// );
+  ///
+  /// // reads `counterProvider2` and returns `counterCubit`
+  /// container.read(counterProvider);
+  /// ```
+  ///
+  /// With Flutter:
+  ///
+  /// ```dart
+  /// final counterProvider = BlocProvider((ref) => CounterCubit(0));
+  /// final counterCubit = CounterCubit(0);
+  /// final counterProvider2 = BlocProvider((ref) => counterCubit);
+  ///
+  /// ProviderScope(
+  ///   overrides: [
+  ///     counterProvider.overrideWithProvider(counterProvider2),
+  ///   ],
+  ///   child: Consumer(
+  ///     builder: (context, watch, _) {
+  ///       final countCubit = watch(counterProvider);
+  ///       return Container();
+  ///     },
+  ///   ),
+  /// );
+  /// ```
   @override
   ProviderOverride overrideWithProvider(covariant BlocProvider<C> provider) {
     return ProviderOverride(provider, this);
