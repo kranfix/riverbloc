@@ -53,7 +53,7 @@ import 'package:flutter/widgets.dart';
 ///)
 /// ```
 /// {@endtemplate}
-class BlocBuilder<C extends Cubit<S>, S> extends ClassicBlocWidget<S> {
+class BlocBuilder<C extends Cubit<S>, S> extends BlocWidget<S> {
   const BlocBuilder({
     Key key,
 
@@ -65,40 +65,6 @@ class BlocBuilder<C extends Cubit<S>, S> extends ClassicBlocWidget<S> {
     this.buildWhen,
   })  : assert(builder != null),
         super(key: key, cubit: cubit);
-
-  /// The [builder] function which will be invoked on each widget build.
-  /// The [builder] takes the `BuildContext` and current `state` and
-  /// must return a widget.
-  /// This is analogous to the [builder] function in [StreamBuilder].
-  final BlocWidgetBuilder<S> builder;
-
-  ///{@macro bloc_builder_build_when}
-  final BlocBuilderCondition<S> buildWhen;
-
-  @override
-  Widget build(BuildContext context) {
-    final _cubit = $use<C>();
-    return builder(context, _cubit.state);
-  }
-
-  @override
-  bool onStateEmitted(BuildContext context, S previous, S state) {
-    return buildWhen?.call(previous, state) ?? true;
-  }
-}
-
-class RiverBlocBuilder<C extends Cubit<S>, S> extends RiverBlocWidget<S> {
-  const RiverBlocBuilder({
-    Key key,
-
-    /// The [cubit] that the [BlocBuilder] will interact with.
-    /// If omitted, [BlocBuilder] will automatically perform a lookup using
-    /// [BlocProvider] and the current `BuildContext`.
-    BlocProvider<C> provider,
-    @required this.builder,
-    this.buildWhen,
-  })  : assert(builder != null),
-        super(key: key, provider: provider);
 
   /// The [builder] function which will be invoked on each widget build.
   /// The [builder] takes the `BuildContext` and current `state` and
