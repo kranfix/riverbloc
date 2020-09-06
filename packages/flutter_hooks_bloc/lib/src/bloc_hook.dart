@@ -25,8 +25,7 @@ abstract class BlocWidget<S> extends HookWidget {
       useBloc<C, S>(cubit: cubit, onEmitted: onStateEmitted);
 
   @protected
-  @mustCallSuper
-  bool onStateEmitted(BuildContext context, S previous, S state) => true;
+  bool onStateEmitted(BuildContext context, S previous, S state);
 }
 
 /// Subscribes to a Cubit and handles a listener or a rebuild.

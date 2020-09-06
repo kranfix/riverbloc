@@ -17,7 +17,7 @@ abstract class BlocListenerBase<S> extends BlocWidget<S> {
     Key key,
     Cubit<S> cubit,
     this.listenWhen,
-    this.listener,
+    @required this.listener,
   }) : super(key: key, cubit: cubit);
 
   /// Takes the previous `state` and the current `state` and is responsible for
@@ -31,7 +31,6 @@ abstract class BlocListenerBase<S> extends BlocWidget<S> {
 
   @override
   bool onStateEmitted(BuildContext context, S previous, S state) {
-    super.onStateEmitted(context, previous, state);
     if (listenWhen?.call(previous, state) ?? true) {
       listener.call(context, state);
     }
