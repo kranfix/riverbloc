@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:riverbloc/riverbloc.dart' show BlocProvider;
 
-import 'flutter_bloc.dart';
+import 'flutter_bloc.dart' show Cubit, BlocProviderExtension;
 
 import 'package:flutter/widgets.dart' show BuildContext;
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart' show useProvider;
 
 /// Signature for the `listener` function which takes the `BuildContext` along
 /// with the `current` and `previous` state and is responsible for executing in
@@ -16,16 +18,23 @@ typedef BlocHookListener<S> = bool Function(
 );
 
 abstract class BlocWidget<S> extends HookWidget {
-  const BlocWidget({Key key, this.cubit}) : super(key: key);
-
-  final Cubit<S> cubit;
+  const BlocWidget({Key key}) : super(key: key);
 
   @protected
-  C $use<C extends Cubit<S>>() =>
-      useBloc<C, S>(cubit: cubit, onEmitted: onStateEmitted);
+  C $use<C extends Cubit<S>>();
 
   @protected
   bool onStateEmitted(BuildContext context, S previous, S state);
+}
+
+abstract class ClassicBlocWidget<S> extends BlocWidget<S> {
+  const ClassicBlocWidget({Key key, this.cubit}) : super(key: key);
+
+  final Cubit<S> cubit;
+
+  @override
+  C $use<C extends Cubit<S>>() =>
+      useBloc<C, S>(cubit: cubit, onEmitted: onStateEmitted);
 }
 
 /// Subscribes to a Cubit and handles a listener or a rebuild.
@@ -65,6 +74,14 @@ abstract class BlocWidget<S> extends HookWidget {
 C useBloc<C extends Cubit<S>, S>({C cubit, BlocHookListener<S> onEmitted}) {
   final context = useContext();
   final _cubit = cubit ?? context.bloc<C>();
+  return use(_BlocHook<S>(_cubit, onEmitted)) as C;
+}
+
+C useRiverBloc<C extends Cubit<S>, S>(
+  BlocProvider<C> provider, {
+  BlocHookListener<S> onEmitted,
+}) {
+  final _cubit = useProvider(provider);
   return use(_BlocHook<S>(_cubit, onEmitted)) as C;
 }
 
