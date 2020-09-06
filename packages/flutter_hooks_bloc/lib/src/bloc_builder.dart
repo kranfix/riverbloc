@@ -3,6 +3,16 @@ import 'flutter_bloc.dart' hide BlocProvider;
 import 'package:riverbloc/riverbloc.dart' show BlocProvider;
 import 'package:flutter/widgets.dart';
 
+/// Signature for the `builder` function which takes the `BuildContext` and
+/// [state] and is responsible for returning a widget which is to be rendered.
+/// This is analogous to the `builder` function in [StreamBuilder].
+typedef BlocWidgetBuilder<S> = Widget Function(BuildContext context, S state);
+
+/// Signature for the `buildWhen` function which takes the previous `state` and
+/// the current `state` and is responsible for returning a [bool] which
+/// determines whether to rebuild [BlocBuilder] with the current `state`.
+typedef BlocBuilderCondition<S> = bool Function(S previous, S current);
+
 /// {@template bloc_builder}
 /// Please refer to `BlocListener` if you want to "do" anything in response to
 /// `state` changes such as navigation, showing a dialog, etc...

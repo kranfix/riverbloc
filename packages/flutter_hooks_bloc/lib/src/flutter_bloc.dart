@@ -5,6 +5,8 @@ export 'package:flutter_bloc/flutter_bloc.dart'
         BlocWidgetListener,
         BlocListenerCondition,
         BlocBuilder,
+        BlocWidgetBuilder,
+        BlocBuilderCondition,
         BlocConsumer,
         BlocListenerBase,
         BlocBuilderBase;
