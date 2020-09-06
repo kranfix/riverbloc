@@ -55,13 +55,13 @@ class BlocListener<C extends Cubit<S>, S> extends BlocListenerBase<S>
 
   @override
   Widget build(BuildContext context) {
-    use<C>();
+    $use<C>();
     return child;
   }
 
   /// Helps to subscribe to a [cubit]
   @override
-  void listen() => use<C>();
+  void listen() => $use<C>();
 
   @override
   bool get hasNoChild => child == null;

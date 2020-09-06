@@ -78,7 +78,7 @@ class BlocBuilder<C extends Cubit<S>, S> extends BlocWidget<S>
 
   @override
   Widget build(BuildContext context) {
-    final _cubit = use<C>();
+    final _cubit = $use<C>();
     return builder(context, _cubit.state);
   }
 }
