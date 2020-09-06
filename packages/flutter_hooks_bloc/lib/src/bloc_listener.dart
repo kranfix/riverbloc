@@ -13,12 +13,70 @@ abstract class NesteableBlocListener {
   DiagnosticsNode asDiagnosticsNode();
 }
 
-abstract class BlocListenerBase<S> extends BlocWidget<S> {
+class BlocListener<C extends Cubit<S>, S> extends BlocListenerBase<C, S>
+    implements NesteableBlocListener {
+  const BlocListener({
+    Key key,
+    C cubit,
+    BlocListenerCondition<S> listenWhen,
+    @required BlocWidgetListener<S> listener,
+    Widget child,
+  })  : assert(listener != null),
+        super(
+          key: key,
+          cubit: cubit,
+          listenWhen: listenWhen,
+          listener: listener,
+          child: child,
+        );
+
+  const BlocListener.river({
+    Key key,
+    BlocProvider<C> provider,
+    BlocListenerCondition<S> listenWhen,
+    @required BlocWidgetListener<S> listener,
+    Widget child,
+  })  : assert(listener != null),
+        super.river(
+          key: key,
+          provider: provider,
+          listenWhen: listenWhen,
+          listener: listener,
+          child: child,
+        );
+
+  /// Helps to subscribe to a [cubit]
+  @override
+  void listen() => $use<C>();
+
+  @override
+  bool get hasNoChild => child == null;
+
+  @override
+  DiagnosticsNode asDiagnosticsNode() {
+    if (provider != null) {
+      return DiagnosticsProperty<BlocProvider<C>>(
+        '$runtimeType',
+        provider,
+      );
+    } else {
+      return DiagnosticsProperty<S>(
+        '$runtimeType',
+        cubit?.state,
+        ifNull: '',
+        showSeparator: cubit?.state != null,
+      );
+    }
+  }
+}
+
+abstract class BlocListenerBase<C extends Cubit<S>, S> extends BlocWidget<S> {
   const BlocListenerBase({
     Key key,
     Cubit<S> cubit,
     this.listenWhen,
     @required this.listener,
+    this.child,
   }) : super(key: key, cubit: cubit);
 
   const BlocListenerBase.river({
@@ -26,6 +84,7 @@ abstract class BlocListenerBase<S> extends BlocWidget<S> {
     BlocProvider<Cubit<S>> provider,
     this.listenWhen,
     @required this.listener,
+    @required this.child,
   }) : super.river(key: key, provider: provider);
 
   /// Takes the previous `state` and the current `state` and is responsible for
@@ -37,45 +96,7 @@ abstract class BlocListenerBase<S> extends BlocWidget<S> {
   /// and is responsible for executing in response to `state` changes.
   final BlocWidgetListener<S> listener;
 
-  @override
-  bool onStateEmitted(BuildContext context, S previous, S state) {
-    if (listenWhen?.call(previous, state) ?? true) {
-      listener.call(context, state);
-    }
-    return false;
-  }
-}
-
-class BlocListener<C extends Cubit<S>, S> extends BlocListenerBase<S>
-    implements NesteableBlocListener {
-  const BlocListener({
-    Key key,
-    C cubit,
-    BlocListenerCondition<S> listenWhen,
-    @required BlocWidgetListener<S> listener,
-    this.child,
-  })  : assert(listener != null),
-        super(
-          key: key,
-          cubit: cubit,
-          listenWhen: listenWhen,
-          listener: listener,
-        );
-
-  const BlocListener.river({
-    Key key,
-    BlocProvider<C> provider,
-    BlocListenerCondition<S> listenWhen,
-    @required BlocWidgetListener<S> listener,
-    this.child,
-  })  : assert(listener != null),
-        super.river(
-          key: key,
-          provider: provider,
-          listenWhen: listenWhen,
-          listener: listener,
-        );
-
+  /// The widget which will be rendered as a descendant.
   final Widget child;
 
   @override
@@ -84,12 +105,13 @@ class BlocListener<C extends Cubit<S>, S> extends BlocListenerBase<S>
     return child;
   }
 
-  /// Helps to subscribe to a [cubit]
   @override
-  void listen() => $use<C>();
-
-  @override
-  bool get hasNoChild => child == null;
+  bool onStateEmitted(BuildContext context, S previous, S state) {
+    if (listenWhen?.call(previous, state) ?? true) {
+      listener.call(context, state);
+    }
+    return false;
+  }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -106,23 +128,6 @@ class BlocListener<C extends Cubit<S>, S> extends BlocListenerBase<S>
         ifNull: '<null>',
         showSeparator: cubit.state != null,
       ));
-    }
-  }
-
-  @override
-  DiagnosticsNode asDiagnosticsNode() {
-    if (provider != null) {
-      return DiagnosticsProperty<BlocProvider<C>>(
-        '$runtimeType',
-        provider,
-      );
-    } else {
-      return DiagnosticsProperty<S>(
-        '$runtimeType',
-        cubit?.state,
-        ifNull: '',
-        showSeparator: cubit?.state != null,
-      );
     }
   }
 }
