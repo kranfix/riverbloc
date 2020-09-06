@@ -18,35 +18,31 @@ typedef BlocHookListener<S> = bool Function(
 );
 
 abstract class BlocWidget<S> extends HookWidget {
-  const BlocWidget({Key key}) : super(key: key);
+  const BlocWidget({
+    Key key,
+    @required this.cubit,
+  })  : provider = null,
+        super(key: key);
+
+  const BlocWidget.river({
+    Key key,
+    @required this.provider,
+  })  : cubit = null,
+        super(key: key);
+
+  final Cubit<S> cubit;
+  final BlocProvider<Cubit<S>> provider;
 
   @protected
-  C $use<C extends Cubit<S>>();
+  C $use<C extends Cubit<S>>() {
+    if (provider != null) {
+      return useRiverBloc<C, S>(provider, onEmitted: onStateEmitted);
+    }
+    return useBloc<C, S>(cubit: cubit, onEmitted: onStateEmitted);
+  }
 
   @protected
   bool onStateEmitted(BuildContext context, S previous, S state);
-}
-
-abstract class ClassicBlocWidget<S> extends BlocWidget<S> {
-  const ClassicBlocWidget({Key key, this.cubit}) : super(key: key);
-
-  final Cubit<S> cubit;
-
-  @override
-  C $use<C extends Cubit<S>>() =>
-      useBloc<C, S>(cubit: cubit, onEmitted: onStateEmitted);
-}
-
-abstract class RiverBlocWidget<S> extends BlocWidget<S> {
-  const RiverBlocWidget({Key key, @required this.provider})
-      : assert(provider != null),
-        super(key: key);
-
-  final BlocProvider<Cubit<S>> provider;
-
-  @override
-  C $use<C extends Cubit<S>>() =>
-      useRiverBloc<C, S>(provider, onEmitted: onStateEmitted);
 }
 
 /// Subscribes to a Cubit and handles a listener or a rebuild.
