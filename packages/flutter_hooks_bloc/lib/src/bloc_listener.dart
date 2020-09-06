@@ -12,7 +12,7 @@ abstract class NesteableBlocListener {
   DiagnosticsNode asDiagnosticsNode();
 }
 
-abstract class BlocListenerBase<S> extends BlocWidget<S> {
+abstract class BlocListenerBase<S> extends ClassicBlocWidget<S> {
   const BlocListenerBase({
     Key key,
     Cubit<S> cubit,

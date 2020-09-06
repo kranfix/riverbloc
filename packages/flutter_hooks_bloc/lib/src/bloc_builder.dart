@@ -52,7 +52,7 @@ import 'package:flutter/widgets.dart';
 ///)
 /// ```
 /// {@endtemplate}
-class BlocBuilder<C extends Cubit<S>, S> extends BlocWidget<S> {
+class BlocBuilder<C extends Cubit<S>, S> extends ClassicBlocWidget<S> {
   const BlocBuilder({
     Key key,
 
