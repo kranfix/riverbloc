@@ -89,6 +89,7 @@ C useRiverBloc<C extends Cubit<S>, S>(
   BlocProvider<C> provider, {
   BlocHookListener<S> onEmitted,
 }) {
+  assert(provider != null);
   final _cubit = useProvider(provider);
   return use(_BlocHook<S>(_cubit, onEmitted)) as C;
 }
