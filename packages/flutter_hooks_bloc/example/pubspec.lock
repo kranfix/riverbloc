@@ -151,6 +151,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.3.2"
+  riverbloc:
+    dependency: transitive
+    description:
+      name: riverbloc
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.0"
   riverpod:
     dependency: transitive
     description:
