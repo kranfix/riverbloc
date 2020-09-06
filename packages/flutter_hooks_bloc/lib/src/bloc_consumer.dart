@@ -60,7 +60,7 @@ import 'package:flutter/widgets.dart';
 /// )
 /// ```
 /// {@endtemplate}
-class BlocConsumer<C extends Cubit<S>, S> extends BlocListenerBase<S> {
+class BlocConsumer<C extends Cubit<S>, S> extends BlocListenerBase<C, S> {
   const BlocConsumer({
     Key key,
 
