@@ -13,6 +13,17 @@ abstract class NesteableBlocListener {
   DiagnosticsNode asDiagnosticsNode();
 }
 
+/// Signature for the `listener` function which takes the `BuildContext` along
+/// with the `state` and is responsible for executing in response to
+/// `state` changes.
+typedef BlocWidgetListener<S> = void Function(BuildContext context, S state);
+
+/// Signature for the `listenWhen` function which takes the previous `state`
+/// and the current `state` and is responsible for returning a [bool] which
+/// determines whether or not to call [BlocWidgetListener] of [BlocListener]
+/// with the current `state`.
+typedef BlocListenerCondition<S> = bool Function(S previous, S current);
+
 /// {@template bloc_listener}
 /// Takes a [BlocWidgetListener] and an optional [cubit] and invokes
 /// the [listener] in response to `state` changes in the [cubit].
