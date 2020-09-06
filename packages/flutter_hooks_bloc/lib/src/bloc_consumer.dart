@@ -100,7 +100,7 @@ class BlocConsumer<C extends Cubit<S>, S> extends BlocListenerBase<S>
   /// [builder] with the current `state`.
   @override
   Widget build(BuildContext context) {
-    final _cubit = use();
+    final _cubit = use<C>();
     return builder(context, _cubit.state);
   }
 }
