@@ -13,6 +13,64 @@ abstract class NesteableBlocListener {
   DiagnosticsNode asDiagnosticsNode();
 }
 
+/// {@template bloc_listener}
+/// Takes a [BlocWidgetListener] and an optional [cubit] and invokes
+/// the [listener] in response to `state` changes in the [cubit].
+/// It should be used for functionality that needs to occur only in response to
+/// a `state` change such as navigation, showing a `SnackBar`, showing
+/// a `Dialog`, etc...
+/// The [listener] is guaranteed to only be called once for each `state` change
+/// unlike the `builder` in `BlocBuilder`.
+///
+/// If the [cubit] parameter is omitted, [BlocListener] will automatically
+/// perform a lookup using [BlocProvider] and the current `BuildContext`.
+///
+/// ```dart
+/// BlocListener<BlocA, BlocAState>(
+///   listener: (context, state) {
+///     // do stuff here based on BlocA's state
+///   },
+///   child: Container(),
+/// )
+/// ```
+/// Only specify the [cubit] if you wish to provide a [cubit] that is otherwise
+/// not accessible via [BlocProvider] and the current `BuildContext`.
+///
+/// ```dart
+/// BlocListener<BlocA, BlocAState>(
+///   bloc: blocA,
+///   listener: (context, state) {
+///     // do stuff here based on BlocA's state
+///   },
+///   child: Container(),
+/// )
+/// ```
+/// {@endtemplate}
+///
+/// {@template bloc_listener_listen_when}
+/// An optional [listenWhen] can be implemented for more granular control
+/// over when [listener] is called.
+/// [listenWhen] will be invoked on each [cubit] `state` change.
+/// [listenWhen] takes the previous `state` and current `state` and must
+/// return a [bool] which determines whether or not the [listener] function
+/// will be invoked.
+/// The previous `state` will be initialized to the `state` of the [cubit]
+/// when the [BlocListener] is initialized.
+/// [listenWhen] is optional and if omitted, it will default to `true`.
+///
+/// ```dart
+/// BlocListener<BlocA, BlocAState>(
+///   listenWhen: (previous, current) {
+///     // return true/false to determine whether or not
+///     // to invoke listener with state
+///   },
+///   listener: (context, state) {
+///     // do stuff here based on BlocA's state
+///   }
+///   child: Container(),
+/// )
+/// ```
+/// {@endtemplate}
 class BlocListener<C extends Cubit<S>, S> extends BlocListenerBase<C, S>
     implements NesteableBlocListener {
   const BlocListener({
