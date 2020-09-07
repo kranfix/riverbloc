@@ -144,5 +144,43 @@ void main() {
       await tester.pump();
       expect(states, expectedStates);
     });
+
+    testWidgets(
+        'updates when the cubit is changed at runtime to a different cubit '
+        'and unsubscribes from old cubit', (tester) async {
+      var listenerCallCount = 0;
+      int latestState;
+      final incrementFinder = find.byKey(
+        const Key('cubit_listener_increment_button'),
+      );
+      final resetCubitFinder = find.byKey(
+        const Key('cubit_listener_reset_button'),
+      );
+      await tester.pumpWidget(ProviderScope(
+        child: MyApp(
+          onListenerCalled: (_, state) {
+            listenerCallCount++;
+            latestState = state;
+          },
+        ),
+      ));
+
+      await tester.tap(incrementFinder);
+      await tester.pump();
+      expect(listenerCallCount, 1);
+      expect(latestState, 1);
+
+      await tester.tap(incrementFinder);
+      await tester.pump();
+      expect(listenerCallCount, 2);
+      expect(latestState, 2);
+
+      await tester.tap(resetCubitFinder);
+      await tester.pump();
+      await tester.tap(incrementFinder);
+      await tester.pump();
+      expect(listenerCallCount, 3);
+      expect(latestState, 1);
+    });
   });
 }
