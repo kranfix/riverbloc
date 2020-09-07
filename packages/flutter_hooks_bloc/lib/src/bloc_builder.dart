@@ -78,10 +78,11 @@ class BlocBuilder<C extends Cubit<S>, S> extends BlocWidget<S> {
 
   const BlocBuilder.river({
     Key key,
-    BlocProvider<C> provider,
+    @required BlocProvider<C> provider,
     @required this.builder,
     this.buildWhen,
-  })  : assert(builder != null),
+  })  : assert(provider != null),
+        assert(builder != null),
         super.river(key: key, provider: provider);
 
   /// The [builder] function which will be invoked on each widget build.
