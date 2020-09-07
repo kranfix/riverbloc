@@ -101,11 +101,12 @@ class BlocListener<C extends Cubit<S>, S> extends BlocListenerBase<C, S>
 
   const BlocListener.river({
     Key key,
-    BlocProvider<C> provider,
+    @required BlocProvider<C> provider,
     BlocListenerCondition<S> listenWhen,
     @required BlocWidgetListener<S> listener,
     Widget child,
-  })  : assert(listener != null),
+  })  : assert(provider != null),
+        assert(listener != null),
         super.river(
           key: key,
           provider: provider,
@@ -125,8 +126,10 @@ class BlocListener<C extends Cubit<S>, S> extends BlocListenerBase<C, S>
   DiagnosticsNode asDiagnosticsNode() {
     if (provider != null) {
       return DiagnosticsProperty<BlocProvider<C>>(
-        '$runtimeType',
-        provider,
+        '$runtimeType.river',
+        null,
+        ifNull: '',
+        showSeparator: false,
       );
     } else {
       return DiagnosticsProperty<S>(
@@ -150,11 +153,12 @@ abstract class BlocListenerBase<C extends Cubit<S>, S> extends BlocWidget<S> {
 
   const BlocListenerBase.river({
     Key key,
-    BlocProvider<Cubit<S>> provider,
+    @required BlocProvider<Cubit<S>> provider,
     this.listenWhen,
     @required this.listener,
     @required this.child,
-  }) : super.river(key: key, provider: provider);
+  })  : assert(provider != null),
+        super.river(key: key, provider: provider);
 
   /// Takes the previous `state` and the current `state` and is responsible for
   /// returning a [bool] which determines whether or not to call [listener]
