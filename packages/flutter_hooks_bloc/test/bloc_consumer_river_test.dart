@@ -1,5 +1,6 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_hooks_bloc/flutter_hooks_bloc.dart' hide BlocProvider;
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverbloc/riverbloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -53,6 +54,33 @@ void main() {
       } on dynamic catch (error) {
         expect(error, isAssertionError);
       }
+    });
+
+    testWidgets(
+        'accesses the bloc directly and passes initial state to builder and '
+        'nothing to listener', (tester) async {
+      final counterCubit = CounterCubit();
+      final counterProvider = BlocProvider((ref) => counterCubit);
+      final listenerStates = <int>[];
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: BlocConsumer<CounterCubit, int>.river(
+                provider: counterProvider,
+                builder: (context, state) {
+                  return Text('State: $state');
+                },
+                listener: (_, state) {
+                  listenerStates.add(state);
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('State: 0'), findsOneWidget);
+      expect(listenerStates, isEmpty);
     });
   });
 }
