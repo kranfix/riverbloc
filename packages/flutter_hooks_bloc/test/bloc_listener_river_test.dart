@@ -52,3 +52,23 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+void main() {
+  group('BlocListener.river', () {
+    testWidgets('throws if initialized with null cubit, listener, and child',
+        (tester) async {
+      try {
+        await tester.pumpWidget(
+          BlocListener<Cubit, dynamic>.river(
+            provider: null,
+            listener: null,
+            child: null,
+          ),
+        );
+        fail('should throw AssertionError');
+      } on dynamic catch (error) {
+        expect(error, isAssertionError);
+      }
+    });
+  });
+}
