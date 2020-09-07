@@ -250,5 +250,28 @@ void main() {
       expect(listenWhenCallCount, 3);
       expect(latestPreviousState, 1);
     });
+
+    testWidgets(
+        'does not call listener when listenWhen returns false on single state '
+        'change', (tester) async {
+      final states = <int>[];
+      const expectedStates = <int>[];
+      final counterCubit = CounterCubit();
+      final counterProvider = BlocProvider((ref) => counterCubit);
+      await tester.pumpWidget(
+        ProviderScope(
+          child: BlocListener<CounterCubit, int>.river(
+            provider: counterProvider,
+            listenWhen: (_, __) => false,
+            listener: (_, state) => states.add(state),
+            child: const SizedBox(),
+          ),
+        ),
+      );
+      counterCubit.increment();
+      await tester.pump();
+
+      expect(states, expectedStates);
+    });
   });
 }
