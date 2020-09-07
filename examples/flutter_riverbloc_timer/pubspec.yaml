@@ -1,0 +1,24 @@
+name: flutter_timer
+description: A new Flutter project.
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.6.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^0.9.1
+  riverbloc: ^0.1.0
+  flutter_hooks_bloc:
+    path: ../../packages/flutter_hooks_bloc
+  equatable: ^1.2.4
+  wave: ^0.0.8
+
+dependencies_overrides:
+  riverbloc:
+    path: ../../packages/riverbloc
+
+flutter:
+  uses-material-design: true
