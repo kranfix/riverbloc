@@ -32,5 +32,18 @@ void main() {
         expect(error, isAssertionError);
       }
     });
+
+    testWidgets('throws if initialized with null builder', (tester) async {
+      try {
+        await tester.pumpWidget(
+          BlocBuilder<CounterCubit, int>.river(
+            provider: counterProvider,
+            builder: null,
+          ),
+        );
+      } on dynamic catch (error) {
+        expect(error, isAssertionError);
+      }
+    });
   });
 }
