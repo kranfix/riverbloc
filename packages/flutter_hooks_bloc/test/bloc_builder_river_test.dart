@@ -87,6 +87,9 @@ class MyThemeAppState extends State<MyThemeApp> {
                 RaisedButton(
                   key: const Key('raised_button_1'),
                   onPressed: () {
+                    //setState(() {
+                    // change = true;
+                    //});
                     change = true;
                     context.refresh(themeProvider);
                   },
@@ -94,7 +97,9 @@ class MyThemeAppState extends State<MyThemeApp> {
                 RaisedButton(
                   key: const Key('raised_button_2'),
                   onPressed: () {
-                    change = false;
+                    setState(() {
+                      change = false;
+                    });
                     context.refresh(themeProvider);
                   },
                 ),
@@ -254,6 +259,45 @@ void main() {
 
       expect(materialApp.theme, ThemeData.dark());
       expect(numBuilds, 2);
+    });
+
+    testWidgets(
+        'does not update when the cubit is changed at runtime to same cubit '
+        'and stays subscribed to current cubit', (tester) async {
+      final themeCubit = DarkThemeCubit();
+      var numBuilds = 0;
+      await tester.pumpWidget(
+        MyThemeApp(themeCubit: themeCubit, onBuild: () => numBuilds++),
+      );
+
+      await tester.pumpAndSettle();
+
+      var materialApp = tester.widget<MaterialApp>(
+        find.byKey(const Key('material_app')),
+      );
+
+      expect(materialApp.theme, ThemeData.dark());
+      expect(numBuilds, 1);
+
+      await tester.tap(find.byKey(const Key('raised_button_2')));
+      await tester.pumpAndSettle();
+
+      materialApp = tester.widget<MaterialApp>(
+        find.byKey(const Key('material_app')),
+      );
+
+      expect(materialApp.theme, ThemeData.dark());
+      expect(numBuilds, 2);
+
+      themeCubit.setLightTheme();
+      await tester.pumpAndSettle();
+
+      materialApp = tester.widget<MaterialApp>(
+        find.byKey(const Key('material_app')),
+      );
+
+      expect(materialApp.theme, ThemeData.light());
+      expect(numBuilds, 3);
     });
   });
 }
