@@ -355,4 +355,18 @@ void main() {
       expect(states, expectedStates);
     });
   });
+
+  group('BlocListener.river diagnostics', () {
+    test('does not prints the state after the widget runtimeType', () async {
+      final blocListener = BlocListener<CounterCubit, int>.river(
+        provider: counterProvider,
+        listener: (context, state) {},
+        child: const SizedBox(),
+      );
+      expect(
+        blocListener.asDiagnosticsNode().toString(),
+        'BlocListener<CounterCubit, int>.river',
+      );
+    });
+  });
 }
