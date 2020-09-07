@@ -216,5 +216,44 @@ void main() {
       expect(materialApp.theme, ThemeData.light());
       expect(numBuilds, 3);
     });
+
+    testWidgets(
+        'updates when the cubit is changed at runtime to a different cubit and'
+        'unsubscribes from old cubit', (tester) async {
+      final themeCubit = ThemeCubit();
+      var numBuilds = 0;
+      await tester.pumpWidget(
+        MyThemeApp(themeCubit: themeCubit, onBuild: () => numBuilds++),
+      );
+
+      await tester.pumpAndSettle();
+
+      var materialApp = tester.widget<MaterialApp>(
+        find.byKey(const Key('material_app')),
+      );
+
+      expect(materialApp.theme, ThemeData.light());
+      expect(numBuilds, 1);
+
+      await tester.tap(find.byKey(const Key('raised_button_1')));
+      await tester.pumpAndSettle();
+
+      materialApp = tester.widget<MaterialApp>(
+        find.byKey(const Key('material_app')),
+      );
+
+      expect(materialApp.theme, ThemeData.dark());
+      expect(numBuilds, 2);
+
+      themeCubit.setLightTheme();
+      await tester.pumpAndSettle();
+
+      materialApp = tester.widget<MaterialApp>(
+        find.byKey(const Key('material_app')),
+      );
+
+      expect(materialApp.theme, ThemeData.dark());
+      expect(numBuilds, 2);
+    });
   });
 }
