@@ -1,6 +1,7 @@
 import 'bloc_listener.dart';
 import 'bloc_builder.dart';
-import 'flutter_bloc.dart';
+import 'package:bloc/bloc.dart';
+import 'package:riverbloc/riverbloc.dart';
 
 import 'package:flutter/widgets.dart';
 
@@ -78,6 +79,23 @@ class BlocConsumer<C extends Cubit<S>, S> extends BlocListenerBase<C, S> {
         super(
           key: key,
           cubit: cubit,
+          listenWhen: listenWhen,
+          listener: listener,
+        );
+
+  const BlocConsumer.river({
+    Key key,
+    @required BlocProvider<C> provider,
+    BlocListenerCondition<S> listenWhen,
+    @required BlocWidgetListener<S> listener,
+    this.buildWhen,
+    @required this.builder,
+  })  : assert(provider != null),
+        assert(listener != null),
+        assert(builder != null),
+        super.river(
+          key: key,
+          provider: provider,
           listenWhen: listenWhen,
           listener: listener,
         );
