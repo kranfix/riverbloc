@@ -86,5 +86,19 @@ void main() {
         expect(error, isAssertionError);
       }
     });
+
+    testWidgets('renders child properly', (tester) async {
+      const targetKey = Key('cubit_listener_container');
+      await tester.pumpWidget(
+        ProviderScope(
+          child: BlocListener<CounterCubit, int>.river(
+            provider: counterProvider,
+            listener: (_, __) {},
+            child: const SizedBox(key: targetKey),
+          ),
+        ),
+      );
+      expect(find.byKey(targetKey), findsOneWidget);
+    });
   });
 }
