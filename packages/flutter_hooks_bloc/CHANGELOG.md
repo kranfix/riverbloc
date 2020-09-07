@@ -1,3 +1,15 @@
+## [0.11.0]
+
+- Adding `userRiverBloc()` hook function.
+- Adding contructors for using riverbloc with the bloc widgets:
+  - `BlocListener.river()`
+  - `BlocBuilder.river()`
+  - `BlocConsumer.river()`
+- New library `flutter_riverbloc`:
+  ```dart
+  import 'package:flutter_hooks_bloc/flutter_riverbloc.dart';
+  ```
+
 ## [0.10.0]
 
 - Adding documentation for a imaginary `MultiBlocBuilder`.
