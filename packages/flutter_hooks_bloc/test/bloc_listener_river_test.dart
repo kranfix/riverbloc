@@ -182,5 +182,37 @@ void main() {
       expect(listenerCallCount, 3);
       expect(latestState, 1);
     });
+
+    testWidgets(
+        'calls listenWhen on single state change with correct previous '
+        'and current states', (tester) async {
+      int latestPreviousState;
+      var listenWhenCallCount = 0;
+      final states = <int>[];
+      final counterCubit = CounterCubit();
+      final counterProvider = BlocProvider((ref) => counterCubit);
+      const expectedStates = [1];
+      await tester.pumpWidget(
+        ProviderScope(
+          child: BlocListener<CounterCubit, int>.river(
+            provider: counterProvider,
+            listenWhen: (previous, state) {
+              listenWhenCallCount++;
+              latestPreviousState = previous;
+              states.add(state);
+              return true;
+            },
+            listener: (_, __) {},
+            child: const SizedBox(),
+          ),
+        ),
+      );
+      counterCubit.increment();
+      await tester.pump();
+
+      expect(states, expectedStates);
+      expect(listenWhenCallCount, 1);
+      expect(latestPreviousState, 0);
+    });
   });
 }
