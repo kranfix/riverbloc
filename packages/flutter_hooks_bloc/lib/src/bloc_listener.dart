@@ -149,15 +149,17 @@ abstract class BlocListenerBase<C extends Cubit<S>, S> extends BlocWidget<S> {
     this.listenWhen,
     @required this.listener,
     this.child,
-  }) : super(key: key, cubit: cubit);
+  })  : assert(listener != null),
+        super(key: key, cubit: cubit);
 
   const BlocListenerBase.river({
     Key key,
-    @required BlocProvider<Cubit<S>> provider,
+    @required BlocProvider<C> provider,
     this.listenWhen,
     @required this.listener,
-    @required this.child,
+    this.child,
   })  : assert(provider != null),
+        assert(listener != null),
         super.river(key: key, provider: provider);
 
   /// Takes the previous `state` and the current `state` and is responsible for
