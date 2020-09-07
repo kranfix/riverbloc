@@ -2,7 +2,7 @@ name: flutter_hooks_bloc
 description: >-
   A flutter_bloc reimplementation based on flutter_hooks
   with the same API.
-version: 0.10.0
+version: 0.11.0
 homepage: https://github.com/kranfix/riverbloc
 
 environment:
