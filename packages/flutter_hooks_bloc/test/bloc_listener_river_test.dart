@@ -70,5 +70,21 @@ void main() {
         expect(error, isAssertionError);
       }
     });
+
+    testWidgets('throws if initialized with null listener and child',
+        (tester) async {
+      try {
+        await tester.pumpWidget(
+          BlocListener<CounterCubit, int>.river(
+            provider: counterProvider,
+            listener: null,
+            child: null,
+          ),
+        );
+        fail('should throw AssertionError');
+      } on dynamic catch (error) {
+        expect(error, isAssertionError);
+      }
+    });
   });
 }
