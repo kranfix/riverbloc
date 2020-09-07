@@ -173,5 +173,48 @@ void main() {
       expect(materialApp.theme, ThemeData.dark());
       expect(numBuilds, 2);
     });
+
+    testWidgets('rebuilds many times without buildWhen', (tester) async {
+      final themeCubit = ThemeCubit();
+      final themeProvider = BlocProvider((ref) => themeCubit);
+      var numBuilds = 0;
+      await tester.pumpWidget(
+        ProviderScope(
+          child: BlocBuilder<ThemeCubit, ThemeData>.river(
+            provider: themeProvider,
+            builder: (context, theme) {
+              numBuilds++;
+              return MaterialApp(
+                key: const Key('material_app'),
+                theme: theme,
+                home: const SizedBox(),
+              );
+            },
+          ),
+        ),
+      );
+
+      themeCubit.setDarkTheme();
+
+      await tester.pumpAndSettle();
+
+      var materialApp = tester.widget<MaterialApp>(
+        find.byKey(const Key('material_app')),
+      );
+
+      expect(materialApp.theme, ThemeData.dark());
+      expect(numBuilds, 2);
+
+      themeCubit.setLightTheme();
+
+      await tester.pumpAndSettle();
+
+      materialApp = tester.widget<MaterialApp>(
+        find.byKey(const Key('material_app')),
+      );
+
+      expect(materialApp.theme, ThemeData.light());
+      expect(numBuilds, 3);
+    });
   });
 }
