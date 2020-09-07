@@ -76,6 +76,14 @@ class BlocBuilder<C extends Cubit<S>, S> extends BlocWidget<S> {
   })  : assert(builder != null),
         super(key: key, cubit: cubit);
 
+  const BlocBuilder.river({
+    Key key,
+    BlocProvider<C> provider,
+    @required this.builder,
+    this.buildWhen,
+  })  : assert(builder != null),
+        super.river(key: key, provider: provider);
+
   /// The [builder] function which will be invoked on each widget build.
   /// The [builder] takes the `BuildContext` and current `state` and
   /// must return a widget.
