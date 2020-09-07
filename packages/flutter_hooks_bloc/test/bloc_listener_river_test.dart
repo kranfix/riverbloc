@@ -100,5 +100,26 @@ void main() {
       );
       expect(find.byKey(targetKey), findsOneWidget);
     });
+
+    testWidgets('calls listener on single state change', (tester) async {
+      final counterCubit = CounterCubit();
+      final counterProvider = BlocProvider((ref) => counterCubit);
+      final states = <int>[];
+      const expectedStates = [1];
+      await tester.pumpWidget(
+        ProviderScope(
+          child: BlocListener<CounterCubit, int>.river(
+            provider: counterProvider,
+            listener: (_, state) {
+              states.add(state);
+            },
+            child: const SizedBox(),
+          ),
+        ),
+      );
+      counterCubit.increment();
+      await tester.pump();
+      expect(states, expectedStates);
+    });
   });
 }
