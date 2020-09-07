@@ -325,5 +325,34 @@ void main() {
 
       expect(states, expectedStates);
     });
+
+    testWidgets(
+        'calls listener when listenWhen returns true on multiple state change',
+        (tester) async {
+      final states = <int>[];
+      final counterCubit = CounterCubit();
+      final counterProvider = BlocProvider((ref) => counterCubit);
+      const expectedStates = [1, 2, 3, 4];
+      await tester.pumpWidget(
+        ProviderScope(
+          child: BlocListener<CounterCubit, int>.river(
+            provider: counterProvider,
+            listenWhen: (_, __) => true,
+            listener: (_, state) => states.add(state),
+            child: const SizedBox(),
+          ),
+        ),
+      );
+      counterCubit.increment();
+      await tester.pump();
+      counterCubit.increment();
+      await tester.pump();
+      counterCubit.increment();
+      await tester.pump();
+      counterCubit.increment();
+      await tester.pump();
+
+      expect(states, expectedStates);
+    });
   });
 }
