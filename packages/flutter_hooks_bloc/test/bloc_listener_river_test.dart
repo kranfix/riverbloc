@@ -214,5 +214,41 @@ void main() {
       expect(listenWhenCallCount, 1);
       expect(latestPreviousState, 0);
     });
+
+    testWidgets(
+        'calls listenWhen with previous listener state and current cubit state',
+        (tester) async {
+      int latestPreviousState;
+      var listenWhenCallCount = 0;
+      final states = <int>[];
+      final counterCubit = CounterCubit();
+      const expectedStates = [2];
+      await tester.pumpWidget(
+        BlocListener<CounterCubit, int>(
+          cubit: counterCubit,
+          listenWhen: (previous, state) {
+            listenWhenCallCount++;
+            if ((previous + state) % 3 == 0) {
+              latestPreviousState = previous;
+              states.add(state);
+              return true;
+            }
+            return false;
+          },
+          listener: (_, __) {},
+          child: const SizedBox(),
+        ),
+      );
+      counterCubit.increment();
+      await tester.pump();
+      counterCubit.increment();
+      await tester.pump();
+      counterCubit.increment();
+      await tester.pump();
+
+      expect(states, expectedStates);
+      expect(listenWhenCallCount, 3);
+      expect(latestPreviousState, 1);
+    });
   });
 }
