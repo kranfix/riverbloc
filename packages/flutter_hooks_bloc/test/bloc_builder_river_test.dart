@@ -299,5 +299,24 @@ void main() {
       expect(materialApp.theme, ThemeData.light());
       expect(numBuilds, 3);
     });
+
+    testWidgets('shows latest state instead of initial state', (tester) async {
+      final themeCubit = ThemeCubit()..setDarkTheme();
+      await tester.pumpAndSettle();
+
+      var numBuilds = 0;
+      await tester.pumpWidget(
+        MyThemeApp(themeCubit: themeCubit, onBuild: () => numBuilds++),
+      );
+
+      await tester.pumpAndSettle();
+
+      final materialApp = tester.widget<MaterialApp>(
+        find.byKey(const Key('material_app')),
+      );
+
+      expect(materialApp.theme, ThemeData.dark());
+      expect(numBuilds, 1);
+    });
   });
 }
