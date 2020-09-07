@@ -1,6 +1,17 @@
 import 'bloc_hook.dart';
-import 'flutter_bloc.dart';
+import 'flutter_bloc.dart' hide BlocProvider;
+import 'package:riverbloc/riverbloc.dart' show BlocProvider;
 import 'package:flutter/widgets.dart';
+
+/// Signature for the `builder` function which takes the `BuildContext` and
+/// [state] and is responsible for returning a widget which is to be rendered.
+/// This is analogous to the `builder` function in [StreamBuilder].
+typedef BlocWidgetBuilder<S> = Widget Function(BuildContext context, S state);
+
+/// Signature for the `buildWhen` function which takes the previous `state` and
+/// the current `state` and is responsible for returning a [bool] which
+/// determines whether to rebuild [BlocBuilder] with the current `state`.
+typedef BlocBuilderCondition<S> = bool Function(S previous, S current);
 
 /// {@template bloc_builder}
 /// Please refer to `BlocListener` if you want to "do" anything in response to
@@ -52,8 +63,7 @@ import 'package:flutter/widgets.dart';
 ///)
 /// ```
 /// {@endtemplate}
-class BlocBuilder<C extends Cubit<S>, S> extends BlocWidget<S>
-    with BuildWhenOnStateEmittedMixin<S> {
+class BlocBuilder<C extends Cubit<S>, S> extends BlocWidget<S> {
   const BlocBuilder({
     Key key,
 
@@ -73,22 +83,16 @@ class BlocBuilder<C extends Cubit<S>, S> extends BlocWidget<S>
   final BlocWidgetBuilder<S> builder;
 
   ///{@macro bloc_builder_build_when}
-  @override
   final BlocBuilderCondition<S> buildWhen;
 
   @override
   Widget build(BuildContext context) {
-    final _cubit = use<C>();
+    final _cubit = $use<C>();
     return builder(context, _cubit.state);
   }
-}
-
-mixin BuildWhenOnStateEmittedMixin<S> on BlocWidget<S> {
-  BlocBuilderCondition<S> get buildWhen;
 
   @override
   bool onStateEmitted(BuildContext context, S previous, S state) {
-    super.onStateEmitted(context, previous, state);
     return buildWhen?.call(previous, state) ?? true;
   }
 }
