@@ -157,5 +157,50 @@ void main() {
       expect(builderStates, [0, 2]);
       expect(listenerStates, [1, 2]);
     });
+
+    testWidgets('does not trigger listen when listenWhen evaluates to false',
+        (tester) async {
+      final counterCubit = CounterCubit();
+      final counterProvider = BlocProvider((ref) => counterCubit);
+      final listenerStates = <int>[];
+      final builderStates = <int>[];
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: BlocConsumer<CounterCubit, int>.river(
+                provider: counterProvider,
+                builder: (context, state) {
+                  builderStates.add(state);
+                  return Text('State: $state');
+                },
+                listenWhen: (previous, current) =>
+                    (previous + current) % 3 == 0,
+                listener: (_, state) {
+                  listenerStates.add(state);
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('State: 0'), findsOneWidget);
+      expect(builderStates, [0]);
+      expect(listenerStates, isEmpty);
+
+      counterCubit.increment();
+      await tester.pump();
+
+      expect(find.text('State: 1'), findsOneWidget);
+      expect(builderStates, [0, 1]);
+      expect(listenerStates, isEmpty);
+
+      counterCubit.increment();
+      await tester.pumpAndSettle();
+
+      expect(find.text('State: 2'), findsOneWidget);
+      expect(builderStates, [0, 1, 2]);
+      expect(listenerStates, [2]);
+    });
   });
 }
