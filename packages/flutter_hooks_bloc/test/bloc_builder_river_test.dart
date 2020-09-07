@@ -12,6 +12,62 @@ class CounterCubit extends Cubit<int> {
   void decrement() => emit(state - 1);
 }
 
+class MyCounterApp extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => MyCounterAppState();
+}
+
+class MyCounterAppState extends State<MyCounterApp> {
+  final CounterCubit _cubit = CounterCubit();
+  BlocProvider<CounterCubit> counterProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    counterProvider = BlocProvider((ref) => _cubit);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ProviderScope(
+      child: MaterialApp(
+        home: Scaffold(
+          key: const Key('myCounterApp'),
+          body: Column(
+            children: <Widget>[
+              BlocBuilder<CounterCubit, int>(
+                cubit: _cubit,
+                buildWhen: (previousState, state) {
+                  return (previousState + state) % 3 == 0;
+                },
+                builder: (context, count) {
+                  return Text(
+                    '$count',
+                    key: const Key('myCounterAppTextCondition'),
+                  );
+                },
+              ),
+              BlocBuilder<CounterCubit, int>(
+                cubit: _cubit,
+                builder: (context, count) {
+                  return Text(
+                    '$count',
+                    key: const Key('myCounterAppText'),
+                  );
+                },
+              ),
+              RaisedButton(
+                key: const Key('myCounterAppIncrementButton'),
+                onPressed: _cubit.increment,
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 final counterProvider = BlocProvider((ref) => CounterCubit());
 
 class ThemeCubit extends Cubit<ThemeData> {
@@ -317,6 +373,59 @@ void main() {
 
       expect(materialApp.theme, ThemeData.dark());
       expect(numBuilds, 1);
+    });
+
+    testWidgets('with buildWhen only rebuilds when buildWhen evaluates to true',
+        (tester) async {
+      await tester.pumpWidget(MyCounterApp());
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('myCounterApp')), findsOneWidget);
+
+      final incrementButtonFinder =
+          find.byKey(const Key('myCounterAppIncrementButton'));
+      expect(incrementButtonFinder, findsOneWidget);
+
+      final counterText1 =
+          tester.widget<Text>(find.byKey(const Key('myCounterAppText')));
+      expect(counterText1.data, '0');
+
+      final conditionalCounterText1 = tester
+          .widget<Text>(find.byKey(const Key('myCounterAppTextCondition')));
+      expect(conditionalCounterText1.data, '0');
+
+      await tester.tap(incrementButtonFinder);
+      await tester.pumpAndSettle();
+
+      final counterText2 =
+          tester.widget<Text>(find.byKey(const Key('myCounterAppText')));
+      expect(counterText2.data, '1');
+
+      final conditionalCounterText2 = tester
+          .widget<Text>(find.byKey(const Key('myCounterAppTextCondition')));
+      expect(conditionalCounterText2.data, '0');
+
+      await tester.tap(incrementButtonFinder);
+      await tester.pumpAndSettle();
+
+      final counterText3 =
+          tester.widget<Text>(find.byKey(const Key('myCounterAppText')));
+      expect(counterText3.data, '2');
+
+      final conditionalCounterText3 = tester
+          .widget<Text>(find.byKey(const Key('myCounterAppTextCondition')));
+      expect(conditionalCounterText3.data, '2');
+
+      await tester.tap(incrementButtonFinder);
+      await tester.pumpAndSettle();
+
+      final counterText4 =
+          tester.widget<Text>(find.byKey(const Key('myCounterAppText')));
+      expect(counterText4.data, '3');
+
+      final conditionalCounterText4 = tester
+          .widget<Text>(find.byKey(const Key('myCounterAppTextCondition')));
+      expect(conditionalCounterText4.data, '2');
     });
   });
 }
