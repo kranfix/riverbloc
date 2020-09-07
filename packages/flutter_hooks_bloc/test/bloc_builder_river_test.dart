@@ -153,5 +153,25 @@ void main() {
       expect(materialApp.theme, ThemeData.light());
       expect(numBuilds, 1);
     });
+
+    testWidgets('receives events and sends state updates to widget',
+        (tester) async {
+      final themeCubit = ThemeCubit();
+      var numBuilds = 0;
+      await tester.pumpWidget(
+        MyThemeApp(themeCubit: themeCubit, onBuild: () => numBuilds++),
+      );
+
+      themeCubit.setDarkTheme();
+
+      await tester.pumpAndSettle();
+
+      final materialApp = tester.widget<MaterialApp>(
+        find.byKey(const Key('material_app')),
+      );
+
+      expect(materialApp.theme, ThemeData.dark());
+      expect(numBuilds, 2);
+    });
   });
 }
