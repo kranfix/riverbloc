@@ -12,11 +12,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_hooks: ^0.14.0
-  hooks_riverpod: ^0.9.1
-  flutter_bloc: ^6.0.5
-  riverbloc: ^ 0.1.0
-  bloc: ^6.0.3
+  flutter_hooks: ">=0.10.0 <2.0.0"
+  hooks_riverpod: ">=0.10.0 <2.0.0"
+  flutter_bloc: ">=6.0.0 <7.0.0"
+  riverbloc: ">=0.1.0 <2.0.0"
+  bloc: ">=6.0.0 <7.0.0"
 
 dev_dependencies:
   flutter_test:
