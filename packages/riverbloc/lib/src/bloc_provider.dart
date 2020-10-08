@@ -45,11 +45,12 @@ import 'package:riverpod/src/framework.dart';
 ///   }
 /// }
 /// ```
-class BlocProvider<C extends Cubit<Object>> extends Provider<C> {
+class BlocProvider<C extends Cubit<Object>>
+    extends AlwaysAliveProviderBase<C, C> {
   BlocProvider(
     Create<C, ProviderReference> create, {
     String name,
-  }) : super(create, name: name);
+  }) : super(create, name);
 
   BlocStateProvider<Object> _state;
 
@@ -92,6 +93,19 @@ class BlocProvider<C extends Cubit<Object>> extends Provider<C> {
   @override
   ProviderOverride overrideWithProvider(covariant BlocProvider<C> provider) {
     return ProviderOverride(provider, this);
+  }
+
+  @override
+  ProviderStateBase<C, C> createState() => _BlocProviderState<C>();
+}
+
+class _BlocProviderState<C extends Cubit<Object>>
+    extends ProviderStateBase<C, C> {
+  @override
+  void valueChanged({C previous}) {
+    if (createdValue != exposedValue) {
+      exposedValue = createdValue;
+    }
   }
 }
 
