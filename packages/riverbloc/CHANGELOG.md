@@ -1,3 +1,8 @@
+## [0.1.2] - 2020-10-08
+
+- BlocProvider as sealed class
+- analysis options with no includes
+
 ## [0.1.1] - 2020-10-08
 
 - Upgrading to `riverpod-0.11.0`

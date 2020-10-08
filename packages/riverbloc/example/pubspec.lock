@@ -122,7 +122,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.1.1"
+    version: "0.1.2"
   riverpod:
     dependency: transitive
     description:
