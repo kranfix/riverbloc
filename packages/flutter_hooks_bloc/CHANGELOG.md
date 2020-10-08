@@ -1,3 +1,7 @@
+## [0.11.0] - 2020-10-08
+
+- Upgrading dependencies in a valid range
+
 ## [0.11.0]
 
 - Adding `userRiverBloc()` hook function.
