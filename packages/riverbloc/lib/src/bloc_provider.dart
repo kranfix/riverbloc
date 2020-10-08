@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:riverpod/riverpod.dart';
+import 'package:meta/meta.dart';
 
 // ignore: implementation_imports
 import 'package:riverpod/src/framework.dart';
@@ -45,6 +46,7 @@ import 'package:riverpod/src/framework.dart';
 ///   }
 /// }
 /// ```
+@sealed
 class BlocProvider<C extends Cubit<Object>>
     extends AlwaysAliveProviderBase<C, C> {
   BlocProvider(
