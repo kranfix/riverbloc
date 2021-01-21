@@ -1,5 +1,6 @@
+import 'package:bloc/bloc.dart';
+
 import 'bloc_hook.dart';
-import 'flutter_bloc.dart' hide BlocProvider;
 import 'package:riverbloc/riverbloc.dart' show BlocProvider;
 import 'package:flutter/widgets.dart';
 

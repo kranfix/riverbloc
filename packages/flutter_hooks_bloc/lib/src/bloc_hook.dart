@@ -1,8 +1,9 @@
 import 'dart:async';
+import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
-import 'package:riverbloc/riverbloc.dart' show BlocProvider;
 
-import 'flutter_bloc.dart' show Cubit, BlocProviderExtension;
+import 'flutter_bloc.dart' show BlocProviderExtension;
+import 'package:riverbloc/riverbloc.dart' show BlocProvider;
 
 import 'package:flutter/widgets.dart' show BuildContext;
 import 'package:flutter_hooks/flutter_hooks.dart';

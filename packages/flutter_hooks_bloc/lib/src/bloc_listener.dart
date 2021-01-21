@@ -1,5 +1,7 @@
+import 'package:bloc/bloc.dart';
+
 import 'bloc_hook.dart';
-import 'flutter_bloc.dart' hide BlocProvider;
+
 import 'package:riverbloc/riverbloc.dart' show BlocProvider;
 
 import 'package:flutter/widgets.dart';
@@ -82,8 +84,7 @@ typedef BlocListenerCondition<S> = bool Function(S previous, S current);
 /// )
 /// ```
 /// {@endtemplate}
-class BlocListener<C extends Cubit<S>, S> extends BlocListenerBase<C, S>
-    implements NesteableBlocListener {
+class BlocListener<C extends Cubit<S>, S> extends BlocListenerBase<C, S> implements NesteableBlocListener {
   const BlocListener({
     Key key,
     C cubit,
