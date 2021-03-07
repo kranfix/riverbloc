@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:riverbloc/riverbloc.dart';
@@ -6,7 +7,9 @@ import 'package:riverbloc/riverbloc.dart';
 enum CounterEvent { inc, dec }
 
 class CounterBloc extends Bloc<CounterEvent, int> {
-  CounterBloc(int state) : super(state);
+  CounterBloc(int state, {this.onClose}) : super(state);
+
+  void Function()? onClose;
 
   @override
   Stream<int> mapEventToState(CounterEvent event) async* {
@@ -19,6 +22,12 @@ class CounterBloc extends Bloc<CounterEvent, int> {
         yield state - 1;
         break;
     }
+  }
+
+  @override
+  Future<void> close() {
+    onClose?.call();
+    return super.close();
   }
 }
 
@@ -93,6 +102,31 @@ void main() {
 
       expect(counterBloc2.state, 0);
       expect(container.read(counterBlocProvider.state), 0);
+    });
+
+    test('bloc with manual dispose', () async {
+      final container = ProviderContainer();
+
+      var isBlocClosed = false;
+
+      final counterBlocProvider = BlocProvider(
+        (ref) {
+          final bloc = CounterBloc(0, onClose: () => isBlocClosed = true);
+          ref.onDispose(() => bloc.close());
+          return bloc;
+        },
+      );
+      final counterBloc = container.read(counterBlocProvider);
+
+      expect(counterBloc.state, 0);
+      expect(container.read(counterBlocProvider.state), 0);
+
+      counterBloc.add(CounterEvent.inc);
+      await Future(() {});
+
+      container.dispose();
+
+      expect(isBlocClosed, true);
     });
 
     test('BlocProvider override with provider', () {
