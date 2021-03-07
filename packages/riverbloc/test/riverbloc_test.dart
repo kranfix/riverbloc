@@ -73,6 +73,50 @@ void main() {
         expect(container.read(counterBlocProvider.state), count + 1);
       }
     });
+
+    test('bloc resubscribe', () async {
+      final container = ProviderContainer();
+      final counterBloc = container.read(counterBlocProvider);
+
+      expect(counterBloc.state, 0);
+      expect(container.read(counterBlocProvider.state), 0);
+
+      for (var i = 0; i < 2; i++) {
+        counterBloc.add(CounterEvent.inc);
+      }
+      await Future(() {});
+      expect(container.read(counterBlocProvider.state), 2);
+
+      final counterBloc2 = container.refresh(counterBlocProvider);
+      expect(counterBloc2, isNot(equals(counterBloc)));
+      expect(container.read(counterBlocProvider), equals(counterBloc2));
+
+      expect(counterBloc2.state, 0);
+      expect(container.read(counterBlocProvider.state), 0);
+    });
+
+    test('BlocProvider override with provider', () {
+      final counterBloc = CounterBloc(3);
+      final counterProvider2 = BlocProvider((ref) => counterBloc);
+      final container = ProviderContainer(
+        overrides: [
+          counterBlocProvider.overrideWithProvider(counterProvider2),
+        ],
+      );
+
+      expect(container.read(counterBlocProvider), counterBloc);
+      expect(container.read(counterBlocProvider.state), 3);
+    });
+
+    test('BlocStateProvider override with value', () {
+      final container = ProviderContainer(
+        overrides: [
+          counterBlocProvider.state.overrideWithValue(5),
+        ],
+      );
+      expect(container.read(counterBlocProvider.state), 5);
+      expect(container.read(counterBlocProvider).state, 0);
+    });
   });
 
   group('Cubit test', () {
@@ -100,7 +144,7 @@ void main() {
         container.read(counterCubitProvider).increment();
         expect(container.read(counterCubitProvider.state), count);
         expect(counterCubit.state, count + 1);
-        await Future.value();
+        await Future(() {});
         expect(container.read(counterCubitProvider.state), count + 1);
       }
     });
@@ -114,8 +158,8 @@ void main() {
 
       for (var i = 0; i < 2; i++) {
         counterCubit.increment();
-        await Future.value();
       }
+      await Future(() {});
       expect(container.read(counterCubitProvider.state), 2);
 
       final counterCubit2 = container.refresh(counterCubitProvider);
