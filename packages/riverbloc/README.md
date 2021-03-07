@@ -3,7 +3,7 @@
 ![Coverage](https://raw.githubusercontent.com/kranfix/riverbloc/master/packages/riverbloc/coverage_badge.svg?sanitize=true)
 
 An implementation of BlocProvider based on riverpod providers.
-The goal of this package is to make easy the migration from `flutter_bloc`
+The goal of this package is to make easy the migration from `flutter_bloc` to
 `flutter_riverpod`.
 
 If you are interested in `hooks` with `bloc`, see also
@@ -11,7 +11,7 @@ If you are interested in `hooks` with `bloc`, see also
 
 ## Usage
 
-It's similar to StateNotiferProvider but with streams.
+It's similar to StateNotiferProvider but with bloc instead of StateNofier.
 
 ```dart
 class CounterCubit extends Cubit<int> {
@@ -23,7 +23,7 @@ class CounterCubit extends Cubit<int> {
 final counterProvider = BlocProvider((ref) => CounterCubit(0));
 
 class MyHomePage extends ConsumerWidget {
-  const MyHomePage({Key key, this.title}) : super(key: key);
+  const MyHomePage({Key? key, this.title}) : super(key: key);
 
   final String title;
 
@@ -41,7 +41,7 @@ class MyHomePage extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'counterCubit.state: ${counterCubit.state}',
+              'initial counterCubit.state: ${counterCubit.state}',
             ),
             Consumer(builder: (context, watch, __) {
               // Rebuilds in every emitted state

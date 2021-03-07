@@ -19,7 +19,7 @@ import 'package:riverpod/src/framework.dart';
 /// final counterProvider = BlocProvider((ref) => CounterCubit(0));
 ///
 /// class MyHomePage extends ConsumerWidget {
-///   const MyHomePage({Key key, this.title}) : super(key: key);
+///   const MyHomePage({Key? key, required this.title}) : super(key: key);
 ///
 ///   final String title;
 ///
@@ -33,8 +33,21 @@ import 'package:riverpod/src/framework.dart';
 ///         title: Text(title),
 ///       ),
 ///       body: Center(
-///         child: Text(
-///           'counterCubit.state: ${counterCubit.state}',
+///         child: Column(
+///           mainAxisAlignment: MainAxisAlignment.center,
+///           children: <Widget>[
+///             Text(
+///               'initial counterCubit.state: ${counterCubit.state}',
+///             ),
+///             Consumer(builder: (context, watch, __) {
+///               // Rebuilds on every emitted state
+///               final _counter = watch(counterProvider.state);
+///               return Text(
+///                 '$_counter',
+///                 style: Theme.of(context).textTheme.headline4,
+///               );
+///             }),
+///           ],
 ///         ),
 ///       ),
 ///       floatingActionButton: FloatingActionButton(
@@ -47,14 +60,14 @@ import 'package:riverpod/src/framework.dart';
 /// }
 /// ```
 @sealed
-class BlocProvider<C extends Cubit<Object>>
-    extends AlwaysAliveProviderBase<C, C> {
+class BlocProvider<B extends Bloc<Object?, Object>>
+    extends AlwaysAliveProviderBase<B, B> {
   BlocProvider(
-    Create<C, ProviderReference> create, {
-    String name,
+    Create<B, ProviderReference> create, {
+    String? name,
   }) : super(create, name);
 
-  BlocStateProvider<Object> _state;
+  BlocStateProvider<Object?>? _state;
 
   ///
   /// With pure dart:
@@ -93,18 +106,18 @@ class BlocProvider<C extends Cubit<Object>>
   /// );
   /// ```
   @override
-  ProviderOverride overrideWithProvider(covariant BlocProvider<C> provider) {
+  ProviderOverride overrideWithProvider(covariant BlocProvider<B> provider) {
     return ProviderOverride(provider, this);
   }
 
   @override
-  ProviderStateBase<C, C> createState() => _BlocProviderState<C>();
+  ProviderStateBase<B, B> createState() => _BlocProviderState<B, Object>();
 }
 
-class _BlocProviderState<C extends Cubit<Object>>
-    extends ProviderStateBase<C, C> {
+class _BlocProviderState<B extends Bloc<Object?, S>, S>
+    extends ProviderStateBase<B, B> {
   @override
-  void valueChanged({C previous}) {
+  void valueChanged({B? previous}) {
     if (createdValue != exposedValue) {
       exposedValue = createdValue;
     }
@@ -125,7 +138,8 @@ class _BlocProviderState<C extends Cubit<Object>>
 ///   );
 /// }),
 /// ```
-extension BlocStateProviderX<S> on BlocProvider<Cubit<S>> {
+extension BlocStateProviderX<S extends Object>
+    on BlocProvider<Bloc<Object?, S>> {
   BlocStateProvider<S> get state {
     _state ??= BlocStateProvider<S>._(this);
     return _state as BlocStateProvider<S>;
@@ -134,21 +148,20 @@ extension BlocStateProviderX<S> on BlocProvider<Cubit<S>> {
 
 /// The [BlocStateProvider] watch a [cubit] or [bloc] and subscribe to its
 /// `state` and rebuilds every time that it is emitted.
-class BlocStateProvider<S> extends AlwaysAliveProviderBase<Cubit<S>, S> {
+class BlocStateProvider<S extends Object>
+    extends AlwaysAliveProviderBase<Bloc<Object?, S>, S> {
   BlocStateProvider._(this._provider)
       : super(
           (ref) => ref.watch(_provider),
           _provider.name != null ? '${_provider.name}.state' : null,
         );
 
-  final BlocProvider<Cubit<S>> _provider;
+  final BlocProvider<Bloc<Object?, S>> _provider;
 
   @override
   Override overrideWithValue(S value) {
     return ProviderOverride(
-      ValueProvider<Cubit<S>, S>((ref) {
-        return ref.watch(_provider);
-      }, value),
+      ValueProvider<Bloc<Object?, S>, S>((ref) => ref.watch(_provider), value),
       this,
     );
   }
@@ -157,15 +170,12 @@ class BlocStateProvider<S> extends AlwaysAliveProviderBase<Cubit<S>, S> {
   _BlocStateProviderState<S> createState() => _BlocStateProviderState();
 }
 
-class _BlocStateProviderState<S> extends ProviderStateBase<Cubit<S>, S> {
-  StreamSubscription<S> _subscription;
+class _BlocStateProviderState<S>
+    extends ProviderStateBase<Bloc<Object?, S>, S> {
+  StreamSubscription<S>? _subscription;
 
   @override
-  void valueChanged({Cubit<S> previous}) {
-    assert(
-      createdValue != null,
-      'BlocProvider must return a non-null value',
-    );
+  void valueChanged({Bloc<Object?, S>? previous}) {
     if (createdValue != previous) {
       if (_subscription != null) {
         _unsubscribe();
@@ -175,17 +185,13 @@ class _BlocStateProviderState<S> extends ProviderStateBase<Cubit<S>, S> {
   }
 
   void _subscribe() {
-    if (createdValue != null) {
-      exposedValue = createdValue.state;
-      _subscription = createdValue.listen(_listener);
-    }
+    exposedValue = createdValue.state;
+    _subscription = createdValue.listen(_listener);
   }
 
   void _unsubscribe() {
-    if (_subscription != null) {
-      _subscription.cancel();
-      _subscription = null;
-    }
+    _subscription?.cancel();
+    _subscription = null;
   }
 
   void _listener(S value) {
