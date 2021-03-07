@@ -1,3 +1,13 @@
+## [0.2.0] - 2021-03-07
+
+- Updating meta dependency
+
+## [0.2.0] - 2021-03-07
+
+- Null-safety added
+- Using Bloc instead of Cubit because Cubit now extends Bloc.
+- Adding test for Bloc.
+
 ## [0.1.2] - 2020-10-08
 
 - BlocProvider as sealed class
