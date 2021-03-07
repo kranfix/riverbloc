@@ -9,18 +9,18 @@ class CounterCubit extends Cubit<int> {
   void increment() => emit(state + 1);
 }
 
-final counterProvider = BlocProvider((ref) => CounterCubit(0));
+final counterCubitProvider = BlocProvider((ref) => CounterCubit(0));
 
 void main() {
   group('Cubit test', () {
     test('reads cubit with default state 0 and increments it', () {
       final container = ProviderContainer();
 
-      final counterCubit = container.read(counterProvider);
+      final counterCubit = container.read(counterCubitProvider);
 
       expect(counterCubit.state, 0);
 
-      container.read(counterProvider).increment();
+      container.read(counterCubitProvider).increment();
 
       expect(counterCubit.state, 1);
     });
@@ -28,39 +28,39 @@ void main() {
     test('defaults to 0 and notify listeners when value changes', () async {
       final container = ProviderContainer();
 
-      final counterCubit = container.read(counterProvider);
+      final counterCubit = container.read(counterCubitProvider);
 
       expect(counterCubit.state, 0);
-      expect(container.read(counterProvider.state), 0);
+      expect(container.read(counterCubitProvider.state), 0);
 
       for (var count = 0; count < 10; count++) {
-        container.read(counterProvider).increment();
-        expect(container.read(counterProvider.state), count);
+        container.read(counterCubitProvider).increment();
+        expect(container.read(counterCubitProvider.state), count);
         expect(counterCubit.state, count + 1);
         await Future.value();
-        expect(container.read(counterProvider.state), count + 1);
+        expect(container.read(counterCubitProvider.state), count + 1);
       }
     });
 
     test('bloc resubscribe', () async {
       final container = ProviderContainer();
-      final counterCubit = container.read(counterProvider);
+      final counterCubit = container.read(counterCubitProvider);
 
       expect(counterCubit.state, 0);
-      expect(container.read(counterProvider.state), 0);
+      expect(container.read(counterCubitProvider.state), 0);
 
       for (var i = 0; i < 2; i++) {
         counterCubit.increment();
         await Future.value();
       }
-      expect(container.read(counterProvider.state), 2);
+      expect(container.read(counterCubitProvider.state), 2);
 
-      final counterCubit2 = container.refresh(counterProvider);
+      final counterCubit2 = container.refresh(counterCubitProvider);
       expect(counterCubit2, isNot(equals(counterCubit)));
-      expect(container.read(counterProvider), equals(counterCubit2));
+      expect(container.read(counterCubitProvider), equals(counterCubit2));
 
       expect(counterCubit2.state, 0);
-      expect(container.read(counterProvider.state), 0);
+      expect(container.read(counterCubitProvider.state), 0);
     });
 
     test('BlocProvider override with provider', () {
@@ -68,22 +68,22 @@ void main() {
       final counterProvider2 = BlocProvider((ref) => counterCubit);
       final container = ProviderContainer(
         overrides: [
-          counterProvider.overrideWithProvider(counterProvider2),
+          counterCubitProvider.overrideWithProvider(counterProvider2),
         ],
       );
 
-      expect(container.read(counterProvider), counterCubit);
-      expect(container.read(counterProvider.state), 3);
+      expect(container.read(counterCubitProvider), counterCubit);
+      expect(container.read(counterCubitProvider.state), 3);
     });
 
     test('BlocStateProvider override with value', () {
       final container = ProviderContainer(
         overrides: [
-          counterProvider.state.overrideWithValue(5),
+          counterCubitProvider.state.overrideWithValue(5),
         ],
       );
-      expect(container.read(counterProvider.state), 5);
-      expect(container.read(counterProvider).state, 0);
+      expect(container.read(counterCubitProvider.state), 5);
+      expect(container.read(counterCubitProvider).state, 0);
     });
   });
 }
