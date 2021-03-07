@@ -3,6 +3,27 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:riverbloc/riverbloc.dart';
 
+enum CounterEvent { inc, dec }
+
+class CounterBloc extends Bloc<CounterEvent, int> {
+  CounterBloc(int state) : super(state);
+
+  @override
+  Stream<int> mapEventToState(CounterEvent event) async* {
+    switch (event) {
+      case CounterEvent.inc:
+        yield state + 1;
+        break;
+      case CounterEvent.dec:
+      default:
+        yield state - 1;
+        break;
+    }
+  }
+}
+
+final counterBlocProvider = BlocProvider((ref) => CounterBloc(0));
+
 class CounterCubit extends Cubit<int> {
   CounterCubit(int state) : super(state);
 
