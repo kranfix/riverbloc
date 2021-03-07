@@ -17,7 +17,7 @@ class CounterCubit extends Cubit<int> {
 final counterProvider = BlocProvider((ref) => CounterCubit(0));
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends ConsumerWidget {
-  const MyHomePage({Key key, this.title}) : super(key: key);
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -51,10 +51,10 @@ class MyHomePage extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'counterCubit.state: ${counterCubit.state}',
+              'initial counterCubit.state: ${counterCubit.state}',
             ),
             Consumer(builder: (context, watch, __) {
-              // Rebuilds in every emitted state
+              // Rebuilds on every emitted state
               final _counter = watch(counterProvider.state);
               return Text(
                 '$_counter',
