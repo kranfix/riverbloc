@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatelessWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -75,9 +75,7 @@ class MyHomePage extends StatelessWidget {
 }
 
 class CounterItem<C extends CounterCubitBase> extends StatelessWidget {
-  const CounterItem({Key key, @required this.state})
-      : assert(state != null),
-        super(key: key);
+  const CounterItem({Key? key, required this.state}) : super(key: key);
 
   final int state;
 
@@ -92,12 +90,12 @@ class CounterItem<C extends CounterCubitBase> extends StatelessWidget {
         ),
         IconButton(
           icon: Icon(Icons.arrow_left),
-          onPressed: () => context.bloc<C>().decrement(),
+          onPressed: () => context.read<C>().decrement(),
         ),
         Text('$state'),
         IconButton(
           icon: Icon(Icons.arrow_right),
-          onPressed: () => context.bloc<C>().increment(),
+          onPressed: () => context.read<C>().increment(),
         ),
       ],
     );
