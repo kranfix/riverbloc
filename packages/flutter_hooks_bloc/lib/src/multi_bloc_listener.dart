@@ -68,11 +68,9 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 /// {@endtemplate}
 class MultiBlocListener extends HookWidget {
   /// {@macro multi_bloc_listener}
-  MultiBlocListener({@required this.listeners, @required this.child})
-      : assert(listeners != null),
-        assert(listeners.isNotEmpty),
-        assert(listeners._debugBlocListenerWithNoChild()),
-        assert(child != null);
+  MultiBlocListener({required this.listeners, required this.child})
+      : assert(listeners.isNotEmpty),
+        assert(listeners._debugBlocListenerWithNoChild());
 
   final List<NesteableBlocListener> listeners;
   final Widget child;
@@ -105,8 +103,7 @@ extension _DebugBlocListenerWithNoChildX on List<NesteableBlocListener> {
 
 @visibleForTesting
 class BlocListenerTree extends DiagnosticableTree {
-  const BlocListenerTree({@required this.listeners})
-      : assert(listeners != null);
+  const BlocListenerTree({required this.listeners});
 
   final List<NesteableBlocListener> listeners;
 

@@ -12,48 +12,6 @@ final counterProvider = BlocProvider((ref) => CounterCubit());
 
 void main() {
   group('BlocConsumer.river', () {
-    testWidgets('throws AssertionError if provider is null', (tester) async {
-      try {
-        await tester.pumpWidget(
-          BlocConsumer<CounterCubit, int>.river(
-            provider: null,
-            listener: null,
-            builder: null,
-          ),
-        );
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-
-    testWidgets('throws AssertionError if listener is null', (tester) async {
-      try {
-        await tester.pumpWidget(
-          BlocConsumer<CounterCubit, int>.river(
-            provider: counterProvider,
-            listener: null,
-            builder: null,
-          ),
-        );
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-
-    testWidgets('throws AssertionError if builder is null', (tester) async {
-      try {
-        await tester.pumpWidget(
-          BlocConsumer<CounterCubit, int>.river(
-            provider: counterProvider,
-            listener: (_, __) {},
-            builder: null,
-          ),
-        );
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-
     testWidgets(
         'accesses the bloc directly and passes initial state to builder and '
         'nothing to listener', (tester) async {

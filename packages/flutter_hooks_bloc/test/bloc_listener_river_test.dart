@@ -12,9 +12,9 @@ class CounterCubit extends Cubit<int> {
 final counterProvider = BlocProvider((ref) => CounterCubit());
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key key, this.onListenerCalled}) : super(key: key);
+  const MyApp({Key? key, this.onListenerCalled}) : super(key: key);
 
-  final BlocWidgetListener<int> onListenerCalled;
+  final BlocWidgetListener<int>? onListenerCalled;
 
   @override
   Widget build(BuildContext context) {
@@ -31,15 +31,17 @@ class MyApp extends StatelessWidget {
             );
             return Column(
               children: [
-                RaisedButton(
+                ElevatedButton(
                   key: const Key('cubit_listener_reset_button'),
                   onPressed: () {
                     context.refresh(counterProvider);
                   },
+                  child: null,
                 ),
-                RaisedButton(
+                ElevatedButton(
                   key: const Key('cubit_listener_increment_button'),
                   onPressed: () => context.read(counterProvider).increment(),
+                  child: null,
                 ),
               ],
             );
@@ -52,38 +54,6 @@ class MyApp extends StatelessWidget {
 
 void main() {
   group('BlocListener.river', () {
-    testWidgets('throws if initialized with null cubit, listener, and child',
-        (tester) async {
-      try {
-        await tester.pumpWidget(
-          BlocListener<Cubit, dynamic>.river(
-            provider: null,
-            listener: null,
-            child: null,
-          ),
-        );
-        fail('should throw AssertionError');
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-
-    testWidgets('throws if initialized with null listener and child',
-        (tester) async {
-      try {
-        await tester.pumpWidget(
-          BlocListener<CounterCubit, int>.river(
-            provider: counterProvider,
-            listener: null,
-            child: null,
-          ),
-        );
-        fail('should throw AssertionError');
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-
     testWidgets('renders child properly', (tester) async {
       const targetKey = Key('cubit_listener_container');
       await tester.pumpWidget(
@@ -146,7 +116,7 @@ void main() {
         'updates when the cubit is changed at runtime to a different cubit '
         'and unsubscribes from old cubit', (tester) async {
       var listenerCallCount = 0;
-      int latestState;
+      late int latestState;
       final incrementFinder = find.byKey(
         const Key('cubit_listener_increment_button'),
       );
@@ -183,7 +153,7 @@ void main() {
     testWidgets(
         'calls listenWhen on single state change with correct previous '
         'and current states', (tester) async {
-      int latestPreviousState;
+      late int latestPreviousState;
       var listenWhenCallCount = 0;
       final states = <int>[];
       final counterCubit = CounterCubit();
@@ -215,14 +185,14 @@ void main() {
     testWidgets(
         'calls listenWhen with previous listener state and current cubit state',
         (tester) async {
-      int latestPreviousState;
+      late int latestPreviousState;
       var listenWhenCallCount = 0;
       final states = <int>[];
       final counterCubit = CounterCubit();
       const expectedStates = [2];
       await tester.pumpWidget(
         BlocListener<CounterCubit, int>(
-          cubit: counterCubit,
+          bloc: counterCubit,
           listenWhen: (previous, state) {
             listenWhenCallCount++;
             if ((previous + state) % 3 == 0) {

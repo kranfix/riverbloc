@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends HookWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -65,7 +65,7 @@ class MyHomePage extends HookWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.bloc<CounterCubit>().increment(),
+        onPressed: () => context.read<CounterCubit>().increment(),
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ),

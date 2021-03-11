@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:riverbloc/riverbloc.dart' show BlocProvider;
 
-import 'flutter_bloc.dart' show Cubit, BlocProviderExtension;
+import 'flutter_bloc.dart' show Bloc, ReadContext;
 
 import 'package:flutter/widgets.dart' show BuildContext;
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -17,28 +17,30 @@ typedef BlocHookListener<S> = bool Function(
   S current,
 );
 
-abstract class BlocWidget<S> extends HookWidget {
+abstract class BlocWidget<B extends Bloc<Object?, S>, S extends Object>
+    extends HookWidget {
   const BlocWidget({
-    Key key,
-    @required this.cubit,
+    Key? key,
+    B? bloc,
   })  : provider = null,
+        bloc = bloc,
         super(key: key);
 
   const BlocWidget.river({
-    Key key,
+    Key? key,
     @required this.provider,
-  })  : cubit = null,
+  })  : bloc = null,
         super(key: key);
 
-  final Cubit<S> cubit;
-  final BlocProvider<Cubit<S>> provider;
+  final B? bloc;
+  final BlocProvider<B>? provider;
 
   @protected
-  C $use<C extends Cubit<S>>() {
+  B $use() {
     if (provider != null) {
-      return useRiverBloc<C, S>(provider, onEmitted: onStateEmitted);
+      return useRiverBloc<B, S>(provider!, onEmitted: onStateEmitted);
     }
-    return useBloc<C, S>(cubit: cubit, onEmitted: onStateEmitted);
+    return useBloc<B, S>(bloc: bloc, onEmitted: onStateEmitted);
   }
 
   @protected
@@ -51,7 +53,7 @@ abstract class BlocWidget<S> extends HookWidget {
 /// as needing build if either [allowRebuild] is `true` or [buildWhen]
 /// invocation returns [true].
 ///
-/// if [cubit] is null, it will be inherited with `context.bloc()`
+/// if [bloc] is null, it will be inherited with `context.bloc()`
 ///
 /// The following example showcase a basic counter application.
 ///
@@ -79,56 +81,60 @@ abstract class BlocWidget<S> extends HookWidget {
 /// See also:
 ///
 ///  * [Cubit]
-C useBloc<C extends Cubit<S>, S>({C cubit, BlocHookListener<S> onEmitted}) {
-  final context = useContext();
-  final _cubit = cubit ?? context.bloc<C>();
-  return use(_BlocHook<S>(_cubit, onEmitted)) as C;
-}
-
-C useRiverBloc<C extends Cubit<S>, S>(
-  BlocProvider<C> provider, {
-  BlocHookListener<S> onEmitted,
+B useBloc<B extends Bloc<Object?, S>, S extends Object>({
+  B? bloc,
+  BlocHookListener<S>? onEmitted,
 }) {
-  assert(provider != null);
-  final _cubit = useProvider(provider);
-  return use(_BlocHook<S>(_cubit, onEmitted)) as C;
+  // TODO(@kranfix): try to reduce lines
+  final context = useContext();
+  final _bloc = bloc ?? context.read<B>();
+  return use(_BlocHook<S>(_bloc, onEmitted)) as B;
 }
 
-class _BlocHook<S> extends Hook<Cubit<S>> {
-  const _BlocHook(this.cubit, this.onEmitted);
+B useRiverBloc<B extends Bloc<Object?, S>, S extends Object>(
+  BlocProvider<B> provider, {
+  BlocHookListener<S>? onEmitted,
+}) {
+  final _bloc = useProvider(provider);
+  return use(_BlocHook<S>(_bloc, onEmitted)) as B;
+}
 
-  final Cubit<S> cubit;
-  final BlocHookListener<S> onEmitted;
+class _BlocHook<S> extends Hook<Bloc<Object?, S>> {
+  const _BlocHook(this.bloc, this.onEmitted);
+
+  final Bloc<Object?, S> bloc;
+  final BlocHookListener<S>? onEmitted;
 
   @override
-  HookState<Cubit<S>, _BlocHook<S>> createState() => _BlocHookState<S>();
+  HookState<Bloc<Object?, S>, _BlocHook<S>> createState() =>
+      _BlocHookState<S>();
 }
 
-class _BlocHookState<S> extends HookState<Cubit<S>, _BlocHook<S>> {
-  StreamSubscription<S> _subscription;
+class _BlocHookState<S> extends HookState<Bloc<Object?, S>, _BlocHook<S>> {
+  StreamSubscription<S>? _subscription;
 
   /// Previous state from cubit
-  S _previous;
+  late S _previous;
 
   @override
-  Cubit<S> build(BuildContext context) => hook.cubit;
+  Bloc<Object?, S> build(BuildContext context) => hook.bloc;
 
   @override
   void initHook() {
     super.initHook();
-    _previous = hook.cubit.state;
+    _previous = hook.bloc.state;
     _subscribe();
   }
 
   @override
-  void didUpdateHook(_BlocHook<S> oldWidget) {
-    super.didUpdateHook(oldWidget);
-    final oldCubit = oldWidget.cubit;
-    final currentCubit = hook.cubit ?? oldCubit;
+  void didUpdateHook(_BlocHook<S> oldHook) {
+    super.didUpdateHook(oldHook);
+    final oldCubit = oldHook.bloc;
+    final currentCubit = hook.bloc;
     if (oldCubit != currentCubit) {
       if (_subscription != null) {
         _unsubscribe();
-        _previous = hook.cubit.state;
+        _previous = hook.bloc.state;
       }
       _subscribe();
     }
@@ -141,7 +147,7 @@ class _BlocHookState<S> extends HookState<Cubit<S>, _BlocHook<S>> {
   }
 
   void _subscribe() {
-    _subscription = hook.cubit.listen((state) {
+    _subscription = hook.bloc.listen((state) {
       if (hook.onEmitted?.call(context, _previous, state) ?? true) {
         setState(() {});
       }
@@ -151,7 +157,7 @@ class _BlocHookState<S> extends HookState<Cubit<S>, _BlocHook<S>> {
 
   void _unsubscribe() {
     if (_subscription != null) {
-      _subscription.cancel();
+      _subscription!.cancel();
       _subscription = null;
     }
   }

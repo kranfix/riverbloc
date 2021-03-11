@@ -55,7 +55,7 @@ And also into a widget that extends a HookWidget:
 class BlocBuilder<C extends Cubit<S>, S> extends HookWidget
     with CubitComposer<C>, BlocBuilderInterface<C, S> {
   const BlocBuilder({
-    Key key,
+    Key? key,
     this.cubit,
     @required this.builder,
     this.buildWhen,
@@ -92,7 +92,7 @@ But with `useBloc` comes to the rescue.
 
 ```dart
 class MyMultiBlocBuilder extends HookWidget {
-  const MyMultiBlocBuilder({Key key}) : super(key: key);
+  const MyMultiBlocBuilder({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context){
