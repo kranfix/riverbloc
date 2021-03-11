@@ -1,17 +1,11 @@
+import 'package:flutter_hooks_bloc/src/multi_bloc_listener.dart';
+
 import 'bloc_hook.dart';
 import 'flutter_bloc.dart' hide BlocProvider;
 import 'package:riverbloc/riverbloc.dart' show BlocProvider;
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter/foundation.dart';
-
-abstract class NesteableBlocListener {
-  void listen();
-
-  bool get hasNoChild;
-
-  DiagnosticsNode asDiagnosticsNode();
-}
 
 /// Signature for the `listener` function which takes the `BuildContext` along
 /// with the `state` and is responsible for executing in response to
@@ -83,7 +77,7 @@ typedef BlocListenerCondition<S> = bool Function(S previous, S current);
 /// ```
 /// {@endtemplate}
 class BlocListener<B extends Bloc<Object?, S>, S extends Object>
-    extends BlocListenerBase<B, S> implements NesteableBlocListener {
+    extends BlocListenerBase<B, S> implements NestableBlocListener {
   const BlocListener({
     Key? key,
     B? bloc,
@@ -196,7 +190,7 @@ abstract class BlocListenerBase<B extends Bloc<Object?, S>, S extends Object>
         'state',
         bloc?.state,
         ifNull: '<null>',
-        showSeparator: bloc!.state != null,
+        showSeparator: bloc?.state != null,
       ));
     }
   }

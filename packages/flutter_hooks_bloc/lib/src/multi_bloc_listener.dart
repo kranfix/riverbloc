@@ -72,7 +72,7 @@ class MultiBlocListener extends HookWidget {
       : assert(listeners.isNotEmpty),
         assert(listeners._debugBlocListenerWithNoChild());
 
-  final List<NesteableBlocListener> listeners;
+  final List<NestableBlocListener> listeners;
   final Widget child;
 
   @override
@@ -97,7 +97,21 @@ class MultiBlocListener extends HookWidget {
       [for (final listener in listeners) listener.asDiagnosticsNode()];
 }
 
-extension _DebugBlocListenerWithNoChildX on List<NesteableBlocListener> {
+/// The [NestableBlocListener] is the base for every item in a
+/// [MultiBlocProvider]. Thus, the bloc listener is not limited to be a
+/// [BlocListener], but can another type.
+///
+/// see also
+/// - [MultiBlocListener]
+abstract class NestableBlocListener {
+  void listen();
+
+  bool get hasNoChild;
+
+  DiagnosticsNode asDiagnosticsNode();
+}
+
+extension _DebugBlocListenerWithNoChildX on List<NestableBlocListener> {
   bool _debugBlocListenerWithNoChild() => every((it) => it.hasNoChild);
 }
 
@@ -105,7 +119,7 @@ extension _DebugBlocListenerWithNoChildX on List<NesteableBlocListener> {
 class BlocListenerTree extends DiagnosticableTree {
   const BlocListenerTree({required this.listeners});
 
-  final List<NesteableBlocListener> listeners;
+  final List<NestableBlocListener> listeners;
 
   @override
   List<DiagnosticsNode> debugDescribeChildren() =>

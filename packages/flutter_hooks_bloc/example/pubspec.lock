@@ -68,7 +68,7 @@ packages:
       name: flutter_bloc
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "7.0.0-nullsafety.3"
+    version: "7.0.0-nullsafety.5"
   flutter_hooks:
     dependency: transitive
     description:
@@ -82,7 +82,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.12.0"
+    version: "0.12.2"
   flutter_riverpod:
     dependency: transitive
     description:
@@ -150,7 +150,7 @@ packages:
       name: provider
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.0.0-nullsafety.5"
+    version: "5.0.0"
   riverbloc:
     dependency: transitive
     description:

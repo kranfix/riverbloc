@@ -68,7 +68,7 @@ packages:
       name: flutter_bloc
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "7.0.0-nullsafety.3"
+    version: "7.0.0-nullsafety.5"
   flutter_hooks:
     dependency: "direct main"
     description:
@@ -143,14 +143,14 @@ packages:
       name: pedantic
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.9.2"
+    version: "1.11.0"
   provider:
     dependency: transitive
     description:
       name: provider
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.0.0-nullsafety.5"
+    version: "5.0.0"
   riverbloc:
     dependency: "direct main"
     description:
