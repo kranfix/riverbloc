@@ -4,15 +4,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_timer/bloc/timer_bloc.dart';
 import 'package:riverbloc/riverbloc.dart';
 import 'package:flutter_timer/ticker.dart';
-import 'package:wave/wave.dart';
-import 'package:wave/config.dart';
+//import 'package:wave/wave.dart';
+//import 'package:wave/config.dart';
 
 void main() => runApp(const ProviderScope(child: MyApp()));
 
 final timerProvider = BlocProvider((ref) => TimerBloc(ticker: Ticker()));
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +40,7 @@ class Timer extends StatelessWidget {
       appBar: AppBar(title: Text('Flutter Timer')),
       body: Stack(
         children: [
-          Background(),
+          const Background(),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -90,7 +90,7 @@ class Actions extends ConsumerWidget {
     );
   }
 
-  List<Widget> _mapStateToActionButtons({TimerBloc timerBloc}) {
+  List<Widget> _mapStateToActionButtons({required TimerBloc timerBloc}) {
     final TimerState currentState = timerBloc.state;
     if (currentState is TimerInitial) {
       return [
@@ -138,35 +138,41 @@ class Actions extends ConsumerWidget {
 }
 
 class Background extends StatelessWidget {
+  const Background();
+
   @override
   Widget build(BuildContext context) {
-    return WaveWidget(
-      config: CustomConfig(
-        gradients: [
-          [
-            Color.fromRGBO(72, 74, 126, 1),
-            Color.fromRGBO(125, 170, 206, 1),
-            Color.fromRGBO(184, 189, 245, 0.7)
-          ],
-          [
-            Color.fromRGBO(72, 74, 126, 1),
-            Color.fromRGBO(125, 170, 206, 1),
-            Color.fromRGBO(172, 182, 219, 0.7)
-          ],
-          [
-            Color.fromRGBO(72, 73, 126, 1),
-            Color.fromRGBO(125, 170, 206, 1),
-            Color.fromRGBO(190, 238, 246, 0.7)
-          ],
-        ],
-        durations: [19440, 10800, 6000],
-        heightPercentages: [0.03, 0.01, 0.02],
-        gradientBegin: Alignment.bottomCenter,
-        gradientEnd: Alignment.topCenter,
-      ),
-      size: Size(double.infinity, double.infinity),
-      waveAmplitude: 25,
-      backgroundColor: Colors.blue[50],
+    return Container(
+      color: Color.fromRGBO(125, 170, 206, 1),
     );
+    // TODO: Send PR to Wave to update example
+    //return WaveWidget(
+    //  config: CustomConfig(
+    //    gradients: [
+    //      [
+    //        Color.fromRGBO(72, 74, 126, 1),
+    //        Color.fromRGBO(125, 170, 206, 1),
+    //        Color.fromRGBO(184, 189, 245, 0.7)
+    //      ],
+    //      [
+    //        Color.fromRGBO(72, 74, 126, 1),
+    //        Color.fromRGBO(125, 170, 206, 1),
+    //        Color.fromRGBO(172, 182, 219, 0.7)
+    //      ],
+    //      [
+    //        Color.fromRGBO(72, 73, 126, 1),
+    //        Color.fromRGBO(125, 170, 206, 1),
+    //        Color.fromRGBO(190, 238, 246, 0.7)
+    //      ],
+    //    ],
+    //    durations: [19440, 10800, 6000],
+    //    heightPercentages: [0.03, 0.01, 0.02],
+    //    gradientBegin: Alignment.bottomCenter,
+    //    gradientEnd: Alignment.topCenter,
+    //  ),
+    //  size: Size(double.infinity, double.infinity),
+    //  waveAmplitude: 25,
+    //  backgroundColor: Colors.blue[50],
+    //);
   }
 }

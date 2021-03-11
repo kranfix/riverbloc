@@ -1,6 +1,15 @@
-## [0.11.0] - 2020-10-08
+## [0.12.2] - 2021-03-11
 
-- Upgrading dependencies in a valid range
+- Fixing typo renaming `Nesteable` to `Nestable`.
+- Adding documentation for `Nestable`.
+
+## [0.12.1] - 2021-03-11
+
+- Using last version of flutter_bloc (7.0.0-nullsafety.5) and pedantic (1.11.0)
+
+## [0.12.0] - 2021-03-11
+
+- Upgrading to null-safety
 
 ## [0.11.0]
 

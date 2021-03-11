@@ -18,27 +18,6 @@ class CounterCubit2 = CounterCubit with _DecrementerMixin;
 
 void main() {
   group('MultiBlocListener', () {
-    testWidgets('throws if initialized with no listeners and no child',
-        (tester) async {
-      try {
-        await tester.pumpWidget(
-          MultiBlocListener(listeners: null, child: null),
-        );
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-
-    testWidgets('throws if initialized with no listeners', (tester) async {
-      try {
-        await tester.pumpWidget(
-          MultiBlocListener(listeners: null, child: const SizedBox()),
-        );
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-
     testWidgets('throws if initialized listeners list is empty',
         (tester) async {
       try {
@@ -48,26 +27,7 @@ void main() {
             child: const SizedBox(),
           ),
         );
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-
-    testWidgets('throws if initialized with no child', (tester) async {
-      try {
-        final counterCubit = CounterCubit();
-        await tester.pumpWidget(
-          MultiBlocListener(
-            listeners: [
-              BlocListener<CounterCubit, int>(
-                cubit: counterCubit,
-                listener: (context, state) {},
-              )
-            ],
-            child: null,
-          ),
-        );
-      } on dynamic catch (error) {
+      } catch (error) {
         expect(error, isAssertionError);
       }
     });
@@ -85,11 +45,11 @@ void main() {
         MultiBlocListener(
           listeners: [
             BlocListener<CounterCubit, int>(
-              cubit: counterCubitA,
+              bloc: counterCubitA,
               listener: (context, state) => statesA.add(state),
             ),
             BlocListener<CounterCubit, int>(
-              cubit: counterCubitB,
+              bloc: counterCubitB,
               listener: (context, state) => statesB.add(state),
             ),
           ],
@@ -125,11 +85,11 @@ void main() {
         MultiBlocListener(
           listeners: [
             BlocListener(
-              cubit: counterCubitA,
+              bloc: counterCubitA,
               listener: (BuildContext context, int state) => statesA.add(state),
             ),
             BlocListener(
-              cubit: counterCubitB,
+              bloc: counterCubitB,
               listener: (BuildContext context, int state) => statesB.add(state),
             ),
           ],
@@ -159,7 +119,7 @@ void main() {
           MultiBlocListener(
             listeners: [
               BlocListener(
-                cubit: counterCubit,
+                bloc: counterCubit,
                 listener: (BuildContext context, int state) {},
                 child: const SizedBox(),
               ),
@@ -174,17 +134,6 @@ void main() {
     });
   });
 
-  group('BlocListenerTree', () {
-    testWidgets('throws assertion on null listeners', (tester) async {
-      try {
-        BlocListenerTree(listeners: null);
-        fail('BlocListenerTree should not have null listener');
-      } catch (e) {
-        expect(e, isAssertionError);
-      }
-    });
-  });
-
   group('MultiBlocListener diagnostics', () {
     test('prints a tree', () async {
       final cubit2 = CounterCubit2();
@@ -194,7 +143,7 @@ void main() {
             listener: (context, state) {},
           ),
           BlocListener<CounterCubit2, int>(
-            cubit: cubit2,
+            bloc: cubit2,
             listener: (context, state) {},
           ),
         ],

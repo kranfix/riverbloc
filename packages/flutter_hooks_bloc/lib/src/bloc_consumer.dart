@@ -11,13 +11,13 @@ import 'package:flutter/widgets.dart';
 /// [BlocConsumer] is analogous to a nested `BlocListener`
 /// and `BlocBuilder` but reduces the amount of boilerplate needed.
 /// [BlocConsumer] should only be used when it is necessary to both rebuild UI
-/// and execute other reactions to state changes in the [cubit].
+/// and execute other reactions to state changes in the [bloc].
 ///
 /// [BlocConsumer] takes a required `BlocWidgetBuilder`
-/// and `BlocWidgetListener` and an optional [cubit],
+/// and `BlocWidgetListener` and an optional [bloc],
 /// `BlocBuilderCondition`, and `BlocListenerCondition`.
 ///
-/// If the [cubit] parameter is omitted, [BlocConsumer] will automatically
+/// If the [bloc] parameter is omitted, [BlocConsumer] will automatically
 /// perform a lookup using `BlocProvider` and the current `BuildContext`.
 ///
 /// ```dart
@@ -33,12 +33,12 @@ import 'package:flutter/widgets.dart';
 ///
 /// An optional [listenWhen] and [buildWhen] can be implemented for more
 /// granular control over when [listener] and [builder] are called.
-/// The [listenWhen] and [buildWhen] will be invoked on each [cubit] `state`
+/// The [listenWhen] and [buildWhen] will be invoked on each [bloc] `state`
 /// change.
 /// They each take the previous `state` and current `state` and must return
 /// a [bool] which determines whether or not the [builder] and/or [listener]
 /// function will be invoked.
-/// The previous `state` will be initialized to the `state` of the [cubit] when
+/// The previous `state` will be initialized to the `state` of the [bloc] when
 /// the [BlocConsumer] is initialized.
 /// [listenWhen] and [buildWhen] are optional and if they aren't implemented,
 /// they will default to `true`.
@@ -62,38 +62,34 @@ import 'package:flutter/widgets.dart';
 /// )
 /// ```
 /// {@endtemplate}
-class BlocConsumer<C extends Cubit<S>, S> extends BlocListenerBase<C, S> {
+class BlocConsumer<B extends Bloc<Object?, S>, S extends Object>
+    extends BlocListenerBase<B, S> {
   const BlocConsumer({
-    Key key,
+    Key? key,
 
-    /// The [cubit] that the [BlocConsumer] will interact with.
+    /// The [bloc] that the [BlocConsumer] will interact with.
     /// If omitted, [BlocConsumer] will automatically perform a lookup using
     /// `BlocProvider` and the current `BuildContext`.
-    C cubit,
-    BlocListenerCondition<S> listenWhen,
-    @required BlocWidgetListener<S> listener,
+    B? bloc,
+    BlocListenerCondition<S>? listenWhen,
+    required BlocWidgetListener<S> listener,
     this.buildWhen,
-    @required this.builder,
-  })  : assert(listener != null),
-        assert(builder != null),
-        super(
+    required this.builder,
+  }) : super(
           key: key,
-          cubit: cubit,
+          bloc: bloc,
           listenWhen: listenWhen,
           listener: listener,
         );
 
   const BlocConsumer.river({
-    Key key,
-    @required BlocProvider<C> provider,
-    BlocListenerCondition<S> listenWhen,
-    @required BlocWidgetListener<S> listener,
+    Key? key,
+    required BlocProvider<B> provider,
+    BlocListenerCondition<S>? listenWhen,
+    required BlocWidgetListener<S> listener,
     this.buildWhen,
-    @required this.builder,
-  })  : assert(provider != null),
-        assert(listener != null),
-        assert(builder != null),
-        super.river(
+    required this.builder,
+  }) : super.river(
           key: key,
           provider: provider,
           listenWhen: listenWhen,
@@ -103,7 +99,7 @@ class BlocConsumer<C extends Cubit<S>, S> extends BlocListenerBase<C, S> {
   /// Takes the previous `state` and the current `state` and is responsible for
   /// returning a [bool] which determines whether or not to call [listener] of
   /// [BlocConsumer] with the current `state`.
-  final BlocBuilderCondition<S> buildWhen;
+  final BlocBuilderCondition<S>? buildWhen;
 
   /// The [builder] function which will be invoked on each widget build.
   /// The [builder] takes the `BuildContext` and current `state` and
@@ -116,7 +112,7 @@ class BlocConsumer<C extends Cubit<S>, S> extends BlocListenerBase<C, S> {
   /// [builder] with the current `state`.
   @override
   Widget build(BuildContext context) {
-    final _cubit = $use<C>();
+    final _cubit = $use();
     return builder(context, _cubit.state);
   }
 

@@ -17,7 +17,7 @@ typedef BlocBuilderCondition<S> = bool Function(S previous, S current);
 /// Please refer to `BlocListener` if you want to "do" anything in response to
 /// `state` changes such as navigation, showing a dialog, etc...
 ///
-/// If the [cubit] parameter is omitted, [BlocBuilder] will automatically
+/// If the [bloc] parameter is omitted, [BlocBuilder] will automatically
 /// perform a lookup using [BlocProvider] and the current `BuildContext`.
 ///
 /// ```dart
@@ -28,7 +28,7 @@ typedef BlocBuilderCondition<S> = bool Function(S previous, S current);
 /// )
 /// ```
 ///
-/// Only specify the [cubit] if you wish to provide a [cubit] that is otherwise
+/// Only specify the [bloc] if you wish to provide a [bloc] that is otherwise
 /// not accessible via [BlocProvider] and the current `BuildContext`.
 ///
 /// ```dart
@@ -43,11 +43,11 @@ typedef BlocBuilderCondition<S> = bool Function(S previous, S current);
 /// {@template bloc_builder_build_when}
 /// An optional [buildWhen] can be implemented for more granular control over
 /// how often [BlocBuilder] rebuilds.
-/// [buildWhen] will be invoked on each [cubit] `state` change.
+/// [buildWhen] will be invoked on each [bloc] `state` change.
 /// [buildWhen] takes the previous `state` and current `state` and must
 /// return a [bool] which determines whether or not the [builder] function will
 /// be invoked.
-/// The previous `state` will be initialized to the `state` of the [cubit] when
+/// The previous `state` will be initialized to the `state` of the [bloc] when
 /// the [BlocBuilder] is initialized.
 /// [buildWhen] is optional and if omitted, it will default to `true`.
 ///
@@ -63,27 +63,25 @@ typedef BlocBuilderCondition<S> = bool Function(S previous, S current);
 ///)
 /// ```
 /// {@endtemplate}
-class BlocBuilder<C extends Cubit<S>, S> extends BlocWidget<S> {
+class BlocBuilder<B extends Bloc<Object?, S>, S extends Object>
+    extends BlocWidget<B, S> {
   const BlocBuilder({
-    Key key,
+    Key? key,
 
-    /// The [cubit] that the [BlocBuilder] will interact with.
+    /// The [bloc] that the [BlocBuilder] will interact with.
     /// If omitted, [BlocBuilder] will automatically perform a lookup using
     /// [BlocProvider] and the current `BuildContext`.
-    C cubit,
-    @required this.builder,
+    B? bloc,
+    required this.builder,
     this.buildWhen,
-  })  : assert(builder != null),
-        super(key: key, cubit: cubit);
+  }) : super(key: key, bloc: bloc);
 
   const BlocBuilder.river({
-    Key key,
-    @required BlocProvider<C> provider,
-    @required this.builder,
+    Key? key,
+    required BlocProvider<B> provider,
+    required this.builder,
     this.buildWhen,
-  })  : assert(provider != null),
-        assert(builder != null),
-        super.river(key: key, provider: provider);
+  }) : super.river(key: key, provider: provider);
 
   /// The [builder] function which will be invoked on each widget build.
   /// The [builder] takes the `BuildContext` and current `state` and
@@ -92,12 +90,12 @@ class BlocBuilder<C extends Cubit<S>, S> extends BlocWidget<S> {
   final BlocWidgetBuilder<S> builder;
 
   ///{@macro bloc_builder_build_when}
-  final BlocBuilderCondition<S> buildWhen;
+  final BlocBuilderCondition<S>? buildWhen;
 
   @override
   Widget build(BuildContext context) {
-    final _cubit = $use<C>();
-    return builder(context, _cubit.state);
+    final _bloc = $use();
+    return builder(context, _bloc.state);
   }
 
   @override
