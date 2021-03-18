@@ -43,8 +43,8 @@ abstract class BlocWidget<B extends BlocBase<S>, S extends Object>
 
 /// Subscribes to a Cubit and handles a listener or a rebuild.
 ///
-/// Whenever [Cubit.state] updates, it will mark the caller [HookWidget]
-/// as needing build if either [allowRebuild] is `true` or [buildWhen]
+/// Whenever [BlocBase.state] updates, it will mark the caller [HookWidget]
+/// as needing build if either `allowRebuild` is `true` or `buildWhen`
 /// invocation returns `true`.
 ///
 /// if [bloc] is null, it will be inherited with `context.bloc()`
