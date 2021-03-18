@@ -1,3 +1,8 @@
+## [0.13.0] - 2021-03-18
+
+- Using `bloc 7.0.0` and `riverbloc 0.2.2`.
+- Using `BlocBase` clase.
+
 ## [0.12.2] - 2021-03-11
 
 - Fixing typo renaming `Nesteable` to `Nestable`.

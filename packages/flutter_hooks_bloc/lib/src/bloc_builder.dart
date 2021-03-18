@@ -63,7 +63,7 @@ typedef BlocBuilderCondition<S> = bool Function(S previous, S current);
 ///)
 /// ```
 /// {@endtemplate}
-class BlocBuilder<B extends Bloc<Object?, S>, S extends Object>
+class BlocBuilder<B extends BlocBase<S>, S extends Object>
     extends BlocWidget<B, S> {
   const BlocBuilder({
     Key? key,

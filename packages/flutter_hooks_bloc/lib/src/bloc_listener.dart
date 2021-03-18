@@ -76,7 +76,7 @@ typedef BlocListenerCondition<S> = bool Function(S previous, S current);
 /// )
 /// ```
 /// {@endtemplate}
-class BlocListener<B extends Bloc<Object?, S>, S extends Object>
+class BlocListener<B extends BlocBase<S>, S extends Object>
     extends BlocListenerBase<B, S> implements NestableBlocListener {
   const BlocListener({
     Key? key,
@@ -133,7 +133,7 @@ class BlocListener<B extends Bloc<Object?, S>, S extends Object>
   }
 }
 
-abstract class BlocListenerBase<B extends Bloc<Object?, S>, S extends Object>
+abstract class BlocListenerBase<B extends BlocBase<S>, S extends Object>
     extends BlocWidget<B, S> {
   const BlocListenerBase({
     Key? key,

@@ -60,7 +60,7 @@ import 'package:riverpod/src/framework.dart';
 /// }
 /// ```
 @sealed
-class BlocProvider<B extends Bloc<Object?, Object>>
+class BlocProvider<B extends BlocBase<Object>>
     extends AlwaysAliveProviderBase<B, B> {
   BlocProvider(
     Create<B, ProviderReference> create, {
@@ -114,7 +114,7 @@ class BlocProvider<B extends Bloc<Object?, Object>>
   ProviderStateBase<B, B> createState() => _BlocProviderState<B, Object>();
 }
 
-class _BlocProviderState<B extends Bloc<Object?, S>, S>
+class _BlocProviderState<B extends BlocBase<S>, S>
     extends ProviderStateBase<B, B> {
   @override
   void valueChanged({B? previous}) {
@@ -138,8 +138,7 @@ class _BlocProviderState<B extends Bloc<Object?, S>, S>
 ///   );
 /// }),
 /// ```
-extension BlocStateProviderX<S extends Object>
-    on BlocProvider<Bloc<Object?, S>> {
+extension BlocStateProviderX<S extends Object> on BlocProvider<BlocBase<S>> {
   BlocStateProvider<S> get state {
     _state ??= BlocStateProvider<S>._(this);
     return _state as BlocStateProvider<S>;
@@ -149,19 +148,19 @@ extension BlocStateProviderX<S extends Object>
 /// The [BlocStateProvider] watch a [cubit] or [bloc] and subscribe to its
 /// `state` and rebuilds every time that it is emitted.
 class BlocStateProvider<S extends Object>
-    extends AlwaysAliveProviderBase<Bloc<Object?, S>, S> {
+    extends AlwaysAliveProviderBase<BlocBase<S>, S> {
   BlocStateProvider._(this._provider)
       : super(
           (ref) => ref.watch(_provider),
           _provider.name != null ? '${_provider.name}.state' : null,
         );
 
-  final BlocProvider<Bloc<Object?, S>> _provider;
+  final BlocProvider<BlocBase<S>> _provider;
 
   @override
   Override overrideWithValue(S value) {
     return ProviderOverride(
-      ValueProvider<Bloc<Object?, S>, S>((ref) => ref.watch(_provider), value),
+      ValueProvider<BlocBase<S>, S>((ref) => ref.watch(_provider), value),
       this,
     );
   }
@@ -170,12 +169,11 @@ class BlocStateProvider<S extends Object>
   _BlocStateProviderState<S> createState() => _BlocStateProviderState();
 }
 
-class _BlocStateProviderState<S>
-    extends ProviderStateBase<Bloc<Object?, S>, S> {
+class _BlocStateProviderState<S> extends ProviderStateBase<BlocBase<S>, S> {
   StreamSubscription<S>? _subscription;
 
   @override
-  void valueChanged({Bloc<Object?, S>? previous}) {
+  void valueChanged({BlocBase<S>? previous}) {
     if (createdValue != previous) {
       if (_subscription != null) {
         _unsubscribe();
@@ -186,7 +184,7 @@ class _BlocStateProviderState<S>
 
   void _subscribe() {
     exposedValue = createdValue.state;
-    _subscription = createdValue.listen(_listener);
+    _subscription = createdValue.stream.listen(_listener);
   }
 
   void _unsubscribe() {

@@ -62,7 +62,7 @@ import 'package:flutter/widgets.dart';
 /// )
 /// ```
 /// {@endtemplate}
-class BlocConsumer<B extends Bloc<Object?, S>, S extends Object>
+class BlocConsumer<B extends BlocBase<S>, S extends Object>
     extends BlocListenerBase<B, S> {
   const BlocConsumer({
     Key? key,
