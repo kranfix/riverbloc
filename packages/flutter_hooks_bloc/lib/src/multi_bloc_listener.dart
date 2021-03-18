@@ -1,7 +1,9 @@
-import 'bloc_listener.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+
+import 'bloc_listener.dart';
+import 'flutter_bloc.dart';
 
 /// {@template multi_bloc_listener}
 /// Merges multiple [BlocListener] widgets into one widget tree.
@@ -43,23 +45,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 /// )
 /// ```
 ///
-/// In addition, [BlocListenable] can replace [BlocListener] but it has a
-/// lighter implementation. Also
-///
-/// ```dart
-/// MultiBlocListener(
-///   listeners: [
-///     BlocListenable<BlocA, BlocAState>(
-///       listener: (context, state) {},
-///     ),
-///     BlocListener<BlocB, BlocBState>(
-///       listener: (context, state) {},
-///     ),
-///   ],
-///   child: ChildA(),
-/// )
-/// ```
-///
 /// [MultiBlocListener] avoids converts a tree of nested [BlocListener] and
 /// only add a widget to the widget tree.
 /// As a result, the only advantages of using [MultiBlocListener] are both the
@@ -72,12 +57,18 @@ class MultiBlocListener extends HookWidget {
       : assert(listeners.isNotEmpty),
         assert(listeners._debugBlocListenerWithNoChild());
 
+  /// List of [BlocListener] and/or  [NestableBlocListener].
+  /// Must have at least one element
   final List<NestableBlocListener> listeners;
+
+  /// `child` [Widget] for [MultiBlocListener]
   final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    listeners.forEach((it) => it.listen());
+    for (final it in listeners) {
+      it.listen();
+    }
     return child;
   }
 
@@ -104,10 +95,15 @@ class MultiBlocListener extends HookWidget {
 /// see also
 /// - [MultiBlocListener]
 abstract class NestableBlocListener {
+  /// The `listen` method describe how a widget must listen a [BlocBase]
   void listen();
 
+  /// Given that the [NestableBlocListener] are used in a [MultiBlocProvider]
+  /// The must not have a child each one. Then, the `hasNoChild` allows
+  /// the [MultiBlocProvider] to check that they don't have them.
   bool get hasNoChild;
 
+  /// Generates a [DiagnosticsNode] for show the `bloc` states in the debugger.
   DiagnosticsNode asDiagnosticsNode();
 }
 
