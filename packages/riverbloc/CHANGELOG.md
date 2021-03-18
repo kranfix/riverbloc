@@ -1,4 +1,4 @@
-## [0.2.2] - 2021-03-07
+## [0.2.2] - 2021-03-18
 
 - Upgrading dependency to bloc 7.0.0 (stable)
 - Using the new `BlocBase` class.
