@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
-import 'package:riverbloc/riverbloc.dart';
 
 import 'bloc_builder.dart';
 import 'bloc_listener.dart';
@@ -80,26 +79,6 @@ class BlocConsumer<B extends BlocBase<S>, S extends Object>
   }) : super(
           key: key,
           bloc: bloc,
-          listenWhen: listenWhen,
-          listener: listener,
-        );
-
-  /// Listen and rebuilds its content based on a `riverbloc` provider.
-  @Deprecated(
-    'The BlocConsumer.river constructor is deprecated and'
-    ' will be removed on v0.14.0.'
-    'Use riverbloc instead',
-  )
-  const BlocConsumer.river({
-    Key? key,
-    required BlocProvider<B> provider,
-    BlocListenerCondition<S>? listenWhen,
-    required BlocWidgetListener<S> listener,
-    this.buildWhen,
-    required this.builder,
-  }) : super.river(
-          key: key,
-          provider: provider,
           listenWhen: listenWhen,
           listener: listener,
         );
