@@ -1,7 +1,8 @@
+import 'package:flutter/widgets.dart';
+import 'package:riverbloc/riverbloc.dart' show BlocProvider;
+
 import 'bloc_hook.dart';
 import 'flutter_bloc.dart' hide BlocProvider;
-import 'package:riverbloc/riverbloc.dart' show BlocProvider;
-import 'package:flutter/widgets.dart';
 
 /// Signature for the `builder` function which takes the `BuildContext` and
 /// [state] and is responsible for returning a widget which is to be rendered.
@@ -65,6 +66,7 @@ typedef BlocBuilderCondition<S> = bool Function(S previous, S current);
 /// {@endtemplate}
 class BlocBuilder<B extends BlocBase<S>, S extends Object>
     extends BlocWidget<B, S> {
+  ///The [BlocBuilder] constuctor builds a widget for
   const BlocBuilder({
     Key? key,
 
@@ -76,6 +78,11 @@ class BlocBuilder<B extends BlocBase<S>, S extends Object>
     this.buildWhen,
   }) : super(key: key, bloc: bloc);
 
+  /// Rebuilds its content based on a `riverbloc` provider.
+  @Deprecated(
+    'The BlocBuilder.river constructor is deprecated.'
+    'Use riverbloc instead',
+  )
   const BlocBuilder.river({
     Key? key,
     required BlocProvider<B> provider,
