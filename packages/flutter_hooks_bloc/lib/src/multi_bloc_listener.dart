@@ -111,10 +111,17 @@ extension _DebugBlocListenerWithNoChildX on List<NestableBlocListener> {
   bool _debugBlocListenerWithNoChild() => every((it) => it.hasNoChild);
 }
 
+/// {@template bloc_listener_tree}
+/// The [BlocListenerTree] is a [DiagnosticableTree] for showwing
+/// the `bloc` providers in the devtools.
+/// {@endtemplate}
 @visibleForTesting
 class BlocListenerTree extends DiagnosticableTree {
+  /// {@macro bloc_listener_tree}
   const BlocListenerTree({required this.listeners});
 
+  /// List of [NestableBlocListener] ([BlocListener] for example) that
+  /// will be used in the [MultiBlocListener].
   final List<NestableBlocListener> listeners;
 
   @override
