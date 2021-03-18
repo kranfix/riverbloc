@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:riverbloc/riverbloc.dart' show BlocProvider;
 
-import 'flutter_bloc.dart' show Bloc, ReadContext;
+import 'flutter_bloc.dart' show BlocBase, ReadContext;
 
 import 'package:flutter/widgets.dart' show BuildContext;
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -17,7 +17,7 @@ typedef BlocHookListener<S> = bool Function(
   S current,
 );
 
-abstract class BlocWidget<B extends Bloc<Object?, S>, S extends Object>
+abstract class BlocWidget<B extends BlocBase<S>, S extends Object>
     extends HookWidget {
   const BlocWidget({
     Key? key,
@@ -81,7 +81,7 @@ abstract class BlocWidget<B extends Bloc<Object?, S>, S extends Object>
 /// See also:
 ///
 ///  * [Cubit]
-B useBloc<B extends Bloc<Object?, S>, S extends Object>({
+B useBloc<B extends BlocBase<S>, S extends Object>({
   B? bloc,
   BlocHookListener<S>? onEmitted,
 }) {
@@ -91,7 +91,7 @@ B useBloc<B extends Bloc<Object?, S>, S extends Object>({
   return use(_BlocHook<S>(_bloc, onEmitted)) as B;
 }
 
-B useRiverBloc<B extends Bloc<Object?, S>, S extends Object>(
+B useRiverBloc<B extends BlocBase<S>, S extends Object>(
   BlocProvider<B> provider, {
   BlocHookListener<S>? onEmitted,
 }) {
@@ -99,25 +99,24 @@ B useRiverBloc<B extends Bloc<Object?, S>, S extends Object>(
   return use(_BlocHook<S>(_bloc, onEmitted)) as B;
 }
 
-class _BlocHook<S> extends Hook<Bloc<Object?, S>> {
+class _BlocHook<S> extends Hook<BlocBase<S>> {
   const _BlocHook(this.bloc, this.onEmitted);
 
-  final Bloc<Object?, S> bloc;
+  final BlocBase<S> bloc;
   final BlocHookListener<S>? onEmitted;
 
   @override
-  HookState<Bloc<Object?, S>, _BlocHook<S>> createState() =>
-      _BlocHookState<S>();
+  HookState<BlocBase<S>, _BlocHook<S>> createState() => _BlocHookState<S>();
 }
 
-class _BlocHookState<S> extends HookState<Bloc<Object?, S>, _BlocHook<S>> {
+class _BlocHookState<S> extends HookState<BlocBase<S>, _BlocHook<S>> {
   StreamSubscription<S>? _subscription;
 
   /// Previous state from cubit
   late S _previous;
 
   @override
-  Bloc<Object?, S> build(BuildContext context) => hook.bloc;
+  BlocBase<S> build(BuildContext context) => hook.bloc;
 
   @override
   void initHook() {
@@ -147,7 +146,7 @@ class _BlocHookState<S> extends HookState<Bloc<Object?, S>, _BlocHook<S>> {
   }
 
   void _subscribe() {
-    _subscription = hook.bloc.listen((state) {
+    _subscription = hook.bloc.stream.listen((state) {
       if (hook.onEmitted?.call(context, _previous, state) ?? true) {
         setState(() {});
       }

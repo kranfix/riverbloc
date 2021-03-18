@@ -128,7 +128,7 @@ void main() {
           ),
         );
         fail('should throw AssertionError');
-      } on dynamic catch (error) {
+      } catch (error) {
         expect(error, isAssertionError);
       }
     });

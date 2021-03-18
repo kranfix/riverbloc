@@ -139,7 +139,7 @@ class MyThemeAppState extends State<MyThemeApp> {
             theme: theme,
             home: Column(
               children: [
-                RaisedButton(
+                ElevatedButton(
                   key: const Key('raised_button_1'),
                   onPressed: () {
                     //setState(() {
@@ -148,8 +148,9 @@ class MyThemeAppState extends State<MyThemeApp> {
                     change = true;
                     context.refresh(themeProvider);
                   },
+                  child: null,
                 ),
-                RaisedButton(
+                ElevatedButton(
                   key: const Key('raised_button_2'),
                   onPressed: () {
                     setState(() {
@@ -157,6 +158,7 @@ class MyThemeAppState extends State<MyThemeApp> {
                     });
                     context.refresh(themeProvider);
                   },
+                  child: null,
                 ),
               ],
             ),
