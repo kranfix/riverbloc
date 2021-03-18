@@ -66,7 +66,7 @@ typedef BlocBuilderCondition<S> = bool Function(S previous, S current);
 /// {@endtemplate}
 class BlocBuilder<B extends BlocBase<S>, S extends Object>
     extends BlocWidget<B, S> {
-  ///The [BlocBuilder] constuctor builds a widget for
+  ///The [BlocBuilder] constuctor builds a widget when a `bloc` state change.
   const BlocBuilder({
     Key? key,
 
@@ -80,7 +80,8 @@ class BlocBuilder<B extends BlocBase<S>, S extends Object>
 
   /// Rebuilds its content based on a `riverbloc` provider.
   @Deprecated(
-    'The BlocBuilder.river constructor is deprecated.'
+    'The BlocBuilder.river constructor is deprecated and'
+    ' will be removed on v0.14.0.'
     'Use riverbloc instead',
   )
   const BlocBuilder.river({
