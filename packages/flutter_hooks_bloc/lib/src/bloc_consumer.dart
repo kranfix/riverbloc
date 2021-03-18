@@ -1,9 +1,9 @@
-import 'bloc_listener.dart';
-import 'bloc_builder.dart';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/widgets.dart';
 import 'package:riverbloc/riverbloc.dart';
 
-import 'package:flutter/widgets.dart';
+import 'bloc_builder.dart';
+import 'bloc_listener.dart';
 
 /// {@template bloc_consumer}
 /// [BlocConsumer] exposes a [builder] and [listener] in order react to new
@@ -64,6 +64,8 @@ import 'package:flutter/widgets.dart';
 /// {@endtemplate}
 class BlocConsumer<B extends BlocBase<S>, S extends Object>
     extends BlocListenerBase<B, S> {
+  /// The [BlocConsumer] constuctor listen and rebuilds a widget
+  /// when a `bloc` state change.
   const BlocConsumer({
     Key? key,
 
@@ -82,6 +84,12 @@ class BlocConsumer<B extends BlocBase<S>, S extends Object>
           listener: listener,
         );
 
+  /// Listen and rebuilds its content based on a `riverbloc` provider.
+  @Deprecated(
+    'The BlocConsumer.river constructor is deprecated and'
+    ' will be removed on v0.14.0.'
+    'Use riverbloc instead',
+  )
   const BlocConsumer.river({
     Key? key,
     required BlocProvider<B> provider,
