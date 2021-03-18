@@ -1,3 +1,8 @@
+## [0.14.0] - 2021-03-18
+
+- Removing `riverbloc` dependece.
+- `breaking` removing the `river` constructors
+
 ## [0.13.0] - 2021-03-18
 
 - Using `bloc 7.0.0` and `riverbloc 0.2.2`.

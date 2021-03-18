@@ -151,13 +151,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "5.0.0"
-  riverbloc:
-    dependency: "direct main"
-    description:
-      name: riverbloc
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.2"
   riverpod:
     dependency: transitive
     description:

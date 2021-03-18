@@ -2,7 +2,7 @@ name: flutter_hooks_bloc
 description: >-
   A flutter_bloc reimplementation based on flutter_hooks
   with the same API.
-version: 0.13.0
+version: 0.14.0
 homepage: https://github.com/kranfix/riverbloc
 
 environment:
@@ -15,7 +15,6 @@ dependencies:
   flutter_hooks: ^0.16.0
   hooks_riverpod: ^0.13.1
   flutter_bloc: ^7.0.0
-  riverbloc: ^0.2.2
   bloc: ^7.0.0
 
 dev_dependencies:
