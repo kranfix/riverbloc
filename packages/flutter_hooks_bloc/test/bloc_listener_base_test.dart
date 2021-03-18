@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter_hooks_bloc/flutter_hooks_bloc.dart' hide BlocProvider;
-import 'package:flutter_hooks_bloc/src/bloc_listener.dart';
+//import 'package:flutter_hooks_bloc/src/bloc_listener.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:riverbloc/riverbloc.dart';
 
