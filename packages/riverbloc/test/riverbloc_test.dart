@@ -112,7 +112,7 @@ void main() {
       final counterBlocProvider = BlocProvider(
         (ref) {
           final bloc = CounterBloc(0, onClose: () => isBlocClosed = true);
-          ref.onDispose(() => bloc.close());
+          ref.onDispose(bloc.close);
           return bloc;
         },
       );
