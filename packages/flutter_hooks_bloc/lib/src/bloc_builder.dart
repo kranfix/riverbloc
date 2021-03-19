@@ -1,7 +1,6 @@
+import 'package:flutter/widgets.dart';
 import 'bloc_hook.dart';
 import 'flutter_bloc.dart' hide BlocProvider;
-import 'package:riverbloc/riverbloc.dart' show BlocProvider;
-import 'package:flutter/widgets.dart';
 
 /// Signature for the `builder` function which takes the `BuildContext` and
 /// [state] and is responsible for returning a widget which is to be rendered.
@@ -17,19 +16,17 @@ typedef BlocBuilderCondition<S> = bool Function(S previous, S current);
 /// Please refer to `BlocListener` if you want to "do" anything in response to
 /// `state` changes such as navigation, showing a dialog, etc...
 ///
-/// If the [bloc] parameter is omitted, [BlocBuilder] will automatically
-/// perform a lookup using [BlocProvider] and the current `BuildContext`.
 ///
 /// ```dart
 /// BlocBuilder<BlocA, BlocAState>(
 ///   builder: (context, state) {
-///   // return widget here based on BlocA's state
+///     // return widget here based on BlocA's state
 ///   }
 /// )
 /// ```
 ///
 /// Only specify the [bloc] if you wish to provide a [bloc] that is otherwise
-/// not accessible via [BlocProvider] and the current `BuildContext`.
+/// not accessible via the current `BuildContext`.
 ///
 /// ```dart
 /// BlocBuilder<BlocA, BlocAState>(
@@ -65,23 +62,17 @@ typedef BlocBuilderCondition<S> = bool Function(S previous, S current);
 /// {@endtemplate}
 class BlocBuilder<B extends BlocBase<S>, S extends Object>
     extends BlocWidget<B, S> {
+  ///The [BlocBuilder] constuctor builds a widget when a `bloc` state change.
   const BlocBuilder({
     Key? key,
 
     /// The [bloc] that the [BlocBuilder] will interact with.
     /// If omitted, [BlocBuilder] will automatically perform a lookup using
-    /// [BlocProvider] and the current `BuildContext`.
+    /// the current `BuildContext`.
     B? bloc,
     required this.builder,
     this.buildWhen,
   }) : super(key: key, bloc: bloc);
-
-  const BlocBuilder.river({
-    Key? key,
-    required BlocProvider<B> provider,
-    required this.builder,
-    this.buildWhen,
-  }) : super.river(key: key, provider: provider);
 
   /// The [builder] function which will be invoked on each widget build.
   /// The [builder] takes the `BuildContext` and current `state` and

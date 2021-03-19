@@ -1,9 +1,8 @@
-import 'bloc_listener.dart';
-import 'bloc_builder.dart';
 import 'package:bloc/bloc.dart';
-import 'package:riverbloc/riverbloc.dart';
-
 import 'package:flutter/widgets.dart';
+
+import 'bloc_builder.dart';
+import 'bloc_listener.dart';
 
 /// {@template bloc_consumer}
 /// [BlocConsumer] exposes a [builder] and [listener] in order react to new
@@ -64,6 +63,8 @@ import 'package:flutter/widgets.dart';
 /// {@endtemplate}
 class BlocConsumer<B extends BlocBase<S>, S extends Object>
     extends BlocListenerBase<B, S> {
+  /// The [BlocConsumer] constuctor listen and rebuilds a widget
+  /// when a `bloc` state change.
   const BlocConsumer({
     Key? key,
 
@@ -78,20 +79,6 @@ class BlocConsumer<B extends BlocBase<S>, S extends Object>
   }) : super(
           key: key,
           bloc: bloc,
-          listenWhen: listenWhen,
-          listener: listener,
-        );
-
-  const BlocConsumer.river({
-    Key? key,
-    required BlocProvider<B> provider,
-    BlocListenerCondition<S>? listenWhen,
-    required BlocWidgetListener<S> listener,
-    this.buildWhen,
-    required this.builder,
-  }) : super.river(
-          key: key,
-          provider: provider,
           listenWhen: listenWhen,
           listener: listener,
         );

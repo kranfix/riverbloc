@@ -1,12 +1,10 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
-import 'package:riverbloc/riverbloc.dart' show BlocProvider;
-
-import 'flutter_bloc.dart' show BlocBase, ReadContext;
-
 import 'package:flutter/widgets.dart' show BuildContext;
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart' show useProvider;
+
+import 'flutter_bloc.dart' show Cubit, Bloc, BlocBase, ReadContext;
 
 /// Signature for the `listener` function which takes the `BuildContext` along
 /// with the `current` and `previous` state and is responsible for executing in
@@ -17,41 +15,37 @@ typedef BlocHookListener<S> = bool Function(
   S current,
 );
 
+/// {@template BlocWidget}
+/// The [BlocWidget] is the base for every reimplementation of `flutter_bloc`'s
+/// widgets based on `Hook`s.
+/// {@endtemplate}
 abstract class BlocWidget<B extends BlocBase<S>, S extends Object>
     extends HookWidget {
+  /// {@macro BlocWidget}
   const BlocWidget({
     Key? key,
-    B? bloc,
-  })  : provider = null,
-        bloc = bloc,
-        super(key: key);
+    this.bloc,
+  }) : super(key: key);
 
-  const BlocWidget.river({
-    Key? key,
-    @required this.provider,
-  })  : bloc = null,
-        super(key: key);
-
+  /// `bloc` that has the state. If it's null, it will be infered from
+  /// [BuildContext]
   final B? bloc;
-  final BlocProvider<B>? provider;
 
+  /// The `$use` method is a sugar syntax for the `useBloc`.
   @protected
-  B $use() {
-    if (provider != null) {
-      return useRiverBloc<B, S>(provider!, onEmitted: onStateEmitted);
-    }
-    return useBloc<B, S>(bloc: bloc, onEmitted: onStateEmitted);
-  }
+  B $use() => useBloc<B, S>(bloc: bloc, onEmitted: onStateEmitted);
 
+  /// The `onStateEmitted` method allows to customize the behavior
+  /// of the implementation of the [BlocWidget]
   @protected
   bool onStateEmitted(BuildContext context, S previous, S state);
 }
 
 /// Subscribes to a Cubit and handles a listener or a rebuild.
 ///
-/// Whenever [Cubit.state] updates, it will mark the caller [HookWidget]
-/// as needing build if either [allowRebuild] is `true` or [buildWhen]
-/// invocation returns [true].
+/// Whenever [BlocBase.state] updates, it will mark the caller [HookWidget]
+/// as needing build if either `allowRebuild` is `true` or `buildWhen`
+/// invocation returns `true`.
 ///
 /// if [bloc] is null, it will be inherited with `context.bloc()`
 ///
@@ -81,21 +75,13 @@ abstract class BlocWidget<B extends BlocBase<S>, S extends Object>
 /// See also:
 ///
 ///  * [Cubit]
+///  * [Bloc]
+///  * [BlocBase]
 B useBloc<B extends BlocBase<S>, S extends Object>({
   B? bloc,
   BlocHookListener<S>? onEmitted,
 }) {
-  // TODO(@kranfix): try to reduce lines
-  final context = useContext();
-  final _bloc = bloc ?? context.read<B>();
-  return use(_BlocHook<S>(_bloc, onEmitted)) as B;
-}
-
-B useRiverBloc<B extends BlocBase<S>, S extends Object>(
-  BlocProvider<B> provider, {
-  BlocHookListener<S>? onEmitted,
-}) {
-  final _bloc = useProvider(provider);
+  final _bloc = bloc ?? useContext().read<B>();
   return use(_BlocHook<S>(_bloc, onEmitted)) as B;
 }
 
@@ -110,6 +96,7 @@ class _BlocHook<S> extends Hook<BlocBase<S>> {
 }
 
 class _BlocHookState<S> extends HookState<BlocBase<S>, _BlocHook<S>> {
+  // ignore: cancel_subscriptions
   StreamSubscription<S>? _subscription;
 
   /// Previous state from cubit

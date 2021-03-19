@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks_bloc/flutter_hooks_bloc.dart' hide BlocProvider;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_timer/bloc/timer_bloc.dart';
 import 'package:riverbloc/riverbloc.dart';
@@ -64,12 +63,6 @@ class Timer extends StatelessWidget {
                     );
                   }),
                 ),
-              ),
-              BlocBuilder.river(
-                provider: timerProvider,
-                buildWhen: (previousState, state) =>
-                    state.runtimeType != previousState.runtimeType,
-                builder: (context, state) => Actions(),
               ),
             ],
           ),

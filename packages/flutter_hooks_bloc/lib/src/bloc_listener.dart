@@ -1,11 +1,9 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks_bloc/src/multi_bloc_listener.dart';
 
 import 'bloc_hook.dart';
 import 'flutter_bloc.dart' hide BlocProvider;
-import 'package:riverbloc/riverbloc.dart' show BlocProvider;
-
-import 'package:flutter/widgets.dart';
-import 'package:flutter/foundation.dart';
 
 /// Signature for the `listener` function which takes the `BuildContext` along
 /// with the `state` and is responsible for executing in response to
@@ -28,7 +26,7 @@ typedef BlocListenerCondition<S> = bool Function(S previous, S current);
 /// unlike the `builder` in `BlocBuilder`.
 ///
 /// If the [bloc] parameter is omitted, [BlocListener] will automatically
-/// perform a lookup using [BlocProvider] and the current `BuildContext`.
+/// perform a lookup using the current `BuildContext`.
 ///
 /// ```dart
 /// BlocListener<BlocA, BlocAState>(
@@ -39,7 +37,7 @@ typedef BlocListenerCondition<S> = bool Function(S previous, S current);
 /// )
 /// ```
 /// Only specify the [bloc] if you wish to provide a [bloc] that is otherwise
-/// not accessible via [BlocProvider] and the current `BuildContext`.
+/// not accessible via the current `BuildContext`.
 ///
 /// ```dart
 /// BlocListener<BlocA, BlocAState>(
@@ -78,6 +76,7 @@ typedef BlocListenerCondition<S> = bool Function(S previous, S current);
 /// {@endtemplate}
 class BlocListener<B extends BlocBase<S>, S extends Object>
     extends BlocListenerBase<B, S> implements NestableBlocListener {
+  /// {@macro bloc_listener}
   const BlocListener({
     Key? key,
     B? bloc,
@@ -92,20 +91,6 @@ class BlocListener<B extends BlocBase<S>, S extends Object>
           child: child,
         );
 
-  const BlocListener.river({
-    Key? key,
-    required BlocProvider<B> provider,
-    BlocListenerCondition<S>? listenWhen,
-    required BlocWidgetListener<S> listener,
-    Widget? child,
-  }) : super.river(
-          key: key,
-          provider: provider,
-          listenWhen: listenWhen,
-          listener: listener,
-          child: child,
-        );
-
   /// Helps to subscribe to a [bloc]
   @override
   void listen() => $use();
@@ -115,26 +100,25 @@ class BlocListener<B extends BlocBase<S>, S extends Object>
 
   @override
   DiagnosticsNode asDiagnosticsNode() {
-    if (provider != null) {
-      return DiagnosticsProperty<BlocProvider<B>>(
-        '$runtimeType.river',
-        null,
-        ifNull: '',
-        showSeparator: false,
-      );
-    } else {
-      return DiagnosticsProperty<S>(
-        '$runtimeType',
-        bloc?.state,
-        ifNull: '',
-        showSeparator: bloc?.state != null,
-      );
-    }
+    return DiagnosticsProperty<S>(
+      '$runtimeType',
+      bloc?.state,
+      ifNull: '',
+      showSeparator: bloc?.state != null,
+    );
   }
 }
 
+/// {@template bloc_listener_base}
+/// Base class for widgets that listen to state changes in a specified [bloc].
+///
+/// A [BlocListenerBase] is a [BlocWidget] and maintains the state subscription.
+/// The type of the state and what happens with each state change
+/// is defined by sub-classes.
+/// {@endtemplate}
 abstract class BlocListenerBase<B extends BlocBase<S>, S extends Object>
     extends BlocWidget<B, S> {
+  /// {@macro bloc_listener_base}
   const BlocListenerBase({
     Key? key,
     B? bloc,
@@ -142,14 +126,6 @@ abstract class BlocListenerBase<B extends BlocBase<S>, S extends Object>
     required this.listener,
     this.child,
   }) : super(key: key, bloc: bloc);
-
-  const BlocListenerBase.river({
-    Key? key,
-    required BlocProvider<B> provider,
-    this.listenWhen,
-    required this.listener,
-    this.child,
-  }) : super.river(key: key, provider: provider);
 
   /// Takes the previous `state` and the current `state` and is responsible for
   /// returning a [bool] which determines whether or not to call [listener]
@@ -180,18 +156,11 @@ abstract class BlocListenerBase<B extends BlocBase<S>, S extends Object>
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    if (provider != null) {
-      properties.add(DiagnosticsProperty<BlocProvider<B>>(
-        'povider',
-        provider,
-      ));
-    } else if (bloc != null) {
-      properties.add(DiagnosticsProperty<S>(
-        'state',
-        bloc?.state,
-        ifNull: '<null>',
-        showSeparator: bloc?.state != null,
-      ));
-    }
+    properties.add(DiagnosticsProperty<S>(
+      'state',
+      bloc?.state,
+      ifNull: '<null>',
+      showSeparator: bloc?.state != null,
+    ));
   }
 }

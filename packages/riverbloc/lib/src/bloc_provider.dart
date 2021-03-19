@@ -7,6 +7,7 @@ import 'package:meta/meta.dart';
 // ignore: implementation_imports
 import 'package:riverpod/src/framework.dart';
 
+/// {@template bloc_provider}
 /// Similar to Provider but for bloc
 ///
 /// ```
@@ -59,9 +60,11 @@ import 'package:riverpod/src/framework.dart';
 ///   }
 /// }
 /// ```
+/// {@endtemplate}
 @sealed
 class BlocProvider<B extends BlocBase<Object>>
     extends AlwaysAliveProviderBase<B, B> {
+  /// {@macro bloc_provider}
   BlocProvider(
     Create<B, ProviderReference> create, {
     String? name,
@@ -139,13 +142,14 @@ class _BlocProviderState<B extends BlocBase<S>, S>
 /// }),
 /// ```
 extension BlocStateProviderX<S extends Object> on BlocProvider<BlocBase<S>> {
+  /// Returns a provider for the `state` value.
   BlocStateProvider<S> get state {
     _state ??= BlocStateProvider<S>._(this);
     return _state as BlocStateProvider<S>;
   }
 }
 
-/// The [BlocStateProvider] watch a [cubit] or [bloc] and subscribe to its
+/// The [BlocStateProvider] watch a [Cubit] or [Bloc] and subscribe to its
 /// `state` and rebuilds every time that it is emitted.
 class BlocStateProvider<S extends Object>
     extends AlwaysAliveProviderBase<BlocBase<S>, S> {

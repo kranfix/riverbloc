@@ -1,7 +1,7 @@
 name: riverbloc
 description: >-
   BlocProvider implementation with riverpod as alternative to provider
-version: 0.2.2
+version: 0.2.3
 homepage: https://github.com/kranfix/riverbloc/tree/master/packages/riverbloc
 repository: https://github.com/kranfix/riverbloc
 
@@ -19,7 +19,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  pedantic: ^1.11.0
+  very_good_analysis: ^2.0.0
   #flutter_coverage_badge: ^0.0.1+1
 
 flutter:
