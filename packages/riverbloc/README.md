@@ -2,7 +2,7 @@
 
 ![Banner](https://raw.githubusercontent.com/kranfix/riverbloc/master/resources/riverbloc_banner.png)
 
-An implementation of BlocProvider based on riverpod providers.
+An implementation of `BlocProvider` based on #[riverpod](https://pub.dev/packages/riverpod) providers.
 The goal of this package is to make easy the migration from `flutter_bloc` to
 `flutter_riverpod`.
 
@@ -11,7 +11,7 @@ If you are interested in `hooks` with `bloc`, see also
 
 ## Usage
 
-It's similar to StateNotiferProvider but with bloc instead of StateNofier.
+It's similar to `StateNotiferProvider` but with bloc instead of StateNofier.
 
 ```dart
 class CounterCubit extends Cubit<int> {
