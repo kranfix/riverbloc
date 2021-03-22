@@ -1,3 +1,7 @@
+## [0.2.4] - 2021-03-2
+
+- New riverbloc logo (thanks to @SergioEric)
+
 ## [0.2.3] - 2021-03-18
 
 - Adding Very Good Analysis
