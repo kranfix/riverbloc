@@ -1,11 +1,4 @@
-import 'dart:async';
-
-import 'package:bloc/bloc.dart';
-import 'package:riverpod/riverpod.dart';
-import 'package:meta/meta.dart';
-
-// ignore: implementation_imports
-import 'package:riverpod/src/framework.dart';
+part of '../riverbloc.dart';
 
 /// {@template bloc_provider}
 /// Similar to Provider but for bloc
@@ -141,68 +134,11 @@ class _BlocProviderState<B extends BlocBase<S>, S>
 ///   );
 /// }),
 /// ```
-extension BlocStateProviderX<S extends Object> on BlocProvider<BlocBase<S>> {
+extension BlocBaseStateProviderX<S extends Object>
+    on BlocProvider<BlocBase<S>> {
   /// Returns a provider for the `state` value.
   BlocStateProvider<S> get state {
     _state ??= BlocStateProvider<S>._(this);
     return _state as BlocStateProvider<S>;
-  }
-}
-
-/// The [BlocStateProvider] watch a [Cubit] or [Bloc] and subscribe to its
-/// `state` and rebuilds every time that it is emitted.
-class BlocStateProvider<S extends Object>
-    extends AlwaysAliveProviderBase<BlocBase<S>, S> {
-  BlocStateProvider._(this._provider)
-      : super(
-          (ref) => ref.watch(_provider),
-          _provider.name != null ? '${_provider.name}.state' : null,
-        );
-
-  final BlocProvider<BlocBase<S>> _provider;
-
-  @override
-  Override overrideWithValue(S value) {
-    return ProviderOverride(
-      ValueProvider<BlocBase<S>, S>((ref) => ref.watch(_provider), value),
-      this,
-    );
-  }
-
-  @override
-  _BlocStateProviderState<S> createState() => _BlocStateProviderState();
-}
-
-class _BlocStateProviderState<S> extends ProviderStateBase<BlocBase<S>, S> {
-  StreamSubscription<S>? _subscription;
-
-  @override
-  void valueChanged({BlocBase<S>? previous}) {
-    if (createdValue != previous) {
-      if (_subscription != null) {
-        _unsubscribe();
-      }
-      _subscribe();
-    }
-  }
-
-  void _subscribe() {
-    exposedValue = createdValue.state;
-    _subscription = createdValue.stream.listen(_listener);
-  }
-
-  void _unsubscribe() {
-    _subscription?.cancel();
-    _subscription = null;
-  }
-
-  void _listener(S value) {
-    exposedValue = value;
-  }
-
-  @override
-  void dispose() {
-    _unsubscribe();
-    super.dispose();
   }
 }
