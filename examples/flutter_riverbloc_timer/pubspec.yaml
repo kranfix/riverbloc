@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_riverpod: ^0.13.1
-  riverbloc: ^0.2.1
+  riverbloc: ^0.2.4
   flutter_hooks_bloc:
     path: ../../packages/flutter_hooks_bloc
   equatable: ^2.0.0
