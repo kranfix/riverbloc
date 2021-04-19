@@ -5,14 +5,11 @@ part of '../riverbloc.dart';
 class BlocStateProvider<S extends Object>
     extends AlwaysAliveProviderBase<BlocBase<S>, S> {
   BlocStateProvider._(this._provider)
-      : super(
-          (ref) => ref.watch(_provider),
-          _provider.name != null ? '${_provider.name}.state' : null,
-        );
+      : super(_provider.name != null ? '${_provider.name}.state' : null);
 
   final BlocProvider<BlocBase<S>> _provider;
 
-  @override
+  /// Provider override with a value for the `state`
   Override overrideWithValue(S value) {
     return ProviderOverride(
       ValueProvider<BlocBase<S>, S>((ref) => ref.watch(_provider), value),
@@ -20,8 +17,12 @@ class BlocStateProvider<S extends Object>
     );
   }
 
+  /// Creates state for [BlocStateProvider]
   @override
   _BlocStateProviderState<S> createState() => _BlocStateProviderState();
+
+  @override
+  BlocBase<S> create(ProviderReference ref) => ref.watch(_provider);
 }
 
 class _BlocStateProviderState<S> extends ProviderStateBase<BlocBase<S>, S> {
