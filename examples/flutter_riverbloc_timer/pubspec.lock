@@ -7,7 +7,7 @@ packages:
       name: bloc
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "7.0.0-nullsafety.3"
+    version: "7.0.0"
   characters:
     dependency: transitive
     description:
@@ -40,7 +40,7 @@ packages:
       name: flutter_bloc
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "7.0.0-nullsafety.5"
+    version: "7.0.0"
   flutter_hooks:
     dependency: transitive
     description:
@@ -54,7 +54,7 @@ packages:
       path: "../../packages/flutter_hooks_bloc"
       relative: true
     source: path
-    version: "0.12.2"
+    version: "0.14.0"
   flutter_riverpod:
     dependency: "direct main"
     description:
@@ -110,7 +110,7 @@ packages:
       name: riverbloc
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.1"
+    version: "0.2.4"
   riverpod:
     dependency: transitive
     description:

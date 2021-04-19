@@ -1,3 +1,7 @@
+## [0.2.5] - 2021-04-19
+
+- Upgrading riverpod to 0.14.0+1
+
 ## [0.2.4] - 2021-03-2
 
 - New riverbloc logo (thanks to @SergioEric)

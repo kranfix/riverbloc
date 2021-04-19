@@ -11,9 +11,9 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  bloc: ^7.0.0-nullsafety.3
-  flutter_bloc: ^7.0.0-nullsafety.5
-  flutter_hooks_bloc: ^0.12.0
+  bloc: ^7.0.0
+  flutter_bloc: ^7.0.0
+  flutter_hooks_bloc: ^0.14.0
   flutter_hooks: ^0.16.0
 
 dev_dependencies:

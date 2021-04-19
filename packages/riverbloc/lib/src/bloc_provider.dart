@@ -1,13 +1,8 @@
-import 'dart:async';
-
-import 'package:bloc/bloc.dart';
-import 'package:riverpod/riverpod.dart';
-import 'package:meta/meta.dart';
-
-// ignore: implementation_imports
-import 'package:riverpod/src/framework.dart';
+part of '../riverbloc.dart';
 
 /// {@template bloc_provider}
+/// # BlocProvider
+///
 /// Similar to Provider but for bloc
 ///
 /// ```
@@ -61,6 +56,46 @@ import 'package:riverpod/src/framework.dart';
 /// }
 /// ```
 /// {@endtemplate}
+///
+/// {@template bloc_provider_override_with_provider}
+/// ## `BlocProvider.overrideWithProvider`
+///
+/// With pure dart:
+///
+/// ```dart
+/// final counterProvider = BlocProvider((ref) => CounterCubit(0));
+/// final counterCubit = CounterCubit(0);
+/// final counterProvider2 = BlocProvider((ref) => counterCubit);
+/// final container = ProviderContainer(
+///   overrides: [
+///     counterProvider.overrideWithProvider(counterProvider2),
+///   ],
+/// );
+///
+/// // reads `counterProvider2` and returns `counterCubit`
+/// container.read(counterProvider);
+/// ```
+///
+/// With Flutter:
+///
+/// ```dart
+/// final counterProvider = BlocProvider((ref) => CounterCubit(0));
+/// final counterCubit = CounterCubit(0);
+/// final counterProvider2 = BlocProvider((ref) => counterCubit);
+///
+/// ProviderScope(
+///   overrides: [
+///     counterProvider.overrideWithProvider(counterProvider2),
+///   ],
+///   child: Consumer(
+///     builder: (context, watch, _) {
+///       final countCubit = watch(counterProvider);
+///       return Container();
+///     },
+///   ),
+/// );
+/// ```
+/// {@endtemplate}
 @sealed
 class BlocProvider<B extends BlocBase<Object>>
     extends AlwaysAliveProviderBase<B, B> {
@@ -68,53 +103,22 @@ class BlocProvider<B extends BlocBase<Object>>
   BlocProvider(
     Create<B, ProviderReference> create, {
     String? name,
-  }) : super(create, name);
+  })  : _create = create,
+        super(name);
 
+  final Create<B, ProviderReference> _create;
   BlocStateProvider<Object?>? _state;
 
-  ///
-  /// With pure dart:
-  ///
-  /// ```dart
-  /// final counterProvider = BlocProvider((ref) => CounterCubit(0));
-  /// final counterCubit = CounterCubit(0);
-  /// final counterProvider2 = BlocProvider((ref) => counterCubit);
-  /// final container = ProviderContainer(
-  ///   overrides: [
-  ///     counterProvider.overrideWithProvider(counterProvider2),
-  ///   ],
-  /// );
-  ///
-  /// // reads `counterProvider2` and returns `counterCubit`
-  /// container.read(counterProvider);
-  /// ```
-  ///
-  /// With Flutter:
-  ///
-  /// ```dart
-  /// final counterProvider = BlocProvider((ref) => CounterCubit(0));
-  /// final counterCubit = CounterCubit(0);
-  /// final counterProvider2 = BlocProvider((ref) => counterCubit);
-  ///
-  /// ProviderScope(
-  ///   overrides: [
-  ///     counterProvider.overrideWithProvider(counterProvider2),
-  ///   ],
-  ///   child: Consumer(
-  ///     builder: (context, watch, _) {
-  ///       final countCubit = watch(counterProvider);
-  ///       return Container();
-  ///     },
-  ///   ),
-  /// );
-  /// ```
-  @override
+  /// {@macro bloc_provider_override_with_provider}
   ProviderOverride overrideWithProvider(covariant BlocProvider<B> provider) {
     return ProviderOverride(provider, this);
   }
 
   @override
   ProviderStateBase<B, B> createState() => _BlocProviderState<B, Object>();
+
+  @override
+  B create(ProviderReference ref) => _create(ref);
 }
 
 class _BlocProviderState<B extends BlocBase<S>, S>
@@ -127,6 +131,7 @@ class _BlocProviderState<B extends BlocBase<S>, S>
   }
 }
 
+/// {@template bloc_base_state_provider_x_state}
 /// Adds [state] to [BlocProvider].
 ///
 /// Usasge:
@@ -141,68 +146,11 @@ class _BlocProviderState<B extends BlocBase<S>, S>
 ///   );
 /// }),
 /// ```
-extension BlocStateProviderX<S extends Object> on BlocProvider<BlocBase<S>> {
-  /// Returns a provider for the `state` value.
+extension BlocBaseStateProviderX<S extends Object>
+    on BlocProvider<BlocBase<S>> {
+  /// {@macro bloc_base_state_provider_x_state}
   BlocStateProvider<S> get state {
     _state ??= BlocStateProvider<S>._(this);
     return _state as BlocStateProvider<S>;
-  }
-}
-
-/// The [BlocStateProvider] watch a [Cubit] or [Bloc] and subscribe to its
-/// `state` and rebuilds every time that it is emitted.
-class BlocStateProvider<S extends Object>
-    extends AlwaysAliveProviderBase<BlocBase<S>, S> {
-  BlocStateProvider._(this._provider)
-      : super(
-          (ref) => ref.watch(_provider),
-          _provider.name != null ? '${_provider.name}.state' : null,
-        );
-
-  final BlocProvider<BlocBase<S>> _provider;
-
-  @override
-  Override overrideWithValue(S value) {
-    return ProviderOverride(
-      ValueProvider<BlocBase<S>, S>((ref) => ref.watch(_provider), value),
-      this,
-    );
-  }
-
-  @override
-  _BlocStateProviderState<S> createState() => _BlocStateProviderState();
-}
-
-class _BlocStateProviderState<S> extends ProviderStateBase<BlocBase<S>, S> {
-  StreamSubscription<S>? _subscription;
-
-  @override
-  void valueChanged({BlocBase<S>? previous}) {
-    if (createdValue != previous) {
-      if (_subscription != null) {
-        _unsubscribe();
-      }
-      _subscribe();
-    }
-  }
-
-  void _subscribe() {
-    exposedValue = createdValue.state;
-    _subscription = createdValue.stream.listen(_listener);
-  }
-
-  void _unsubscribe() {
-    _subscription?.cancel();
-    _subscription = null;
-  }
-
-  void _listener(S value) {
-    exposedValue = value;
-  }
-
-  @override
-  void dispose() {
-    _unsubscribe();
-    super.dispose();
   }
 }
