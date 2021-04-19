@@ -84,7 +84,10 @@ class CounterItem<C extends CounterCubitBase> extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text('$C.state:'),
+        Text(
+          '$C.state:',
+          style: TextStyle(fontSize: 30),
+        ),
         const Expanded(
           child: SizedBox(),
         ),
@@ -92,7 +95,10 @@ class CounterItem<C extends CounterCubitBase> extends StatelessWidget {
           icon: Icon(Icons.arrow_left),
           onPressed: () => context.read<C>().decrement(),
         ),
-        Text('$state'),
+        Text(
+          '$state',
+          style: TextStyle(fontSize: 30),
+        ),
         IconButton(
           icon: Icon(Icons.arrow_right),
           onPressed: () => context.read<C>().increment(),
