@@ -76,6 +76,24 @@ part of '../riverbloc.dart';
 /// ```
 /// {@endtemplate}
 ///
+/// {@template bloc_provider_stream}
+/// ## `BlocProvider.stream`
+/// Listen if the `Bloc.stream` or `Cubit.stream`
+///
+/// Usasge:
+///
+/// ```dart
+/// Consumer(builder: (context, watch, __) {
+///   // Rebuilds if the cubit or bloc is recreated
+///   final _cubit = watch(counterProvider.notifier);
+///   return Text(
+///     '${_cubit.state}',
+///     style: Theme.of(context).textTheme.headline4,
+///   );
+/// }),
+/// ```
+/// {@endtemplate}
+///
 /// {@template bloc_provider_override_with_provider}
 /// ## `BlocProvider.overrideWithProvider`
 ///
@@ -175,6 +193,10 @@ class BlocProvider<B extends BlocBase<S>, S>
   late final AlwaysAliveProviderBase<B, B> notifier =
       _NotifierProvider(_create, name: name);
 
+  /// {@macro bloc_provider_stream}
+  late final AlwaysAliveProviderBase<Stream<S>, AsyncValue<S>> stream =
+      _StreamProvider<B, S>(notifier, name: name);
+
   /// {@macro bloc_provider_override_with_provider}
   ProviderOverride overrideWithProvider(covariant BlocProvider<B, S> provider) {
     return ProviderOverride(provider.notifier, notifier);
@@ -242,5 +264,19 @@ class _NotifierProvider<B extends BlocBase<Object?>> extends Provider<B> {
             return notifier;
           },
           name: name == null ? null : '$name.notifier',
+        );
+}
+
+// ignore: subtype_of_sealed_class
+class _StreamProvider<B extends BlocBase<S>, S> extends StreamProvider<S> {
+  _StreamProvider(
+    AlwaysAliveProviderBase<B, B> notifier, {
+    required String? name,
+  }) : super(
+          (ref) {
+            final bloc = ref.watch(notifier);
+            return bloc.stream;
+          },
+          name: name == null ? null : '$name.stream',
         );
 }

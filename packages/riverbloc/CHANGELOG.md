@@ -1,3 +1,7 @@
+## [0.4.0] - 2021-04-21
+
+- Adding `BlocProvider.stream`
+
 ## [0.3.0+1] - 2021-04-21
 
 - Fixing readme example
