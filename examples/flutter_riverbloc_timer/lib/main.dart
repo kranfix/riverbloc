@@ -9,10 +9,8 @@ import 'package:flutter_timer/ticker.dart';
 void main() => runApp(const ProviderScope(child: MyApp()));
 
 // ignore: top_level_function_literal_block
-final timerProvider = BlocProvider((ref) {
-  final bloc = TimerBloc(ticker: Ticker());
-  ref.onDispose(bloc.close);
-  return bloc;
+final timerProvider = BlocProvider<TimerBloc, TimerState>((ref) {
+  return TimerBloc(ticker: Ticker());
 });
 
 class MyApp extends StatelessWidget {
@@ -53,7 +51,7 @@ class Timer extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 100.0),
                 child: Center(
                   child: Consumer(builder: (context, watch, _) {
-                    final state = watch(timerProvider.state);
+                    final state = watch(timerProvider);
                     final String minutesStr = ((state.duration / 60) % 60)
                         .floor()
                         .toString()
@@ -81,11 +79,11 @@ class Timer extends StatelessWidget {
 class Actions extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    watch(timerProvider.state);
+    watch(timerProvider);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: _mapStateToActionButtons(
-        timerBloc: watch(timerProvider),
+        timerBloc: watch(timerProvider.notifier),
       ),
     );
   }
