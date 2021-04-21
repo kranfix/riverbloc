@@ -12,4 +12,3 @@ import 'package:riverpod/src/framework.dart';
 export 'package:bloc/bloc.dart';
 
 part 'src/bloc_provider.dart';
-part 'src/bloc_state_provider.dart';

@@ -1,3 +1,7 @@
+## [0.3.0] - 2021-04-21
+
+- `breaking`: `BlocProvider` has a `notifier` like `StateNotifierProvider`
+
 ## [0.2.5] - 2021-04-19
 
 - Upgrading riverpod to 0.14.0+1
