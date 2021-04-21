@@ -40,16 +40,23 @@ class CounterCubit extends Cubit<int> {
   void increment() => emit(state + 1);
 }
 
+class NullCounterCubit extends Cubit<int?> {
+  NullCounterCubit([int? state]) : super(state);
+
+  void increment() => emit((state ?? -1) + 1);
+}
+
 final counterCubitProvider =
     BlocProvider<CounterCubit, int>((ref) => CounterCubit(0));
 
 void main() {
-  group('BlocProvider commons', () {
+  group('Provider names', () {
     test('BlocProvider.notifier with no name', () {
       final counterBlocProvider = BlocProvider<CounterBloc, int>(
         (ref) => CounterBloc(0),
       );
       expect(counterBlocProvider.notifier.name, isNull);
+      expect(counterBlocProvider.stream.name, isNull);
     });
 
     test('BlocProvider.notifier with name', () {
@@ -58,6 +65,7 @@ void main() {
         name: 'counter',
       );
       expect(counterBlocProvider.notifier.name, 'counter.notifier');
+      expect(counterBlocProvider.stream.name, 'counter.stream');
     });
   });
   group('Bloc test', () {
@@ -230,7 +238,7 @@ void main() {
       }
     });
 
-    test('bloc resubscribe', () async {
+    test('cubit resubscribe', () async {
       final container = ProviderContainer();
       final counterCubit = container.read(counterCubitProvider.notifier);
 
@@ -257,6 +265,35 @@ void main() {
 
       expect(counterCubit2.state, 0);
       expect(container.read(counterCubitProvider), 0);
+    });
+
+    test('Cubit<T>.stream with non-null T', () async {
+      final pod = BlocProvider<CounterCubit, int>((ref) => CounterCubit(5));
+      final container = ProviderContainer();
+
+      expect(container.read(pod.stream), equals(const AsyncLoading<int>()));
+
+      container.read(pod.notifier).increment();
+      await Future(() {});
+
+      expect(container.read(pod.stream), equals(const AsyncData(6)));
+      expect(container.read(pod), 6);
+    });
+
+    test('Cubit<T?>.stream with nullable T', () async {
+      final pod = BlocProvider<NullCounterCubit, int?>(
+        (ref) => NullCounterCubit(),
+      );
+      final container = ProviderContainer();
+
+      expect(container.read(pod.stream), equals(const AsyncLoading<int?>()));
+      expect(container.read(pod), isNull);
+
+      container.read(pod.notifier).increment();
+      await Future(() {});
+
+      expect(container.read(pod.stream), equals(const AsyncData<int?>(0)));
+      expect(container.read(pod), 0);
     });
 
     test('BlocProvider overrided with provider', () {
