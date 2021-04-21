@@ -9,10 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_riverpod: ^0.13.1
-  riverbloc: ^0.2.4
-  flutter_hooks_bloc:
-    path: ../../packages/flutter_hooks_bloc
+  flutter_riverpod: ^0.14.0+1
+  riverbloc: ^0.3.0
   equatable: ^2.0.0
   #wave: ^0.1.0
 
