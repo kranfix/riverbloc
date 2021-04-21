@@ -1,3 +1,7 @@
+## [0.3.0+1] - 2021-04-21
+
+- Fixing readme example
+
 ## [0.3.0] - 2021-04-21
 
 - `breaking`: `BlocProvider` has a `notifier` like `StateNotifierProvider`

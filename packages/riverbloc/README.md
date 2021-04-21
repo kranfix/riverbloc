@@ -20,7 +20,9 @@ class CounterCubit extends Cubit<int> {
   void increment() => emit(state + 1);
 }
 
-final counterProvider = BlocProvider((ref) => CounterCubit(0));
+final counterProvider = BlocProvider<CounterCubit, int>(
+  (ref) => CounterCubit(0),
+);
 
 class MyHomePage extends ConsumerWidget {
   const MyHomePage({Key? key, this.title}) : super(key: key);
@@ -31,7 +33,7 @@ class MyHomePage extends ConsumerWidget {
   Widget build(BuildContext context, ScopedReader watch) {
     // Rebuilds the widget if the cubit/bloc changes.
     // But does not rebuild if the state changes with the same cubit/bloc
-    final counterCubit = watch(counterProvider);
+    final counterCubit = watch(counterProvider.notifier);
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
@@ -45,7 +47,7 @@ class MyHomePage extends ConsumerWidget {
             ),
             Consumer(builder: (context, watch, __) {
               // Rebuilds in every emitted state
-              final _counter = watch(counterProvider.state);
+              final _counter = watch(counterProvider);
               return Text(
                 '$_counter',
                 style: Theme.of(context).textTheme.headline4,
@@ -55,7 +57,7 @@ class MyHomePage extends ConsumerWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.read(counterProvider).increment(),
+        onPressed: () => context.read(counterProvider.notifier).increment(),
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ),
