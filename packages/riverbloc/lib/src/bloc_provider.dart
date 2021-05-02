@@ -1,9 +1,20 @@
-part of '../riverbloc.dart';
+import 'dart:async';
+
+import 'package:bloc/bloc.dart';
+import 'package:riverpod/riverpod.dart';
+import 'package:meta/meta.dart';
+
+// ignore: implementation_imports
+import 'package:riverpod/src/framework.dart';
+
+part 'bloc_provider_state.dart';
+part 'bloc_notifier_provider.dart';
+//part 'auto_dispose.dart';
 
 /// {@template bloc_provider}
 /// # BlocProvider
 ///
-/// Similar to [StateNotifierProvider] but for bloc
+/// Similar to [StateNotifierProvider] but for [BlocBase] ([Bloc] and [Cubit])
 ///
 /// ```
 /// class CounterCubit extends Cubit<int> {
@@ -179,7 +190,7 @@ part of '../riverbloc.dart';
 /// {@endtemplate}
 @sealed
 class BlocProvider<B extends BlocBase<S>, S>
-    extends AlwaysAliveProviderBase<B, S> {
+    extends AlwaysAliveProviderBase<B, S> with _BlocProviderMixin {
   /// {@macro bloc_provider}
   BlocProvider(
     Create<B, ProviderReference> create, {
@@ -190,93 +201,22 @@ class BlocProvider<B extends BlocBase<S>, S>
   final Create<B, ProviderReference> _create;
 
   /// {@macro bloc_provider_notifier}
+  @override
   late final AlwaysAliveProviderBase<B, B> notifier =
       _NotifierProvider(_create, name: name);
 
   /// {@macro bloc_provider_stream}
   late final AlwaysAliveProviderBase<Stream<S>, AsyncValue<S>> stream =
-      _StreamProvider<B, S>(notifier, name: name);
+      StreamProvider<S>(
+    (ref) => ref.watch(notifier).stream,
+    name: name == null ? null : '$name.stream',
+  );
 
   /// {@macro bloc_provider_override_with_provider}
-  ProviderOverride overrideWithProvider(covariant BlocProvider<B, S> provider) {
+  ProviderOverride overrideWithProvider(BlocProvider<B, S> provider) {
     return ProviderOverride(provider.notifier, notifier);
   }
 
-  /// {@macro bloc_provider_override_with_value}
-  ProviderOverride overrideWithValue(B value) {
-    return ProviderOverride(
-      ValueProvider<Object?, B>((ref) => value, value),
-      notifier,
-    );
-  }
-
-  @override
-  ProviderStateBase<B, S> createState() => _BlocProviderState<B, S>();
-
   @override
   B create(ProviderReference ref) => ref.watch(notifier);
-}
-
-class _BlocProviderState<B extends BlocBase<S>, S>
-    extends ProviderStateBase<B, S> {
-  StreamSubscription<S>? _subscription;
-
-  @override
-  void valueChanged({B? previous}) {
-    if (createdValue != previous) {
-      if (_subscription != null) {
-        _unsubscribe();
-      }
-      _subscribe();
-    }
-  }
-
-  void _subscribe() {
-    exposedValue = createdValue.state;
-    _subscription = createdValue.stream.listen(_listener);
-  }
-
-  void _unsubscribe() {
-    _subscription?.cancel();
-    _subscription = null;
-  }
-
-  void _listener(S value) {
-    exposedValue = value;
-  }
-
-  @override
-  void dispose() {
-    _unsubscribe();
-    super.dispose();
-  }
-}
-
-// ignore: subtype_of_sealed_class
-class _NotifierProvider<B extends BlocBase<Object?>> extends Provider<B> {
-  _NotifierProvider(
-    Create<B, ProviderReference> create, {
-    required String? name,
-  }) : super(
-          (ref) {
-            final notifier = create(ref);
-            ref.onDispose(notifier.close);
-            return notifier;
-          },
-          name: name == null ? null : '$name.notifier',
-        );
-}
-
-// ignore: subtype_of_sealed_class
-class _StreamProvider<B extends BlocBase<S>, S> extends StreamProvider<S> {
-  _StreamProvider(
-    AlwaysAliveProviderBase<B, B> notifier, {
-    required String? name,
-  }) : super(
-          (ref) {
-            final bloc = ref.watch(notifier);
-            return bloc.stream;
-          },
-          name: name == null ? null : '$name.stream',
-        );
 }

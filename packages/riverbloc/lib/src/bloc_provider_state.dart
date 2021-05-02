@@ -34,3 +34,19 @@ class _BlocProviderState<B extends BlocBase<S>, S>
     super.dispose();
   }
 }
+
+mixin _BlocProviderMixin<B extends BlocBase<S>, S> on RootProvider<B, S> {
+  /// {@macro bloc_provider_notifier}
+  ProviderBase<B, B> get notifier;
+
+  /// {@macro bloc_provider_override_with_value}
+  ProviderOverride overrideWithValue(B value) {
+    return ProviderOverride(
+      ValueProvider<Object?, B>((ref) => value, value),
+      notifier,
+    );
+  }
+
+  @override
+  ProviderStateBase<B, S> createState() => _BlocProviderState<B, S>();
+}
