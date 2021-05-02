@@ -9,7 +9,7 @@ import 'package:riverpod/src/framework.dart';
 
 part 'bloc_provider_state.dart';
 part 'bloc_notifier_provider.dart';
-//part 'auto_dispose.dart';
+part 'auto_dispose.dart';
 
 /// {@template bloc_provider}
 /// # BlocProvider
@@ -188,6 +188,33 @@ part 'bloc_notifier_provider.dart';
 /// );
 /// ```
 /// {@endtemplate}
+///
+/// {@template bloc_provider_auto_dispose}
+/// ## Auto Dispose
+/// Marks the provider as automatically disposed when no-longer listened.
+///
+/// ```dart
+/// final counterProvider1 = BlocProvider.autoDispose((ref) => CounterCubit(0));
+///
+/// final counterProvider2 - AutoDisposeBlocProvider((ref) => CounterCubit(0));
+/// ```
+/// The `maintainState` property is a boolean (`false` by default) that allows
+/// the provider to tell Riverpod if the state of the provider should be
+/// preserved even if no-longer listened.
+///
+/// ```dart
+/// final myProvider = BlocProvider.autoDispose((ref) {
+///   final asyncValue = ref.watch(myFutureProvider);
+///   final firstState = asyncValue.data!.value;
+///   ref.maintainState = true;
+///   return CounterBloc(firstState);
+/// });
+/// ```
+///
+/// This way, if the `asyncValue` has no data, the provider won't create
+/// correctly the state and if the UI leaves the screen and re-enters it,
+/// the `asyncValue` will be readed again to retry creating the state.
+/// {@endtemplate}
 @sealed
 class BlocProvider<B extends BlocBase<S>, S>
     extends AlwaysAliveProviderBase<B, S> with _BlocProviderMixin {
@@ -197,6 +224,9 @@ class BlocProvider<B extends BlocBase<S>, S>
     String? name,
   })  : _create = create,
         super(name);
+
+  /// {@macro bloc_provider_auto_dispose}
+  static const autoDispose = AutoDisposeBlocProviderBuilder();
 
   final Create<B, ProviderReference> _create;
 
