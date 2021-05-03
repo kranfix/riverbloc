@@ -1,4 +1,9 @@
 import 'package:bloc/bloc.dart';
+import 'package:mockito/mockito.dart';
+
+class Listener<T> extends Mock {
+  void call(T value);
+}
 
 enum CounterEvent { inc, dec }
 
@@ -28,13 +33,29 @@ class CounterBloc extends Bloc<CounterEvent, int> {
 }
 
 class CounterCubit extends Cubit<int> {
-  CounterCubit(int state) : super(state);
+  CounterCubit(int state, {this.onClose}) : super(state);
+
+  void Function()? onClose;
 
   void increment() => emit(state + 1);
+
+  @override
+  Future<void> close() {
+    onClose?.call();
+    return super.close();
+  }
 }
 
 class NullCounterCubit extends Cubit<int?> {
-  NullCounterCubit([int? state]) : super(state);
+  NullCounterCubit({int? state, this.onClose}) : super(state);
+
+  void Function()? onClose;
 
   void increment() => emit((state ?? -1) + 1);
+
+  @override
+  Future<void> close() {
+    onClose?.call();
+    return super.close();
+  }
 }
