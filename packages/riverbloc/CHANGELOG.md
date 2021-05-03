@@ -1,3 +1,7 @@
+## [0.5.0] - 2021-05-02
+
+- Adding `BlocProvider.autoDispose`.
+
 ## [0.4.0] - 2021-04-21
 
 - Adding `BlocProvider.stream`
