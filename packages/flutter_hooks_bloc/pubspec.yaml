@@ -13,14 +13,13 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_hooks: ^0.16.0
-  hooks_riverpod: ^0.13.1
   flutter_bloc: ^7.0.0
   bloc: ^7.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  very_good_analysis: ^2.0.0
+  very_good_analysis: ^2.0.3
   #flutter_coverage_badge: ^0.0.1+1
 
 flutter:

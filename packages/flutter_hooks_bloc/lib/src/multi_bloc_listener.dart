@@ -53,9 +53,10 @@ import 'flutter_bloc.dart';
 /// {@endtemplate}
 class MultiBlocListener extends HookWidget {
   /// {@macro multi_bloc_listener}
-  MultiBlocListener({required this.listeners, required this.child})
+  MultiBlocListener({Key? key, required this.listeners, required this.child})
       : assert(listeners.isNotEmpty),
-        assert(listeners._debugBlocListenerWithNoChild());
+        assert(listeners._debugBlocListenerWithNoChild()),
+        super(key: key);
 
   /// List of [BlocListener] and/or  [NestableBlocListener].
   /// Must have at least one element

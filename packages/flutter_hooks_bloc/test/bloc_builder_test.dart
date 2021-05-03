@@ -7,13 +7,13 @@ class MyThemeApp extends StatefulWidget {
   MyThemeApp({
     Key? key,
     required Cubit<ThemeData> themeCubit,
-    required Function onBuild,
+    required VoidCallback onBuild,
   })   : _themeCubit = themeCubit,
         _onBuild = onBuild,
         super(key: key);
 
   final Cubit<ThemeData> _themeCubit;
-  final Function _onBuild;
+  final VoidCallback _onBuild;
 
   @override
   State<MyThemeApp> createState() => MyThemeAppState(
@@ -25,12 +25,12 @@ class MyThemeApp extends StatefulWidget {
 class MyThemeAppState extends State<MyThemeApp> {
   MyThemeAppState({
     required Cubit<ThemeData> themeCubit,
-    required Function onBuild,
+    required VoidCallback onBuild,
   })   : _themeCubit = themeCubit,
         _onBuild = onBuild;
 
   Cubit<ThemeData> _themeCubit;
-  final Function _onBuild;
+  final VoidCallback _onBuild;
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +80,8 @@ class DarkThemeCubit extends Cubit<ThemeData> {
 }
 
 class MyCounterApp extends StatefulWidget {
+  const MyCounterApp({Key? key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => MyCounterAppState();
 }
@@ -314,7 +316,7 @@ void main() {
 
     testWidgets('with buildWhen only rebuilds when buildWhen evaluates to true',
         (tester) async {
-      await tester.pumpWidget(MyCounterApp());
+      await tester.pumpWidget(const MyCounterApp());
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('myCounterApp')), findsOneWidget);
