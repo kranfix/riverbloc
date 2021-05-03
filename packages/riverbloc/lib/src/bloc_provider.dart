@@ -1,9 +1,20 @@
-part of '../riverbloc.dart';
+import 'dart:async';
+
+import 'package:bloc/bloc.dart';
+import 'package:riverpod/riverpod.dart';
+import 'package:meta/meta.dart';
+
+// ignore: implementation_imports
+import 'package:riverpod/src/framework.dart';
+
+part 'bloc_provider_state.dart';
+part 'bloc_notifier_provider.dart';
+part 'auto_dispose.dart';
 
 /// {@template bloc_provider}
 /// # BlocProvider
 ///
-/// Similar to [StateNotifierProvider] but for bloc
+/// Similar to [StateNotifierProvider] but for [BlocBase] ([Bloc] and [Cubit])
 ///
 /// ```
 /// class CounterCubit extends Cubit<int> {
@@ -177,9 +188,36 @@ part of '../riverbloc.dart';
 /// );
 /// ```
 /// {@endtemplate}
+///
+/// {@template bloc_provider_auto_dispose}
+/// ## Auto Dispose
+/// Marks the provider as automatically disposed when no-longer listened.
+///
+/// ```dart
+/// final counterProvider1 = BlocProvider.autoDispose((ref) => CounterCubit(0));
+///
+/// final counterProvider2 - AutoDisposeBlocProvider((ref) => CounterCubit(0));
+/// ```
+/// The `maintainState` property is a boolean (`false` by default) that allows
+/// the provider to tell Riverpod if the state of the provider should be
+/// preserved even if no-longer listened.
+///
+/// ```dart
+/// final myProvider = BlocProvider.autoDispose((ref) {
+///   final asyncValue = ref.watch(myFutureProvider);
+///   final firstState = asyncValue.data!.value;
+///   ref.maintainState = true;
+///   return CounterBloc(firstState);
+/// });
+/// ```
+///
+/// This way, if the `asyncValue` has no data, the provider won't create
+/// correctly the state and if the UI leaves the screen and re-enters it,
+/// the `asyncValue` will be readed again to retry creating the state.
+/// {@endtemplate}
 @sealed
 class BlocProvider<B extends BlocBase<S>, S>
-    extends AlwaysAliveProviderBase<B, S> {
+    extends AlwaysAliveProviderBase<B, S> with _BlocProviderMixin {
   /// {@macro bloc_provider}
   BlocProvider(
     Create<B, ProviderReference> create, {
@@ -187,96 +225,28 @@ class BlocProvider<B extends BlocBase<S>, S>
   })  : _create = create,
         super(name);
 
+  /// {@macro bloc_provider_auto_dispose}
+  static const autoDispose = AutoDisposeBlocProviderBuilder();
+
   final Create<B, ProviderReference> _create;
 
   /// {@macro bloc_provider_notifier}
+  @override
   late final AlwaysAliveProviderBase<B, B> notifier =
       _NotifierProvider(_create, name: name);
 
   /// {@macro bloc_provider_stream}
   late final AlwaysAliveProviderBase<Stream<S>, AsyncValue<S>> stream =
-      _StreamProvider<B, S>(notifier, name: name);
+      StreamProvider<S>(
+    (ref) => ref.watch(notifier).stream,
+    name: name == null ? null : '$name.stream',
+  );
 
   /// {@macro bloc_provider_override_with_provider}
-  ProviderOverride overrideWithProvider(covariant BlocProvider<B, S> provider) {
+  ProviderOverride overrideWithProvider(BlocProvider<B, S> provider) {
     return ProviderOverride(provider.notifier, notifier);
   }
 
-  /// {@macro bloc_provider_override_with_value}
-  ProviderOverride overrideWithValue(B value) {
-    return ProviderOverride(
-      ValueProvider<Object?, B>((ref) => value, value),
-      notifier,
-    );
-  }
-
-  @override
-  ProviderStateBase<B, S> createState() => _BlocProviderState<B, S>();
-
   @override
   B create(ProviderReference ref) => ref.watch(notifier);
-}
-
-class _BlocProviderState<B extends BlocBase<S>, S>
-    extends ProviderStateBase<B, S> {
-  StreamSubscription<S>? _subscription;
-
-  @override
-  void valueChanged({B? previous}) {
-    if (createdValue != previous) {
-      if (_subscription != null) {
-        _unsubscribe();
-      }
-      _subscribe();
-    }
-  }
-
-  void _subscribe() {
-    exposedValue = createdValue.state;
-    _subscription = createdValue.stream.listen(_listener);
-  }
-
-  void _unsubscribe() {
-    _subscription?.cancel();
-    _subscription = null;
-  }
-
-  void _listener(S value) {
-    exposedValue = value;
-  }
-
-  @override
-  void dispose() {
-    _unsubscribe();
-    super.dispose();
-  }
-}
-
-// ignore: subtype_of_sealed_class
-class _NotifierProvider<B extends BlocBase<Object?>> extends Provider<B> {
-  _NotifierProvider(
-    Create<B, ProviderReference> create, {
-    required String? name,
-  }) : super(
-          (ref) {
-            final notifier = create(ref);
-            ref.onDispose(notifier.close);
-            return notifier;
-          },
-          name: name == null ? null : '$name.notifier',
-        );
-}
-
-// ignore: subtype_of_sealed_class
-class _StreamProvider<B extends BlocBase<S>, S> extends StreamProvider<S> {
-  _StreamProvider(
-    AlwaysAliveProviderBase<B, B> notifier, {
-    required String? name,
-  }) : super(
-          (ref) {
-            final bloc = ref.watch(notifier);
-            return bloc.stream;
-          },
-          name: name == null ? null : '$name.stream',
-        );
 }
