@@ -42,7 +42,9 @@ class AutoDisposeBlocProvider<B extends BlocBase<S>, S>
   );
 
   /// {@macro bloc_provider_override_with_provider}
-  ProviderOverride overrideWithProvider(BlocProvider<B, S> provider) {
+  ProviderOverride overrideWithProvider(
+    AutoDisposeBlocProvider<B, S> provider,
+  ) {
     return ProviderOverride(provider.notifier, notifier);
   }
 
