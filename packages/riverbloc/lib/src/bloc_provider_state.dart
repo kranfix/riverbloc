@@ -1,5 +1,6 @@
 part of 'bloc_provider.dart';
 
+// ignore: subtype_of_sealed_class
 mixin _BlocProviderMixin<B extends BlocBase<S>, S> on ProviderBase<S> {
   /// {@macro bloc_provider_notifier}
   ProviderBase<B> get notifier;
