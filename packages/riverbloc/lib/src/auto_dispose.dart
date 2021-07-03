@@ -1,9 +1,5 @@
 part of 'bloc_provider.dart';
 
-/// {@macro riverpod.providerrefbase}
-typedef AutoDisposeBlocNotifierProviderRef<B extends BlocBase<S>, S>
-    = AutoDisposeProviderRefBase;
-
 // ignore: subtype_of_sealed_class
 class _AutoDisposeNotifierProvider<B extends BlocBase<Object?>>
     extends AutoDisposeProviderBase<B> {
@@ -35,6 +31,7 @@ class _AutoDisposeNotifierProvider<B extends BlocBase<Object?>>
       throw UnsupportedError('Cannot override BlocProvider.notifier');
 }
 
+// ignore: subtype_of_sealed_class
 /// {@macro bloc_provider_auto_dispose}
 @sealed
 class AutoDisposeBlocProvider<B extends BlocBase<S>, S>
@@ -43,7 +40,7 @@ class AutoDisposeBlocProvider<B extends BlocBase<S>, S>
 
   AutoDisposeBlocProvider(this._create, {String? name}) : super(name);
 
-  final Create<B, AutoDisposeBlocNotifierProviderRef<B, S>> _create;
+  final Create<B, AutoDisposeProviderRefBase> _create;
 
   @override
   late final AutoDisposeProviderBase<B> notifier =
@@ -59,6 +56,7 @@ class AutoDisposeBlocProvider<B extends BlocBase<S>, S>
   @override
   S create(AutoDisposeProviderElementBase<S> ref) {
     final notifier = ref.watch(this.notifier);
+    ref.state = notifier.state;
 
     void listener(S newState) {
       ref.state = newState;
@@ -100,7 +98,7 @@ class AutoDisposeBlocProviderBuilder {
 
   /// {@macro riverpod.autoDispose}
   AutoDisposeBlocProvider<B, S> call<B extends BlocBase<S>, S>(
-    B Function(AutoDisposeBlocNotifierProviderRef ref) create, {
+    B Function(AutoDisposeProviderRefBase ref) create, {
     String? name,
   }) {
     return AutoDisposeBlocProvider(create, name: name);
