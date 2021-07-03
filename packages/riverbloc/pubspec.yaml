@@ -13,7 +13,7 @@ dependencies:
   flutter:
     sdk: flutter
   riverpod: ^1.0.0-dev.2
-  bloc: ^7.0.0
+  bloc: ">=7.0.0 <9.0.0"
   meta: ^1.3.0
 
 dev_dependencies:
