@@ -215,7 +215,7 @@ part 'auto_dispose.dart';
 /// the `asyncValue` will be readed again to retry creating the state.
 /// {@endtemplate}
 class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
-    with _BlocProviderMixin {
+    with _BlocProviderMixin<B, S> {
   /// {@macro bloc_provider}
   BlocProvider(this._create, {String? name}) : super(name);
 
@@ -228,6 +228,9 @@ class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
   @override
   late final AlwaysAliveProviderBase<B> notifier =
       _NotifierProvider(_create, name: name);
+
+  /// {@macro bloc_provider_bloc}
+  AlwaysAliveProviderBase<B> get bloc => notifier;
 
   /// {@macro bloc_provider_stream}
   late final AlwaysAliveProviderBase<AsyncValue<S>> stream = StreamProvider<S>(
