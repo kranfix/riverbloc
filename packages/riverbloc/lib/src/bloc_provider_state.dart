@@ -14,11 +14,11 @@ mixin _BlocProviderMixin<B extends BlocBase<S>, S> on ProviderBase<S> {
   /// Overrides the behavior of a provider with a value.
   ///
   /// {@macro riverpod.overideWith}
-  Override overrideWithValue(B value) {
+  Override overrideWithValue(B bloc) {
     return ProviderOverride((setup) {
       setup(
         origin: notifier,
-        override: ValueProvider<B>(value),
+        override: ValueProvider<B>(bloc),
       );
       setup(origin: this, override: this);
     });
