@@ -214,7 +214,7 @@ void main() {
 
       expect(
         container.refresh(counterCubitProvider),
-        equals(counterCubit),
+        equals(counterCubit.state),
       );
 
       final counterCubit2 = container.refresh(counterCubitProvider.notifier);
