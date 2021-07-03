@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:meta/meta.dart';
@@ -11,6 +9,7 @@ part 'bloc_provider_state.dart';
 part 'bloc_notifier_provider.dart';
 part 'auto_dispose.dart';
 
+// ignore: subtype_of_sealed_class
 /// {@template bloc_provider}
 /// # BlocProvider
 ///
@@ -215,11 +214,6 @@ part 'auto_dispose.dart';
 /// correctly the state and if the UI leaves the screen and re-enters it,
 /// the `asyncValue` will be readed again to retry creating the state.
 /// {@endtemplate}
-
-/// {@macro riverpod.providerrefbase}
-typedef BlocNotifierProviderRef<B extends BlocBase<S>, S> = ProviderRefBase;
-
-@sealed
 class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
     with _BlocProviderMixin {
   /// {@macro bloc_provider}
@@ -228,7 +222,7 @@ class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
   /// {@macro bloc_provider_auto_dispose}
   static const autoDispose = AutoDisposeBlocProviderBuilder();
 
-  final Create<B, BlocNotifierProviderRef<B, S>> _create;
+  final Create<B, ProviderRefBase> _create;
 
   /// {@macro bloc_provider_notifier}
   @override
@@ -243,7 +237,7 @@ class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
 
   @override
   bool recreateShouldNotify(S previousState, S newState) {
-    return true;
+    return newState != previousState;
   }
 
   /// Overrides the behavior of a provider with a another provider.
@@ -260,6 +254,8 @@ class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
   @override
   S create(ProviderElementBase<S> ref) {
     final notifier = ref.watch(this.notifier);
+
+    ref.state = notifier.state;
 
     void listener(S newState) {
       ref.state = newState;
