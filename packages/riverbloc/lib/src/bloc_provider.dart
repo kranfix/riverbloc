@@ -215,38 +215,62 @@ part 'auto_dispose.dart';
 /// correctly the state and if the UI leaves the screen and re-enters it,
 /// the `asyncValue` will be readed again to retry creating the state.
 /// {@endtemplate}
+
+/// {@macro riverpod.providerrefbase}
+typedef BlocNotifierProviderRef<B extends BlocBase<S>, S> = ProviderRefBase;
+
 @sealed
-class BlocProvider<B extends BlocBase<S>, S>
-    extends AlwaysAliveProviderBase<B, S> with _BlocProviderMixin {
+class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
+    with _BlocProviderMixin {
   /// {@macro bloc_provider}
-  BlocProvider(
-    Create<B, ProviderReference> create, {
-    String? name,
-  })  : _create = create,
-        super(name);
+  BlocProvider(this._create, {String? name}) : super(name);
 
   /// {@macro bloc_provider_auto_dispose}
   static const autoDispose = AutoDisposeBlocProviderBuilder();
 
-  final Create<B, ProviderReference> _create;
+  final Create<B, BlocNotifierProviderRef<B, S>> _create;
 
   /// {@macro bloc_provider_notifier}
   @override
-  late final AlwaysAliveProviderBase<B, B> notifier =
+  late final AlwaysAliveProviderBase<B> notifier =
       _NotifierProvider(_create, name: name);
 
   /// {@macro bloc_provider_stream}
-  late final AlwaysAliveProviderBase<Stream<S>, AsyncValue<S>> stream =
-      StreamProvider<S>(
+  late final AlwaysAliveProviderBase<AsyncValue<S>> stream = StreamProvider<S>(
     (ref) => ref.watch(notifier).stream,
     name: name == null ? null : '$name.stream',
   );
 
-  /// {@macro bloc_provider_override_with_provider}
-  ProviderOverride overrideWithProvider(BlocProvider<B, S> provider) {
-    return ProviderOverride(provider.notifier, notifier);
+  @override
+  bool recreateShouldNotify(S previousState, S newState) {
+    return true;
+  }
+
+  /// Overrides the behavior of a provider with a another provider.
+  ///
+  /// {@macro riverpod.overideWith}
+  Override overrideWithProvider(
+    BlocProvider<B, S> provider,
+  ) {
+    return ProviderOverride((setup) {
+      setup(origin: notifier, override: provider.notifier);
+    });
   }
 
   @override
-  B create(ProviderReference ref) => ref.watch(notifier);
+  S create(ProviderElementBase<S> ref) {
+    final notifier = ref.watch(this.notifier);
+
+    void listener(S newState) {
+      ref.state = newState;
+    }
+
+    final removeListener = notifier.stream.listen(listener);
+    ref.onDispose(removeListener.cancel);
+
+    return ref.state;
+  }
+
+  @override
+  ProviderElementBase<S> createElement() => ProviderElement(this);
 }
