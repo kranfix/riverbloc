@@ -88,6 +88,26 @@ part 'auto_dispose.dart';
 /// ```
 /// {@endtemplate}
 ///
+/// {@template bloc_provider_bloc}
+/// ## `BlocProvider.bloc`
+/// `BlocBase` object getter, it can be either `Bloc`
+/// or `Cubit`.
+///
+/// Usage:
+///
+/// ```dart
+/// Consumer(builder: (context, ref, __) {
+///   return ElevatedButton(
+///     style: style,
+///     onPressed: () {
+///       ref.read(counterBlocPod.bloc).increment();
+///     },
+///     child: const Text('Press me'),
+///   );
+/// }),
+/// ```
+/// {@endtemplate}
+///
 /// {@template bloc_provider_stream}
 /// ## `BlocProvider.stream`
 /// Listen to the `Bloc.stream` or `Cubit.stream`
