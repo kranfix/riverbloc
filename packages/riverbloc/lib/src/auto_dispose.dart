@@ -46,6 +46,9 @@ class AutoDisposeBlocProvider<B extends BlocBase<S>, S>
   late final AutoDisposeProviderBase<B> notifier =
       _AutoDisposeNotifierProvider(_create, name: name);
 
+  /// {@macro bloc_provider_bloc}
+  AutoDisposeProviderBase<B> get bloc => notifier;
+
   /// {@macro bloc_provider_stream}
   late final AutoDisposeProviderBase<AsyncValue<S>> stream =
       AutoDisposeStreamProvider<S>(
