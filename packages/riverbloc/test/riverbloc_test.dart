@@ -311,7 +311,7 @@ void main() {
         name: 'cubit2',
       );
 
-      final setup = SetupOverride();
+      final setup = MockSetupOverride();
 
       counterCubitProvider.setupOverride(setup);
 

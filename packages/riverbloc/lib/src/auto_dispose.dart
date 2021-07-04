@@ -27,7 +27,7 @@ class _AutoDisposeNotifierProvider<B extends BlocBase<Object?>>
   }
 
   @override
-  SetupOverride get setupOverride =>
+  void setupOverride(SetupOverride setup) =>
       throw UnsupportedError('Cannot override BlocProvider.notifier');
 }
 

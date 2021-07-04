@@ -6,10 +6,10 @@ mixin _BlocProviderMixin<B extends BlocBase<S>, S> on ProviderBase<S> {
   ProviderBase<B> get notifier;
 
   @override
-  SetupOverride get setupOverride => (setup) {
-        setup(origin: this, override: this);
-        setup(origin: notifier, override: notifier);
-      };
+  void setupOverride(SetupOverride setup) {
+    setup(origin: this, override: this);
+    setup(origin: notifier, override: notifier);
+  }
 
   /// Overrides the behavior of a provider with a value.
   ///
@@ -18,7 +18,7 @@ mixin _BlocProviderMixin<B extends BlocBase<S>, S> on ProviderBase<S> {
     return ProviderOverride((setup) {
       setup(
         origin: notifier,
-        override: ValueProvider<B>(bloc),
+        override: Provider<B>((ref) => bloc),
       );
       setup(origin: this, override: this);
     });
