@@ -22,7 +22,7 @@ part 'auto_dispose.dart';
 ///   void increment() => emit(state + 1);
 /// }
 ///
-/// final counterProvider =
+/// final counterCubitPod =
 ///     BlocProvider<CounterCubit, int>((ref) => CounterCubit(0));
 ///
 /// class MyHomePage extends ConsumerWidget {
@@ -31,10 +31,10 @@ part 'auto_dispose.dart';
 ///   final String title;
 ///
 ///   @override
-///   Widget build(BuildContext context, ScopedReader watch) {
+///   Widget build(BuildContext context, WidgetRef ref) {
 ///     // Rebuilds the widget if the cubit/bloc changes.
 ///     // But does not rebuild if the state changes with the same cubit/bloc
-///     final counterCubit = watch(counterProvider.notifier);
+///     final counterCubit = ref.watch(counterCubitPod.notifier);
 ///     return Scaffold(
 ///       appBar: AppBar(
 ///         title: Text(title),
@@ -46,9 +46,9 @@ part 'auto_dispose.dart';
 ///             Text(
 ///               'initial counterCubit.state: ${counterCubit.state}',
 ///             ),
-///             Consumer(builder: (context, watch, __) {
+///             Consumer(builder: (context, ref, __) {
 ///               // Rebuilds on every emitted state
-///               final _counter = watch(counterProvider);
+///               final _counter = ref.watch(counterCubitPod);
 ///               return Text(
 ///                 '$_counter',
 ///                 style: Theme.of(context).textTheme.headline4,
@@ -58,7 +58,7 @@ part 'auto_dispose.dart';
 ///         ),
 ///       ),
 ///       floatingActionButton: FloatingActionButton(
-///         onPressed: () => context.read(counterProvider.notifier).increment(),
+///         onPressed: () => ref.read(counterCubitPod.notifier).increment(),
 ///         tooltip: 'Increment',
 ///         child: Icon(Icons.add),
 ///       ),
@@ -70,17 +70,19 @@ part 'auto_dispose.dart';
 ///
 /// {@template bloc_provider_notifier}
 /// ## `BlocProvider.notifier`
-/// Listen if the `Bloc` or `Cubit` when is recreated
+/// `BlocBase` object getter, it can be either `Bloc`
+/// or `Cubit`.
 ///
-/// Usasge:
+/// Usage:
 ///
 /// ```dart
-/// Consumer(builder: (context, watch, __) {
-///   // Rebuilds if the cubit or bloc is recreated
-///   final _cubit = watch(counterProvider.notifier);
-///   return Text(
-///     '${_cubit.state}',
-///     style: Theme.of(context).textTheme.headline4,
+/// Consumer(builder: (context, ref, __) {
+///   return ElevatedButton(
+///     style: style,
+///     onPressed: () {
+///       ref.read(counterBlocPod.notifier).increment();
+///     },
+///     child: const Text('Press me'),
 ///   );
 /// }),
 /// ```
@@ -88,20 +90,7 @@ part 'auto_dispose.dart';
 ///
 /// {@template bloc_provider_stream}
 /// ## `BlocProvider.stream`
-/// Listen if the `Bloc.stream` or `Cubit.stream`
-///
-/// Usasge:
-///
-/// ```dart
-/// Consumer(builder: (context, watch, __) {
-///   // Rebuilds if the cubit or bloc is recreated
-///   final _cubit = watch(counterProvider.notifier);
-///   return Text(
-///     '${_cubit.state}',
-///     style: Theme.of(context).textTheme.headline4,
-///   );
-/// }),
-/// ```
+/// Listen to the `Bloc.stream` or `Cubit.stream`
 /// {@endtemplate}
 ///
 /// {@template bloc_provider_override_with_provider}
@@ -138,8 +127,8 @@ part 'auto_dispose.dart';
 ///     counterProvider.overrideWithProvider(counterProvider2),
 ///   ],
 ///   child: Consumer(
-///     builder: (context, watch, _) {
-///       final countCubit = watch(counterProvider.notifier);
+///     builder: (context, ref, _) {
+///       final countCubit = ref.watch(counterProvider.notifier);
 ///       return Container();
 ///     },
 ///   ),
@@ -179,8 +168,8 @@ part 'auto_dispose.dart';
 ///     counterProvider.overrideWithValue(counterCubit),
 ///   ],
 ///   child: Consumer(
-///     builder: (context, watch, _) {
-///       final countCubit = watch(counterProvider.notifier);
+///     builder: (context, ref, _) {
+///       final countCubit = ref.watch(counterProvider.notifier);
 ///       return Container();
 ///     },
 ///   ),
