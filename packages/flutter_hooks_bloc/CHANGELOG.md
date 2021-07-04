@@ -1,3 +1,7 @@
+## [0.15.1] - 2021-07-04
+
+- Updating README docs
+
 ## [0.15.0] - 2021-07-04
 
 - Upgrading dependencies.
