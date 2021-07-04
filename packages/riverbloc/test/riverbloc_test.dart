@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:riverbloc/riverbloc.dart';
 
+import 'auto_dispose_test.dart';
 import 'helpers/helpers.dart';
 
 final counterBlocProvider =
@@ -298,6 +299,34 @@ void main() {
       );
       expect(container.read(counterCubitProvider), 5);
       expect(container.read(counterCubitProvider.notifier).state, 5);
+    });
+  });
+
+  group('BlocProvider.setupOverride', () {
+    test('override', () {
+      final cubit2 = CounterCubit(3);
+
+      final counterCubitProvider2 = BlocProvider<CounterCubit, int>(
+        (ref) => cubit2,
+        name: 'cubit2',
+      );
+
+      counterCubitProvider.setupOverride(
+        ({
+          required ProviderBase<dynamic> origin,
+          required ProviderBase<dynamic> override,
+        }) {
+          print('Origin: ${origin.name}');
+          print('Override: ${override.name}');
+        },
+      );
+
+      final container = ProviderContainer(overrides: [
+        counterCubitProvider.overrideWithProvider(counterCubitProvider2),
+      ]);
+
+      final cubit = container.read(counterCubitProvider.notifier);
+      print(cubit.state);
     });
   });
 }
