@@ -5,9 +5,6 @@
 A flutter_bloc reimplementation based on flutter_hooks for
 `BlocBuilder`, `BlocListener`, `BlocConsumer` and `MultiBlocListener`.
 
-And also work with `riverbloc` with the `BlocBuilder.river()`,
-`BlocListener.river()` and `BlocConsumer.river()` constructors.
-
 ## Usage as flutter_bloc
 
 **MultiBlocListener, BlocBuilder, BlocListener and BlocConsumer**
@@ -122,46 +119,4 @@ class MyMultiBlocBuilder extends HookWidget {
     );
   }
 }
-```
-
-## Usage with riverbloc
-
-The `useRiverBloc` hook function allows to listen state changes and rebuild
-the widget if necessary.
-
-```dart
-C useRiverBloc<C extends Cubit<S>, S>(
-  /// subscribe to a riverbloc [BlocProvider]`
-  BlocProvider<C> provider, {
-
-  /// If `onEmitted` is not provided or its invocation returns `true`,
-  /// the widget will rebuild.
-  BlocHookListener<S> onEmitted,
-});
-```
-
-```dart
-import 'package:flutter_hooks_bloc/flutter_riverbloc.dart';
-
-class CounterCubit extends Cubit<int> {
-  CounterCubit() :  super(0);
-
-  void increment() => emit(state + 1);
-}
-
-final counterProvider = BlocProvider((ref) => CounterCubit());
-
-ProviderScope(
-  child: HookBuilder(
-    builder: (context){
-      final _cubit = useRiverBloc<C, S>(
-        counterProvider,
-        onEmitted: (context, previous, state) {
-          return state % 3 == 0;
-        }
-      );
-      return Text('State: ${_cubit.state}');
-    },
-  )
-);
 ```
