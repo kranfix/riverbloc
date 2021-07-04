@@ -22,7 +22,7 @@ part 'auto_dispose.dart';
 ///   void increment() => emit(state + 1);
 /// }
 ///
-/// final counterCubitPod =
+/// final counterCubitProvider =
 ///     BlocProvider<CounterCubit, int>((ref) => CounterCubit(0));
 ///
 /// class MyHomePage extends ConsumerWidget {
@@ -34,7 +34,7 @@ part 'auto_dispose.dart';
 ///   Widget build(BuildContext context, WidgetRef ref) {
 ///     // Rebuilds the widget if the cubit/bloc changes.
 ///     // But does not rebuild if the state changes with the same cubit/bloc
-///     final counterCubit = ref.watch(counterCubitPod.notifier);
+///     final counterCubit = ref.watch(counterCubitProvider.notifier);
 ///     return Scaffold(
 ///       appBar: AppBar(
 ///         title: Text(title),
@@ -48,7 +48,7 @@ part 'auto_dispose.dart';
 ///             ),
 ///             Consumer(builder: (context, ref, __) {
 ///               // Rebuilds on every emitted state
-///               final _counter = ref.watch(counterCubitPod);
+///               final _counter = ref.watch(counterCubitProvider);
 ///               return Text(
 ///                 '$_counter',
 ///                 style: Theme.of(context).textTheme.headline4,
@@ -58,7 +58,7 @@ part 'auto_dispose.dart';
 ///         ),
 ///       ),
 ///       floatingActionButton: FloatingActionButton(
-///         onPressed: () => ref.read(counterCubitPod.notifier).increment(),
+///         onPressed: () => ref.read(counterCubitProvider.notifier).increment(),
 ///         tooltip: 'Increment',
 ///         child: Icon(Icons.add),
 ///       ),
@@ -80,7 +80,7 @@ part 'auto_dispose.dart';
 ///   return ElevatedButton(
 ///     style: style,
 ///     onPressed: () {
-///       ref.read(counterBlocPod.notifier).increment();
+///       ref.read(counterBlocProvider.notifier).increment();
 ///     },
 ///     child: const Text('Press me'),
 ///   );
@@ -100,7 +100,7 @@ part 'auto_dispose.dart';
 ///   return ElevatedButton(
 ///     style: style,
 ///     onPressed: () {
-///       ref.read(counterBlocPod.bloc).increment();
+///       ref.read(counterBlocProvider.bloc).increment();
 ///     },
 ///     child: const Text('Press me'),
 ///   );
