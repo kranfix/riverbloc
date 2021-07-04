@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:riverbloc/riverbloc.dart';
 
@@ -71,9 +71,9 @@ void main() {
       container.read(counterProvider2.notifier).increment();
       await Future(() {});
       expect(sub1.read(), 1);
-      verify(listener1(1)).called(1);
+      verify(() => listener1(1)).called(1);
       expect(sub2.read(), 1);
-      verify(listener2(1)).called(1);
+      verify(() => listener2(1)).called(1);
 
       verifyNoMoreInteractions(listener1);
       verifyNoMoreInteractions(listener2);
@@ -142,17 +142,17 @@ void main() {
       container.read(counterProvider2.notifier).increment();
       await Future(() {});
       expect(sub1.read(), const AsyncData(1));
-      verify(listener1(const AsyncData(1))).called(1);
+      verify(() => listener1(const AsyncData(1))).called(1);
       expect(sub2.read(), const AsyncData(1));
-      verify(listener2(const AsyncData(1))).called(1);
+      verify(() => listener2(const AsyncData(1))).called(1);
 
       container.read(counterProvider1.notifier).increment();
       container.read(counterProvider2.notifier).increment();
       await Future(() {});
       expect(sub1.read(), const AsyncData(2));
-      verify(listener1(const AsyncData(2))).called(1);
+      verify(() => listener1(const AsyncData(2))).called(1);
       expect(sub2.read(), const AsyncData(2));
-      verify(listener2(const AsyncData(2))).called(1);
+      verify(() => listener2(const AsyncData(2))).called(1);
 
       verifyNoMoreInteractions(listener1);
       verifyNoMoreInteractions(listener2);

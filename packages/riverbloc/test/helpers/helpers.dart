@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 
 class Listener<T> extends Mock {
   void call(T value);

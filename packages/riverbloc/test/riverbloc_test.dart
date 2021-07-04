@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:riverbloc/riverbloc.dart';
 
-import 'auto_dispose_test.dart';
 import 'helpers/helpers.dart';
 
 final counterBlocProvider =
