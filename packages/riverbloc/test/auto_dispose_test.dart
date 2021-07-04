@@ -5,9 +5,6 @@ import 'package:riverbloc/riverbloc.dart';
 
 import 'helpers/helpers.dart';
 
-final counterCubitProvider =
-    BlocProvider<CounterCubit, int>((ref) => CounterCubit(0));
-
 void main() {
   group('AutoDispose Provider names', () {
     test('AutoDisposeBlocProvider.notifier with no name', () {
@@ -232,6 +229,27 @@ void main() {
       await Future(() {});
       expect(closeCounter1, 0);
       expect(closeCounter2, 1);
+    });
+  });
+
+  group('BlocProvider.bloc', () {
+    final counterCubitProvider = BlocProvider.autoDispose<CounterCubit, int>(
+      (ref) => CounterCubit(0),
+    );
+
+    test('BlocProvider.bloc get BlocBase Object', () {
+      final container = ProviderContainer();
+      final counterCubit = container.read(counterCubitProvider.bloc);
+
+      expect(counterCubit, isA<BlocBase>());
+    });
+
+    test('BlocProvider.bloc equals BlocProvider.notifier', () {
+      final container = ProviderContainer();
+      final bloc = container.read(counterCubitProvider.bloc);
+      final notifier = container.read(counterCubitProvider.notifier);
+
+      expect(bloc, equals(notifier));
     });
   });
 }
