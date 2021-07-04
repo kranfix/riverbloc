@@ -4,11 +4,11 @@ import 'package:flutter_hooks_bloc/flutter_hooks_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class MyThemeApp extends StatefulWidget {
-  MyThemeApp({
+  const MyThemeApp({
     Key? key,
     required Cubit<ThemeData> themeCubit,
     required VoidCallback onBuild,
-  })   : _themeCubit = themeCubit,
+  })  : _themeCubit = themeCubit,
         _onBuild = onBuild,
         super(key: key);
 
@@ -16,21 +16,12 @@ class MyThemeApp extends StatefulWidget {
   final VoidCallback _onBuild;
 
   @override
-  State<MyThemeApp> createState() => MyThemeAppState(
-        themeCubit: _themeCubit,
-        onBuild: _onBuild,
-      );
+  State<MyThemeApp> createState() => MyThemeAppState();
 }
 
 class MyThemeAppState extends State<MyThemeApp> {
-  MyThemeAppState({
-    required Cubit<ThemeData> themeCubit,
-    required VoidCallback onBuild,
-  })   : _themeCubit = themeCubit,
-        _onBuild = onBuild;
-
-  Cubit<ThemeData> _themeCubit;
-  final VoidCallback _onBuild;
+  late Cubit<ThemeData> _themeCubit = widget._themeCubit;
+  late final VoidCallback _onBuild = widget._onBuild;
 
   @override
   Widget build(BuildContext context) {

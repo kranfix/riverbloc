@@ -1,3 +1,7 @@
+## [0.15.0] - 2021-07-04
+
+- Upgrading dependencies.
+
 ## [0.14.0] - 2021-03-18
 
 - Removing `riverbloc` dependece.

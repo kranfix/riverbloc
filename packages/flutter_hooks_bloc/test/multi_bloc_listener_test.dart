@@ -23,7 +23,7 @@ void main() {
       try {
         await tester.pumpWidget(
           MultiBlocListener(
-            listeners: [],
+            listeners: const [],
             child: const SizedBox(),
           ),
         );
