@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:riverbloc/riverbloc.dart';
@@ -29,6 +30,24 @@ void main() {
       expect(counterBlocProvider.stream.name, 'counter.stream');
     });
   });
+
+  group('BlocProvider.bloc', () {
+    test('BlocProvider.bloc get BlocBase Object', () {
+      final container = ProviderContainer();
+      final counterCubit = container.read(counterCubitProvider.bloc);
+
+      expect(counterCubit, isA<BlocBase>());
+    });
+
+    test('BlocProvider.bloc equals BlocProvider.notifier', () {
+      final container = ProviderContainer();
+      final bloc = container.read(counterCubitProvider.bloc);
+      final notifier = container.read(counterCubitProvider.notifier);
+
+      expect(bloc, equals(notifier));
+    });
+  });
+
   group('Bloc test', () {
     test(
         'reads bloc with default state 0 and applies increments and decrements',
