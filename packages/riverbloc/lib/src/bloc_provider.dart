@@ -15,7 +15,7 @@ part 'auto_dispose.dart';
 ///
 /// Similar to [StateNotifierProvider] but for [BlocBase] ([Bloc] and [Cubit])
 ///
-/// ```
+/// ```dart
 /// class CounterCubit extends Cubit<int> {
 ///   CounterCubit(int state) : super(state);
 ///
@@ -58,7 +58,9 @@ part 'auto_dispose.dart';
 ///         ),
 ///       ),
 ///       floatingActionButton: FloatingActionButton(
-///         onPressed: () => ref.read(counterCubitProvider.notifier).increment(),
+///         onPressed: () {
+///           ref.read(counterCubitProvider.notifier).increment();
+///         }
 ///         tooltip: 'Increment',
 ///         child: Icon(Icons.add),
 ///       ),
