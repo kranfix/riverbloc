@@ -18,7 +18,7 @@ mixin _BlocProviderMixin<B extends BlocBase<S>, S> on ProviderBase<S> {
     return ProviderOverride((setup) {
       setup(
         origin: notifier,
-        override: Provider<B>((ref) => bloc),
+        override: ValueProvider<B>(bloc),
       );
       setup(origin: this, override: this);
     });
