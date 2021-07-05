@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:riverbloc/riverbloc.dart';
 
@@ -311,20 +310,13 @@ void main() {
         name: 'cubit2',
       );
 
-      final setup = MockSetupOverride();
+      final override =
+          counterCubitProvider.overrideWithProvider(counterCubitProvider2);
+      expect(override, isA<ProviderOverride>());
 
-      counterCubitProvider.setupOverride(setup);
-
-      ProviderContainer(overrides: [
-        counterCubitProvider.overrideWithProvider(counterCubitProvider2),
-      ]);
-
-      verify(
-        () => setup(
-          origin: counterCubitProvider,
-          override: counterCubitProvider,
-        ),
-      ).called(1);
+      final container = ProviderContainer(overrides: [override]);
+      final cubit = container.read(counterCubitProvider.notifier);
+      expect(cubit, equals(cubit2));
     });
   });
 }
