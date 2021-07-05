@@ -6,7 +6,7 @@ class Listener<T> extends Mock {
   void call(T value);
 }
 
-class SetupOverride extends Mock {
+class MockSetupOverride extends Mock {
   void call({
     required ProviderBase<dynamic> origin,
     required ProviderBase<dynamic> override,
