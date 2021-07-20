@@ -29,6 +29,24 @@ void main() {
       expect(counterBlocProvider.stream.name, 'counter.stream');
     });
   });
+
+  group('BlocProvider.bloc', () {
+    test('BlocProvider.bloc get BlocBase Object', () {
+      final container = ProviderContainer();
+      final counterCubit = container.read(counterCubitProvider.bloc);
+
+      expect(counterCubit, isA<BlocBase>());
+    });
+
+    test('BlocProvider.bloc equals BlocProvider.notifier', () {
+      final container = ProviderContainer();
+      final bloc = container.read(counterCubitProvider.bloc);
+      final notifier = container.read(counterCubitProvider.notifier);
+
+      expect(bloc, equals(notifier));
+    });
+  });
+
   group('Bloc test', () {
     test(
         'reads bloc with default state 0 and applies increments and decrements',
@@ -214,7 +232,7 @@ void main() {
 
       expect(
         container.refresh(counterCubitProvider),
-        equals(counterCubit),
+        equals(counterCubit.state),
       );
 
       final counterCubit2 = container.refresh(counterCubitProvider.notifier);
@@ -280,6 +298,25 @@ void main() {
       );
       expect(container.read(counterCubitProvider), 5);
       expect(container.read(counterCubitProvider.notifier).state, 5);
+    });
+  });
+
+  group('BlocProvider.setupOverride', () {
+    test('override', () {
+      final cubit2 = CounterCubit(3);
+
+      final counterCubitProvider2 = BlocProvider<CounterCubit, int>(
+        (ref) => cubit2,
+        name: 'cubit2',
+      );
+
+      final override =
+          counterCubitProvider.overrideWithProvider(counterCubitProvider2);
+      expect(override, isA<ProviderOverride>());
+
+      final container = ProviderContainer(overrides: [override]);
+      final cubit = container.read(counterCubitProvider.notifier);
+      expect(cubit, equals(cubit2));
     });
   });
 }

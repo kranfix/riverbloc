@@ -1,12 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:riverbloc/riverbloc.dart';
 
 import 'helpers/helpers.dart';
-
-final counterCubitProvider =
-    BlocProvider<CounterCubit, int>((ref) => CounterCubit(0));
 
 void main() {
   group('AutoDispose Provider names', () {
@@ -45,8 +42,8 @@ void main() {
     test('BlocProvider', () async {
       var closeCounter1 = 0;
       var closeCounter2 = 0;
-      final onClose1 = () => closeCounter1++;
-      final onClose2 = () => closeCounter2++;
+      void onClose1() => closeCounter1++;
+      void onClose2() => closeCounter2++;
 
       final listener1 = Listener<int>();
       final listener2 = Listener<int>();
@@ -60,15 +57,9 @@ void main() {
 
       final container = ProviderContainer();
 
-      final sub1 = container.listen<int>(
-        counterProvider1,
-        didChange: (sub) => listener1(sub.read()),
-      );
+      final sub1 = container.listen<int>(counterProvider1, listener1);
 
-      final sub2 = container.listen<int>(
-        counterProvider2,
-        didChange: (sub) => listener2(sub.read()),
-      );
+      final sub2 = container.listen<int>(counterProvider2, listener2);
 
       expect(sub1.read(), 0);
       expect(sub2.read(), 0);
@@ -77,9 +68,9 @@ void main() {
       container.read(counterProvider2.notifier).increment();
       await Future(() {});
       expect(sub1.read(), 1);
-      verify(listener1(1)).called(1);
+      verify(() => listener1(1)).called(1);
       expect(sub2.read(), 1);
-      verify(listener2(1)).called(1);
+      verify(() => listener2(1)).called(1);
 
       verifyNoMoreInteractions(listener1);
       verifyNoMoreInteractions(listener2);
@@ -116,8 +107,8 @@ void main() {
     test('BlocProvider.stream', () async {
       var closeCounter1 = 0;
       var closeCounter2 = 0;
-      final onClose1 = () => closeCounter1++;
-      final onClose2 = () => closeCounter2++;
+      void onClose1() => closeCounter1++;
+      void onClose2() => closeCounter2++;
 
       final listener1 = Listener<AsyncValue<int>>();
       final listener2 = Listener<AsyncValue<int>>();
@@ -133,12 +124,12 @@ void main() {
 
       final sub1 = container.listen<AsyncValue<int>>(
         counterProvider1.stream,
-        didChange: (sub) => listener1(sub.read()),
+        listener1,
       );
 
       final sub2 = container.listen<AsyncValue<int>>(
         counterProvider2.stream,
-        didChange: (sub) => listener2(sub.read()),
+        listener2,
       );
 
       expect(sub1.read(), equals(const AsyncLoading()));
@@ -148,17 +139,17 @@ void main() {
       container.read(counterProvider2.notifier).increment();
       await Future(() {});
       expect(sub1.read(), const AsyncData(1));
-      verify(listener1(const AsyncData(1))).called(1);
+      verify(() => listener1(const AsyncData(1))).called(1);
       expect(sub2.read(), const AsyncData(1));
-      verify(listener2(const AsyncData(1))).called(1);
+      verify(() => listener2(const AsyncData(1))).called(1);
 
       container.read(counterProvider1.notifier).increment();
       container.read(counterProvider2.notifier).increment();
       await Future(() {});
       expect(sub1.read(), const AsyncData(2));
-      verify(listener1(const AsyncData(2))).called(1);
+      verify(() => listener1(const AsyncData(2))).called(1);
       expect(sub2.read(), const AsyncData(2));
-      verify(listener2(const AsyncData(2))).called(1);
+      verify(() => listener2(const AsyncData(2))).called(1);
 
       verifyNoMoreInteractions(listener1);
       verifyNoMoreInteractions(listener2);
@@ -209,8 +200,8 @@ void main() {
     test('Override with provider', () async {
       var closeCounter1 = 0;
       var closeCounter2 = 0;
-      final onClose1 = () => closeCounter1++;
-      final onClose2 = () => closeCounter2++;
+      void onClose1() => closeCounter1++;
+      void onClose2() => closeCounter2++;
       final counterProvider1 = AutoDisposeBlocProvider<CounterCubit, int>(
         (ref) => CounterCubit(0, onClose: onClose1),
       );
@@ -224,7 +215,8 @@ void main() {
         ],
       );
 
-      final sub = container.listen<int>(counterProvider1);
+      final listener = Listener<int>();
+      final sub = container.listen<int>(counterProvider1, listener);
 
       expect(sub.read(), 5);
       container.read(counterProvider1.notifier).increment();
@@ -237,6 +229,27 @@ void main() {
       await Future(() {});
       expect(closeCounter1, 0);
       expect(closeCounter2, 1);
+    });
+  });
+
+  group('BlocProvider.bloc', () {
+    final counterCubitProvider = BlocProvider.autoDispose<CounterCubit, int>(
+      (ref) => CounterCubit(0),
+    );
+
+    test('BlocProvider.bloc get BlocBase Object', () {
+      final container = ProviderContainer();
+      final counterCubit = container.read(counterCubitProvider.bloc);
+
+      expect(counterCubit, isA<BlocBase>());
+    });
+
+    test('BlocProvider.bloc equals BlocProvider.notifier', () {
+      final container = ProviderContainer();
+      final bloc = container.read(counterCubitProvider.bloc);
+      final notifier = container.read(counterCubitProvider.notifier);
+
+      expect(bloc, equals(notifier));
     });
   });
 }

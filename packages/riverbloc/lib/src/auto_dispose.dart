@@ -4,7 +4,7 @@ part of 'bloc_provider.dart';
 class _AutoDisposeNotifierProvider<B extends BlocBase<Object?>>
     extends AutoDisposeProvider<B> {
   _AutoDisposeNotifierProvider(
-    Create<B, AutoDisposeProviderReference> create, {
+    Create<B, AutoDisposeProviderRefBase> create, {
     required String? name,
   }) : super(
           (ref) {
@@ -16,40 +16,62 @@ class _AutoDisposeNotifierProvider<B extends BlocBase<Object?>>
         );
 }
 
+// ignore: subtype_of_sealed_class
 /// {@macro bloc_provider_auto_dispose}
 @sealed
 class AutoDisposeBlocProvider<B extends BlocBase<S>, S>
-    extends AutoDisposeProviderBase<B, S> with _BlocProviderMixin {
+    extends AutoDisposeProviderBase<S> with _BlocProviderMixin<B, S> {
   /// {@macro bloc_provider}
-  AutoDisposeBlocProvider(
-    Create<B, AutoDisposeProviderReference> create, {
-    String? name,
-  })  : _create = create,
-        super(name);
 
-  final Create<B, AutoDisposeProviderReference> _create;
+  AutoDisposeBlocProvider(this._create, {String? name}) : super(name);
 
-  /// {@macro bloc_provider_notifier}
+  final Create<B, AutoDisposeProviderRefBase> _create;
+
   @override
-  late final AutoDisposeProviderBase<B, B> notifier =
+  late final AutoDisposeProviderBase<B> notifier =
       _AutoDisposeNotifierProvider(_create, name: name);
 
+  /// {@macro bloc_provider_bloc}
+  AutoDisposeProviderBase<B> get bloc => notifier;
+
   /// {@macro bloc_provider_stream}
-  late final AutoDisposeProviderBase<Stream<S>, AsyncValue<S>> stream =
+  late final AutoDisposeProviderBase<AsyncValue<S>> stream =
       AutoDisposeStreamProvider<S>(
     (ref) => ref.watch(notifier).stream,
     name: name == null ? null : '$name.stream',
   );
 
-  /// {@macro bloc_provider_override_with_provider}
-  ProviderOverride overrideWithProvider(
+  @override
+  S create(AutoDisposeProviderElementBase<S> ref) {
+    final notifier = ref.watch(this.notifier);
+    ref.state = notifier.state;
+
+    void listener(S newState) {
+      ref.state = newState;
+    }
+
+    final removeListener = notifier.stream.listen(listener);
+    ref.onDispose(removeListener.cancel);
+
+    return ref.state;
+  }
+
+  /// Overrides the behavior of a provider with a another provider.
+  ///
+  /// {@macro riverpod.overideWith}
+  Override overrideWithProvider(
     AutoDisposeBlocProvider<B, S> provider,
   ) {
-    return ProviderOverride(provider.notifier, notifier);
+    return ProviderOverride((setup) {
+      setup(origin: notifier, override: provider.notifier);
+      setup(origin: this, override: this);
+    });
   }
 
   @override
-  B create(covariant AutoDisposeProviderReference ref) => ref.watch(notifier);
+  AutoDisposeProviderElementBase<S> createElement() {
+    return AutoDisposeProviderElement(this);
+  }
 }
 
 /// Builds a [AutoDisposeBlocProvider].
@@ -59,7 +81,7 @@ class AutoDisposeBlocProviderBuilder {
 
   /// {@macro riverpod.autoDispose}
   AutoDisposeBlocProvider<B, S> call<B extends BlocBase<S>, S>(
-    B Function(AutoDisposeProviderReference ref) create, {
+    B Function(AutoDisposeProviderRefBase ref) create, {
     String? name,
   }) {
     return AutoDisposeBlocProvider(create, name: name);

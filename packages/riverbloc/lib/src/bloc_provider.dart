@@ -1,29 +1,30 @@
-import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:meta/meta.dart';
 
 // ignore: implementation_imports
 import 'package:riverpod/src/framework.dart';
+// ignore: implementation_imports
+import 'package:riverpod/src/value_provider.dart';
 
 part 'bloc_provider_state.dart';
 part 'bloc_notifier_provider.dart';
 part 'auto_dispose.dart';
 
+// ignore: subtype_of_sealed_class
 /// {@template bloc_provider}
 /// # BlocProvider
 ///
 /// Similar to [StateNotifierProvider] but for [BlocBase] ([Bloc] and [Cubit])
 ///
-/// ```
+/// ```dart
 /// class CounterCubit extends Cubit<int> {
 ///   CounterCubit(int state) : super(state);
 ///
 ///   void increment() => emit(state + 1);
 /// }
 ///
-/// final counterProvider =
+/// final counterCubitProvider =
 ///     BlocProvider<CounterCubit, int>((ref) => CounterCubit(0));
 ///
 /// class MyHomePage extends ConsumerWidget {
@@ -32,10 +33,10 @@ part 'auto_dispose.dart';
 ///   final String title;
 ///
 ///   @override
-///   Widget build(BuildContext context, ScopedReader watch) {
+///   Widget build(BuildContext context, WidgetRef ref) {
 ///     // Rebuilds the widget if the cubit/bloc changes.
 ///     // But does not rebuild if the state changes with the same cubit/bloc
-///     final counterCubit = watch(counterProvider.notifier);
+///     final counterCubit = ref.watch(counterCubitProvider.notifier);
 ///     return Scaffold(
 ///       appBar: AppBar(
 ///         title: Text(title),
@@ -47,9 +48,9 @@ part 'auto_dispose.dart';
 ///             Text(
 ///               'initial counterCubit.state: ${counterCubit.state}',
 ///             ),
-///             Consumer(builder: (context, watch, __) {
+///             Consumer(builder: (context, ref, __) {
 ///               // Rebuilds on every emitted state
-///               final _counter = watch(counterProvider);
+///               final _counter = ref.watch(counterCubitProvider);
 ///               return Text(
 ///                 '$_counter',
 ///                 style: Theme.of(context).textTheme.headline4,
@@ -59,7 +60,9 @@ part 'auto_dispose.dart';
 ///         ),
 ///       ),
 ///       floatingActionButton: FloatingActionButton(
-///         onPressed: () => context.read(counterProvider.notifier).increment(),
+///         onPressed: () {
+///           ref.read(counterCubitProvider.notifier).increment();
+///         }
 ///         tooltip: 'Increment',
 ///         child: Icon(Icons.add),
 ///       ),
@@ -71,17 +74,39 @@ part 'auto_dispose.dart';
 ///
 /// {@template bloc_provider_notifier}
 /// ## `BlocProvider.notifier`
-/// Listen if the `Bloc` or `Cubit` when is recreated
+/// `BlocBase` object getter, it can be either `Bloc`
+/// or `Cubit`.
 ///
-/// Usasge:
+/// Usage:
 ///
 /// ```dart
-/// Consumer(builder: (context, watch, __) {
-///   // Rebuilds if the cubit or bloc is recreated
-///   final _cubit = watch(counterProvider.notifier);
-///   return Text(
-///     '${_cubit.state}',
-///     style: Theme.of(context).textTheme.headline4,
+/// Consumer(builder: (context, ref, __) {
+///   return ElevatedButton(
+///     style: style,
+///     onPressed: () {
+///       ref.read(counterBlocProvider.notifier).increment();
+///     },
+///     child: const Text('Press me'),
+///   );
+/// }),
+/// ```
+/// {@endtemplate}
+///
+/// {@template bloc_provider_bloc}
+/// ## `BlocProvider.bloc`
+/// `BlocBase` object getter, it can be either `Bloc`
+/// or `Cubit`.
+///
+/// Usage:
+///
+/// ```dart
+/// Consumer(builder: (context, ref, __) {
+///   return ElevatedButton(
+///     style: style,
+///     onPressed: () {
+///       ref.read(counterBlocProvider.bloc).increment();
+///     },
+///     child: const Text('Press me'),
 ///   );
 /// }),
 /// ```
@@ -89,20 +114,7 @@ part 'auto_dispose.dart';
 ///
 /// {@template bloc_provider_stream}
 /// ## `BlocProvider.stream`
-/// Listen if the `Bloc.stream` or `Cubit.stream`
-///
-/// Usasge:
-///
-/// ```dart
-/// Consumer(builder: (context, watch, __) {
-///   // Rebuilds if the cubit or bloc is recreated
-///   final _cubit = watch(counterProvider.notifier);
-///   return Text(
-///     '${_cubit.state}',
-///     style: Theme.of(context).textTheme.headline4,
-///   );
-/// }),
-/// ```
+/// Listen to the `Bloc.stream` or `Cubit.stream`
 /// {@endtemplate}
 ///
 /// {@template bloc_provider_override_with_provider}
@@ -139,8 +151,8 @@ part 'auto_dispose.dart';
 ///     counterProvider.overrideWithProvider(counterProvider2),
 ///   ],
 ///   child: Consumer(
-///     builder: (context, watch, _) {
-///       final countCubit = watch(counterProvider.notifier);
+///     builder: (context, ref, _) {
+///       final countCubit = ref.watch(counterProvider.notifier);
 ///       return Container();
 ///     },
 ///   ),
@@ -180,8 +192,8 @@ part 'auto_dispose.dart';
 ///     counterProvider.overrideWithValue(counterCubit),
 ///   ],
 ///   child: Consumer(
-///     builder: (context, watch, _) {
-///       final countCubit = watch(counterProvider.notifier);
+///     builder: (context, ref, _) {
+///       final countCubit = ref.watch(counterProvider.notifier);
 ///       return Container();
 ///     },
 ///   ),
@@ -215,38 +227,55 @@ part 'auto_dispose.dart';
 /// correctly the state and if the UI leaves the screen and re-enters it,
 /// the `asyncValue` will be readed again to retry creating the state.
 /// {@endtemplate}
-@sealed
-class BlocProvider<B extends BlocBase<S>, S>
-    extends AlwaysAliveProviderBase<B, S> with _BlocProviderMixin {
+class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
+    with _BlocProviderMixin<B, S> {
   /// {@macro bloc_provider}
-  BlocProvider(
-    Create<B, ProviderReference> create, {
-    String? name,
-  })  : _create = create,
-        super(name);
+  BlocProvider(this._create, {String? name}) : super(name);
 
   /// {@macro bloc_provider_auto_dispose}
   static const autoDispose = AutoDisposeBlocProviderBuilder();
 
-  final Create<B, ProviderReference> _create;
+  final Create<B, ProviderRefBase> _create;
 
   /// {@macro bloc_provider_notifier}
   @override
-  late final AlwaysAliveProviderBase<B, B> notifier =
+  late final AlwaysAliveProviderBase<B> notifier =
       _NotifierProvider(_create, name: name);
 
+  /// {@macro bloc_provider_bloc}
+  AlwaysAliveProviderBase<B> get bloc => notifier;
+
   /// {@macro bloc_provider_stream}
-  late final AlwaysAliveProviderBase<Stream<S>, AsyncValue<S>> stream =
-      StreamProvider<S>(
+  late final AlwaysAliveProviderBase<AsyncValue<S>> stream = StreamProvider<S>(
     (ref) => ref.watch(notifier).stream,
     name: name == null ? null : '$name.stream',
   );
 
-  /// {@macro bloc_provider_override_with_provider}
-  ProviderOverride overrideWithProvider(BlocProvider<B, S> provider) {
-    return ProviderOverride(provider.notifier, notifier);
+  /// Overrides the behavior of a provider with a another provider.
+  ///
+  /// {@macro riverpod.overideWith}
+  Override overrideWithProvider(BlocProvider<B, S> provider) {
+    return ProviderOverride((setup) {
+      setup(origin: notifier, override: provider.notifier);
+    });
   }
 
   @override
-  B create(ProviderReference ref) => ref.watch(notifier);
+  S create(ProviderElementBase<S> ref) {
+    final notifier = ref.watch(this.notifier);
+
+    ref.state = notifier.state;
+
+    void listener(S newState) {
+      ref.state = newState;
+    }
+
+    final removeListener = notifier.stream.listen(listener);
+    ref.onDispose(removeListener.cancel);
+
+    return ref.state;
+  }
+
+  @override
+  ProviderElementBase<S> createElement() => ProviderElement(this);
 }

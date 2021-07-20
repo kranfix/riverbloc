@@ -1,8 +1,16 @@
 import 'package:bloc/bloc.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:riverpod/riverpod.dart';
 
 class Listener<T> extends Mock {
   void call(T value);
+}
+
+class MockSetupOverride extends Mock {
+  void call({
+    required ProviderBase<dynamic> origin,
+    required ProviderBase<dynamic> override,
+  });
 }
 
 enum CounterEvent { inc, dec }

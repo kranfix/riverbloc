@@ -1,52 +1,32 @@
 part of 'bloc_provider.dart';
 
-class _BlocProviderState<B extends BlocBase<S>, S>
-    extends ProviderStateBase<B, S> {
-  StreamSubscription<S>? _subscription;
-
-  @override
-  void valueChanged({B? previous}) {
-    if (createdValue != previous) {
-      if (_subscription != null) {
-        _unsubscribe();
-      }
-      _subscribe();
-    }
-  }
-
-  void _subscribe() {
-    exposedValue = createdValue.state;
-    _subscription = createdValue.stream.listen(_listener);
-  }
-
-  void _unsubscribe() {
-    _subscription?.cancel();
-    _subscription = null;
-  }
-
-  void _listener(S value) {
-    exposedValue = value;
-  }
-
-  @override
-  void dispose() {
-    _unsubscribe();
-    super.dispose();
-  }
-}
-
-mixin _BlocProviderMixin<B extends BlocBase<S>, S> on RootProvider<B, S> {
+// ignore: subtype_of_sealed_class
+mixin _BlocProviderMixin<B extends BlocBase<S>, S> on ProviderBase<S> {
   /// {@macro bloc_provider_notifier}
-  ProviderBase<B, B> get notifier;
-
-  /// {@macro bloc_provider_override_with_value}
-  ProviderOverride overrideWithValue(B value) {
-    return ProviderOverride(
-      ValueProvider<Object?, B>((ref) => value, value),
-      notifier,
-    );
-  }
+  ProviderBase<B> get notifier;
 
   @override
-  ProviderStateBase<B, S> createState() => _BlocProviderState<B, S>();
+  void setupOverride(SetupOverride setup) {
+    setup(origin: this, override: this);
+    setup(origin: notifier, override: notifier);
+  }
+
+  /// Overrides the behavior of a provider with a value.
+  ///
+  /// {@macro riverpod.overideWith}
+  Override overrideWithValue(B bloc) {
+    return ProviderOverride((setup) {
+      setup(
+        origin: notifier,
+        override: ValueProvider<B>(bloc),
+      );
+      setup(origin: this, override: this);
+    });
+  }
+
+  /// The bloc notifies when the state changes.
+  @override
+  bool updateShouldNotify(S previousState, S newState) {
+    return newState != previousState;
+  }
 }
