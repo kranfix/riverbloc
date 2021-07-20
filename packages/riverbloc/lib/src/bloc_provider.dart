@@ -251,17 +251,10 @@ class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
     name: name == null ? null : '$name.stream',
   );
 
-  @override
-  bool recreateShouldNotify(S previousState, S newState) {
-    return newState != previousState;
-  }
-
   /// Overrides the behavior of a provider with a another provider.
   ///
   /// {@macro riverpod.overideWith}
-  Override overrideWithProvider(
-    BlocProvider<B, S> provider,
-  ) {
+  Override overrideWithProvider(BlocProvider<B, S> provider) {
     return ProviderOverride((setup) {
       setup(origin: notifier, override: provider.notifier);
     });
