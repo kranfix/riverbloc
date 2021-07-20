@@ -255,7 +255,7 @@ packages:
       name: riverpod
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.0-dev.3"
+    version: "1.0.0-dev.6"
   shelf:
     dependency: transitive
     description:
