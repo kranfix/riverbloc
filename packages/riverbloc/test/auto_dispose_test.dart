@@ -42,8 +42,8 @@ void main() {
     test('BlocProvider', () async {
       var closeCounter1 = 0;
       var closeCounter2 = 0;
-      final onClose1 = () => closeCounter1++;
-      final onClose2 = () => closeCounter2++;
+      void onClose1() => closeCounter1++;
+      void onClose2() => closeCounter2++;
 
       final listener1 = Listener<int>();
       final listener2 = Listener<int>();
@@ -107,8 +107,8 @@ void main() {
     test('BlocProvider.stream', () async {
       var closeCounter1 = 0;
       var closeCounter2 = 0;
-      final onClose1 = () => closeCounter1++;
-      final onClose2 = () => closeCounter2++;
+      void onClose1() => closeCounter1++;
+      void onClose2() => closeCounter2++;
 
       final listener1 = Listener<AsyncValue<int>>();
       final listener2 = Listener<AsyncValue<int>>();
@@ -200,8 +200,8 @@ void main() {
     test('Override with provider', () async {
       var closeCounter1 = 0;
       var closeCounter2 = 0;
-      final onClose1 = () => closeCounter1++;
-      final onClose2 = () => closeCounter2++;
+      void onClose1() => closeCounter1++;
+      void onClose2() => closeCounter2++;
       final counterProvider1 = AutoDisposeBlocProvider<CounterCubit, int>(
         (ref) => CounterCubit(0, onClose: onClose1),
       );
