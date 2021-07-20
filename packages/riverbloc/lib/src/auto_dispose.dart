@@ -2,33 +2,18 @@ part of 'bloc_provider.dart';
 
 // ignore: subtype_of_sealed_class
 class _AutoDisposeNotifierProvider<B extends BlocBase<Object?>>
-    extends AutoDisposeProviderBase<B> {
+    extends AutoDisposeProvider<B> {
   _AutoDisposeNotifierProvider(
-    this._create, {
+    Create<B, AutoDisposeProviderRefBase> create, {
     required String? name,
-  }) : super(name == null ? null : '$name.notifier');
-
-  final Create<B, AutoDisposeProviderRefBase> _create;
-  @override
-  B create(AutoDisposeProviderRefBase ref) {
-    final notifier = _create(ref);
-    ref.onDispose(notifier.close);
-    return notifier;
-  }
-
-  @override
-  bool recreateShouldNotify(B previousState, B newState) {
-    return true;
-  }
-
-  @override
-  AutoDisposeProviderElement<B> createElement() {
-    return AutoDisposeProviderElement(this);
-  }
-
-  @override
-  void setupOverride(SetupOverride setup) =>
-      throw UnsupportedError('Cannot override BlocProvider.notifier');
+  }) : super(
+          (ref) {
+            final notifier = create(ref);
+            ref.onDispose(notifier.close);
+            return notifier;
+          },
+          name: name == null ? null : '$name.notifier',
+        );
 }
 
 // ignore: subtype_of_sealed_class
@@ -69,11 +54,6 @@ class AutoDisposeBlocProvider<B extends BlocBase<S>, S>
     ref.onDispose(removeListener.cancel);
 
     return ref.state;
-  }
-
-  @override
-  bool recreateShouldNotify(S previousState, S newState) {
-    return true;
   }
 
   /// Overrides the behavior of a provider with a another provider.
