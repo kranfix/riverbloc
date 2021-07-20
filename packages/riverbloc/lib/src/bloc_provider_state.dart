@@ -23,4 +23,10 @@ mixin _BlocProviderMixin<B extends BlocBase<S>, S> on ProviderBase<S> {
       setup(origin: this, override: this);
     });
   }
+
+  /// The bloc notifies when the state changes.
+  @override
+  bool updateShouldNotify(S previousState, S newState) {
+    return newState != previousState;
+  }
 }
