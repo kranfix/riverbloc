@@ -1,4 +1,4 @@
-part of 'bloc_provider.dart';
+part of 'framework.dart';
 
 // ignore: subtype_of_sealed_class
 class _AutoDisposeNotifierProvider<B extends BlocBase<Object?>>
