@@ -49,15 +49,20 @@ class _ChangeProvider<S> extends AutoDisposeProvider<S> {
   _ChangeProvider(
     ProviderBase<S> origin, {
     required BlocUpdateCondition<S> shouldNotify,
-  })  : _shouldNotify = shouldNotify,
-        super((ref) => ref.watch(origin));
-
-  final BlocUpdateCondition<S> _shouldNotify;
-
-  @override
-  bool updateShouldNotify(S previousState, S newState) {
-    return _shouldNotify.call(previousState, newState);
-  }
+  }) : super((ref) {
+          var previous = ref.read(origin);
+          ref.listen<S>(
+            origin,
+            (state) {
+              if (shouldNotify(previous, state)) {
+                ref.state = state;
+              }
+              previous = state;
+            },
+            fireImmediately: true,
+          );
+          return previous;
+        });
 }
 
 class _ChangeProviderFamily<S, Arg extends BlocUpdateCondition<S>>
