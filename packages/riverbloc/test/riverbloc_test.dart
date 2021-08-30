@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:riverbloc/riverbloc.dart';
 
@@ -317,6 +318,77 @@ void main() {
       final container = ProviderContainer(overrides: [override]);
       final cubit = container.read(counterCubitProvider.notifier);
       expect(cubit, equals(cubit2));
+    });
+  });
+
+  group('BlocProvider.when', () {
+    test('rebuilds when current is even', () async {
+      final container = ProviderContainer();
+
+      final rawListener = Listener<int>();
+      final conditionedListener = Listener<int>();
+      final conditionedSelectorListener = Listener<int>();
+
+      final conditionedProvider =
+          counterCubitProvider.when((prev, curr) => (prev + curr) % 5 == 0);
+
+      final conditionedSelectorProvider =
+          conditionedProvider.select((val) => 2 * val);
+
+      final sub1 = container.listen<int>(
+        counterCubitProvider,
+        rawListener,
+        fireImmediately: true,
+      );
+      final sub2 = container.listen<int>(
+        conditionedProvider,
+        conditionedListener,
+        fireImmediately: true,
+      );
+      final sub3 = container.listen<int>(
+        conditionedSelectorProvider,
+        conditionedSelectorListener,
+        fireImmediately: true,
+      );
+
+      expect(sub1.read(), 0);
+      expect(sub2.read(), 0);
+      expect(sub3.read(), 2 * 0);
+      verify(() => rawListener(0)).called(1);
+      verify(() => conditionedListener(0)).called(1);
+      verify(() => conditionedSelectorListener(0)).called(1);
+
+      final rawValues = <int>[1, 2, 3, 4, 5, 6, 7, 8, 9];
+      final conditionedValues = <int>[0, 0, 3, 0, 0, 0, 0, 8, 0];
+      var currenteConditionedValue = 0;
+
+      for (var i = 0; i < rawValues.length; i++) {
+        container.read(counterCubitProvider.bloc).increment();
+        await Future(() {});
+
+        final counter = rawValues[i];
+        expect(sub1.read(), counter);
+        verify(() => rawListener(counter)).called(1);
+
+        final coditionedValue = conditionedValues[i];
+        if (coditionedValue == 0) {
+          expect(sub2.read(), currenteConditionedValue);
+          expect(sub3.read(), 2 * currenteConditionedValue);
+          verifyNever(() => conditionedListener(any()));
+          verifyNever(() => conditionedSelectorListener(any()));
+        } else {
+          currenteConditionedValue = coditionedValue;
+          expect(sub2.read(), coditionedValue);
+          expect(sub3.read(), 2 * coditionedValue);
+          verify(() => conditionedListener(coditionedValue)).called(1);
+          verify(() => conditionedSelectorListener(2 * coditionedValue))
+              .called(1);
+        }
+      }
+
+      sub1.close();
+      sub2.close();
+      sub3.close();
     });
   });
 }

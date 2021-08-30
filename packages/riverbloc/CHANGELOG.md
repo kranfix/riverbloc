@@ -1,3 +1,8 @@
+## [1.0.0-dev.1] - 2021-08-30
+
+- Updated riverpod: 1.0.0-dev.7.
+- Conditional rebuild with `BlocProvider.when()`
+
 ## [1.0.0-dev.0] - 2021-07-19
 
 - Updated riverpod: 1.0.0-dev.6. (Thanks to @elianmortega for help).

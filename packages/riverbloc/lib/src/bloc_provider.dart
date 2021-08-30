@@ -1,15 +1,4 @@
-import 'package:bloc/bloc.dart';
-import 'package:riverpod/riverpod.dart';
-import 'package:meta/meta.dart';
-
-// ignore: implementation_imports
-import 'package:riverpod/src/framework.dart';
-// ignore: implementation_imports
-import 'package:riverpod/src/value_provider.dart';
-
-part 'bloc_provider_state.dart';
-part 'bloc_notifier_provider.dart';
-part 'auto_dispose.dart';
+part of 'framework.dart';
 
 // ignore: subtype_of_sealed_class
 /// {@template bloc_provider}
@@ -227,6 +216,42 @@ part 'auto_dispose.dart';
 /// correctly the state and if the UI leaves the screen and re-enters it,
 /// the `asyncValue` will be readed again to retry creating the state.
 /// {@endtemplate}
+///
+/// {@template bloc_provider_when}
+/// ## `BlocProvider.when`
+///
+/// For conditional rebuilds, you can use the `when` property.
+///
+/// ```dart
+/// ref.watch(
+///   counterBlocProvider
+///     .when((previous, current) => current > previous)),
+/// );
+///
+/// ref.watch(
+///   blocProvider
+///     .when((prev, curr) => true)
+///     .select((state) => state.field),
+///   (field) { /* do something */ }
+/// );
+/// ```
+///
+/// or for conditional listening:
+///
+/// ```dart
+/// ref.listen(
+///   counterBlocProvider
+///     .when((previous, current) => current > previous)),
+/// );
+///
+/// ref.listen(
+///   blocProvider
+///     .when((prev, curr) => true)
+///     .select((state) => state.field),
+///   (field) { /* do something*/ }
+/// );
+/// ```
+/// {@endtemplate}
 class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
     with _BlocProviderMixin<B, S> {
   /// {@macro bloc_provider}
@@ -239,11 +264,11 @@ class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
 
   /// {@macro bloc_provider_notifier}
   @override
-  late final AlwaysAliveProviderBase<B> notifier =
-      _NotifierProvider(_create, name: name);
+  AlwaysAliveProviderBase<B> get notifier => bloc;
 
   /// {@macro bloc_provider_bloc}
-  AlwaysAliveProviderBase<B> get bloc => notifier;
+  late final AlwaysAliveProviderBase<B> bloc =
+      _NotifierProvider(_create, name: name);
 
   /// {@macro bloc_provider_stream}
   late final AlwaysAliveProviderBase<AsyncValue<S>> stream = StreamProvider<S>(
@@ -257,23 +282,19 @@ class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
   Override overrideWithProvider(BlocProvider<B, S> provider) {
     return ProviderOverride((setup) {
       setup(origin: notifier, override: provider.notifier);
+      setup(origin: this, override: this);
     });
   }
 
   @override
   S create(ProviderElementBase<S> ref) {
-    final notifier = ref.watch(this.notifier);
+    final bloc = ref.watch(this.bloc);
 
-    ref.state = notifier.state;
-
-    void listener(S newState) {
-      ref.state = newState;
-    }
-
-    final removeListener = notifier.stream.listen(listener);
+    void listener(S newState) => ref.state = newState;
+    final removeListener = bloc.stream.listen(listener);
     ref.onDispose(removeListener.cancel);
 
-    return ref.state;
+    return bloc.state;
   }
 
   @override
