@@ -1,5 +1,11 @@
 part of 'bloc_provider.dart';
 
+/// Signature for the `shouldNotify` function which takes the previous `state`
+/// and the current `state` and is responsible for returning a [bool] which
+/// determines whether or not to call `ref.listen()` or `ref.watch`
+/// with the current `state`.
+typedef BlocUpdateCondition<S> = bool Function(S previous, S current);
+
 // ignore: subtype_of_sealed_class
 mixin _BlocProviderMixin<B extends BlocBase<S>, S> on ProviderBase<S> {
   /// {@macro bloc_provider_notifier}
@@ -28,5 +34,43 @@ mixin _BlocProviderMixin<B extends BlocBase<S>, S> on ProviderBase<S> {
   @override
   bool updateShouldNotify(S previousState, S newState) {
     return newState != previousState;
+  }
+
+  late final _onChange = _ChangeProviderFamily<S, BlocUpdateCondition<S>>(this);
+
+  /// {@macro bloc_provider_when}
+  ProviderBase<S> when(BlocUpdateCondition<S> shouldUpdate) {
+    return _onChange.call(shouldUpdate);
+  }
+}
+
+// ignore: subtype_of_sealed_class
+class _ChangeProvider<S> extends AutoDisposeProvider<S> {
+  _ChangeProvider(
+    ProviderBase<S> origin, {
+    required BlocUpdateCondition<S> shouldNotify,
+  })  : _shouldNotify = shouldNotify,
+        super((ref) => ref.watch(origin));
+
+  final BlocUpdateCondition<S> _shouldNotify;
+
+  @override
+  bool updateShouldNotify(S previousState, S newState) {
+    return _shouldNotify.call(previousState, newState);
+  }
+}
+
+class _ChangeProviderFamily<S, Arg extends BlocUpdateCondition<S>>
+    extends Family<S, Arg, _ChangeProvider<S>> {
+  _ChangeProviderFamily(this.origin, {String? name}) : super(name);
+
+  final ProviderBase<S> origin;
+
+  @override
+  _ChangeProvider<S> create(Arg shouldNotify) {
+    return _ChangeProvider<S>(
+      origin,
+      shouldNotify: shouldNotify,
+    );
   }
 }
