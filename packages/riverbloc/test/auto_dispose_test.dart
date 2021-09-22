@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:riverpod/riverpod.dart';
 import 'package:riverbloc/riverbloc.dart';
+import 'package:riverpod/riverpod.dart';
 
 import 'helpers/helpers.dart';
 
@@ -132,8 +132,8 @@ void main() {
         listener2,
       );
 
-      expect(sub1.read(), equals(const AsyncLoading()));
-      expect(sub2.read(), equals(const AsyncLoading()));
+      expect(sub1.read(), equals(const AsyncLoading<int>()));
+      expect(sub2.read(), equals(const AsyncLoading<int>()));
 
       container.read(counterProvider1.notifier).increment();
       container.read(counterProvider2.notifier).increment();
@@ -168,7 +168,7 @@ void main() {
       );
       expect(
         container.read(counterProvider2.stream),
-        const AsyncLoading(),
+        const AsyncLoading<int>(),
       );
 
       await Future(() {});
@@ -187,7 +187,7 @@ void main() {
       );
       expect(
         container.read(counterProvider2.stream),
-        const AsyncLoading(),
+        const AsyncLoading<int>(),
       );
 
       await Future(() {});
