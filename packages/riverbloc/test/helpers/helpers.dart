@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:riverpod/riverpod.dart';
@@ -13,25 +15,22 @@ class MockSetupOverride extends Mock {
   });
 }
 
-enum CounterEvent { inc, dec }
+abstract class CounterEvent {}
+
+class Incremented extends CounterEvent {}
+
+class Decremented extends CounterEvent {}
 
 class CounterBloc extends Bloc<CounterEvent, int> {
-  CounterBloc(int state, {this.onClose}) : super(state);
+  CounterBloc(int state, {this.onClose}) : super(state) {
+    on<Incremented>(_onIncrement);
+    on<Decremented>(_onDecrement);
+  }
+
+  void _onIncrement(CounterEvent event, Emitter<int> emit) => emit(state + 1);
+  void _onDecrement(CounterEvent event, Emitter<int> emit) => emit(state - 1);
 
   void Function()? onClose;
-
-  @override
-  Stream<int> mapEventToState(CounterEvent event) async* {
-    switch (event) {
-      case CounterEvent.inc:
-        yield state + 1;
-        break;
-      case CounterEvent.dec:
-      default:
-        yield state - 1;
-        break;
-    }
-  }
 
   @override
   Future<void> close() {

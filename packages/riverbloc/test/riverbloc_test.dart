@@ -58,16 +58,16 @@ void main() {
 
       expect(counterBloc.state, 0);
 
-      container.read(counterBlocProvider.notifier).add(CounterEvent.inc);
+      container.read(counterBlocProvider.notifier).add(Incremented());
       await Future(() {});
       expect(counterBloc.state, 1);
 
-      container.read(counterBlocProvider.notifier).add(CounterEvent.inc);
-      container.read(counterBlocProvider.notifier).add(CounterEvent.inc);
+      container.read(counterBlocProvider.notifier).add(Incremented());
+      container.read(counterBlocProvider.notifier).add(Incremented());
       await Future(() {});
       expect(counterBloc.state, 3);
 
-      container.read(counterBlocProvider.notifier).add(CounterEvent.dec);
+      container.read(counterBlocProvider.notifier).add(Decremented());
       await Future(() {});
       expect(counterBloc.state, 2);
     });
@@ -80,7 +80,7 @@ void main() {
       expect(container.read(counterBlocProvider), 0);
 
       for (var count = 0; count < 10; count++) {
-        container.read(counterBlocProvider.notifier).add(CounterEvent.inc);
+        container.read(counterBlocProvider.notifier).add(Incremented());
         expect(container.read(counterBlocProvider), count);
         await Future(() {});
         expect(counterBloc.state, count + 1);
@@ -96,7 +96,7 @@ void main() {
       expect(container.read(counterBlocProvider), 0);
 
       for (var i = 0; i < 2; i++) {
-        counterBloc.add(CounterEvent.inc);
+        counterBloc.add(Incremented());
       }
       await Future(() {});
       expect(container.read(counterBlocProvider), 2);
@@ -125,7 +125,7 @@ void main() {
       expect(counterBloc.state, 0);
       expect(container.read(counterBlocProvider), 0);
 
-      counterBloc.add(CounterEvent.inc);
+      counterBloc.add(Incremented());
       await Future(() {});
 
       container.dispose();
@@ -150,13 +150,13 @@ void main() {
       expect(container.read(counterBlocProvider), 3);
       expect(container.read(counterProvider2), 3);
 
-      container.read(counterProvider2.notifier).add(CounterEvent.inc);
+      container.read(counterProvider2.notifier).add(Incremented());
       await Future(() {});
       expect(counterBloc.state, 4);
       expect(container.read(counterBlocProvider), 4);
       expect(container.read(counterProvider2), 4);
 
-      container.read(counterBlocProvider.notifier).add(CounterEvent.inc);
+      container.read(counterBlocProvider.notifier).add(Incremented());
       await Future(() {});
       expect(counterBloc.state, 5);
       expect(container.read(counterBlocProvider), 5);
@@ -176,12 +176,12 @@ void main() {
       expect(container.read(counterBlocProvider), 3);
       expect(bloc2.state, 3);
 
-      bloc2.add(CounterEvent.inc);
+      bloc2.add(Incremented());
       await Future(() {});
       expect(container.read(counterBlocProvider), 4);
       expect(bloc2.state, 4);
 
-      container.read(counterBlocProvider.notifier).add(CounterEvent.inc);
+      container.read(counterBlocProvider.notifier).add(Incremented());
       await Future(() {});
       expect(container.read(counterBlocProvider), 5);
       expect(bloc2.state, 5);
