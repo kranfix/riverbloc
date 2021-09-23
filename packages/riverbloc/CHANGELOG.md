@@ -1,3 +1,7 @@
+## [1.0.0-dev.2] - 2021-09-22
+
+- Update bloc depencendy: min version 7.2.0
+
 ## [1.0.0-dev.1] - 2021-08-30
 
 - Updated riverpod: 1.0.0-dev.7.
