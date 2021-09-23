@@ -20,7 +20,7 @@ void main() {
     });
 
     test('BlocProvider.bloc with name', () {
-      final counterBlocProvider = BlocProvider<CounterBloc, int>(
+      final counterBlocProvider = BlocProv(
         (ref) => CounterBloc(0),
         name: 'counter',
       );
