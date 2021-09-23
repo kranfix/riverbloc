@@ -273,7 +273,7 @@ class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
   /// {@macro bloc_provider_stream}
   late final AlwaysAliveProviderBase<AsyncValue<S>> stream = StreamProvider<S>(
     (ref) => ref.watch(notifier).stream,
-    name: name == null ? null : '$name.stream',
+    name: modifierName(name, 'stream'),
   );
 
   /// Overrides the behavior of a provider with a another provider.
@@ -281,7 +281,7 @@ class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
   /// {@macro riverpod.overideWith}
   Override overrideWithProvider(BlocProvider<B, S> provider) {
     return ProviderOverride((setup) {
-      setup(origin: notifier, override: provider.notifier);
+      setup(origin: bloc, override: provider.bloc);
       setup(origin: this, override: this);
     });
   }
