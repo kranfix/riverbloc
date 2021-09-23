@@ -1,11 +1,15 @@
+## [1.0.0-dev.3] - 2021-09-22
+
+- `ref.refresh(myBlocProvider)` is equivalent to `ref.refresh(myBlocProvider.bloc)`.
+
 ## [1.0.0-dev.2] - 2021-09-22
 
-- Update bloc depencendy: min version 7.2.0
+- Update bloc depencendy: min version `7.2.0`.
 
 ## [1.0.0-dev.1] - 2021-08-30
 
 - Updated riverpod: 1.0.0-dev.7.
-- Conditional rebuild with `BlocProvider.when()`
+- Conditional rebuild with `BlocProvider.when()`.
 
 ## [1.0.0-dev.0] - 2021-07-19
 
