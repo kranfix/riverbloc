@@ -231,18 +231,35 @@ void main() {
 
       expect(
         container.refresh(counterCubitProvider),
-        equals(counterCubit.state),
+        isNot(equals(counterCubit.state)),
+      );
+      expect(
+        container.read(counterCubitProvider.bloc),
+        isNot(equals(counterCubit)),
       );
 
-      final counterCubit2 = container.refresh(counterCubitProvider.bloc);
-      expect(counterCubit2, isNot(equals(counterCubit)));
+      final counterCubit2 = container.read(counterCubitProvider.bloc);
+      expect(counterCubit2.state, 0);
+      expect(container.read(counterCubitProvider), 0);
+
+      for (var i = 0; i < 2; i++) {
+        counterCubit2.increment();
+      }
+      await Future(() {});
       expect(
         container.read(counterCubitProvider.bloc),
         equals(counterCubit2),
       );
 
-      expect(counterCubit2.state, 0);
+      expect(counterCubit2.state, 2);
+      expect(container.read(counterCubitProvider), 2);
+
+      final counterCubit3 = container.refresh(counterCubitProvider.bloc);
+      expect(counterCubit3.state, 0);
       expect(container.read(counterCubitProvider), 0);
+      expect(container.read(counterCubitProvider.bloc), equals(counterCubit3));
+      expect(counterCubit3, isNot(equals(counterCubit)));
+      expect(counterCubit3, isNot(equals(counterCubit2)));
     });
 
     test('Cubit<T>.stream with non-null T', () async {
