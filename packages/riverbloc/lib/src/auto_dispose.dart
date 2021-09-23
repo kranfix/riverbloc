@@ -12,7 +12,7 @@ class _AutoDisposeNotifierProvider<B extends BlocBase<Object?>>
             ref.onDispose(notifier.close);
             return notifier;
           },
-          name: name == null ? null : '$name.notifier',
+          name: modifierName(name, 'notifier'),
         );
 }
 
@@ -38,7 +38,7 @@ class AutoDisposeBlocProvider<B extends BlocBase<S>, S>
   late final AutoDisposeProviderBase<AsyncValue<S>> stream =
       AutoDisposeStreamProvider<S>(
     (ref) => ref.watch(notifier).stream,
-    name: name == null ? null : '$name.stream',
+    name: modifierName(name, 'stream'),
   );
 
   @override

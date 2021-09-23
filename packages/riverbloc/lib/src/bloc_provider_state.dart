@@ -42,6 +42,9 @@ mixin _BlocProviderMixin<B extends BlocBase<S>, S> on ProviderBase<S> {
   ProviderBase<S> when(BlocUpdateCondition<S> shouldUpdate) {
     return _onChange.call(shouldUpdate);
   }
+
+  @override
+  ProviderBase<B> get providerToRefresh => notifier;
 }
 
 // ignore: subtype_of_sealed_class

@@ -3,6 +3,7 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:riverpod/riverpod.dart';
 
+import 'package:riverpod/src/common.dart';
 import 'package:riverpod/src/framework.dart';
 import 'package:riverpod/src/value_provider.dart';
 

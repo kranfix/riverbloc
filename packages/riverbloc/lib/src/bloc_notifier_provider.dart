@@ -11,6 +11,6 @@ class _NotifierProvider<B extends BlocBase<Object?>> extends Provider<B> {
             ref.onDispose(notifier.close);
             return notifier;
           },
-          name: name == null ? null : '$name.notifier',
+          name: modifierName(name, 'notifier'),
         );
 }

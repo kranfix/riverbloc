@@ -5,41 +5,39 @@ import 'package:riverpod/riverpod.dart';
 
 import 'helpers/helpers.dart';
 
-final counterBlocProvider =
-    BlocProvider<CounterBloc, int>((ref) => CounterBloc(0));
+typedef BlocProv<B extends BlocBase<int>> = BlocProvider<B, int>;
 
-final counterCubitProvider =
-    BlocProvider<CounterCubit, int>((ref) => CounterCubit(0));
+final counterProvider = BlocProv((ref) => CounterBloc(0));
+
+final counterCubitProvider = BlocProv((ref) => CounterCubit(0));
 
 void main() {
   group('Provider names', () {
-    test('BlocProvider.notifier with no name', () {
-      final counterBlocProvider = BlocProvider<CounterBloc, int>(
-        (ref) => CounterBloc(0),
-      );
-      expect(counterBlocProvider.notifier.name, isNull);
+    test('BlocProvider.bloc with no name', () {
+      final counterBlocProvider = BlocProv((ref) => CounterBloc(0));
+      expect(counterBlocProvider.bloc.name, isNull);
       expect(counterBlocProvider.stream.name, isNull);
     });
 
-    test('BlocProvider.notifier with name', () {
-      final counterBlocProvider = BlocProvider<CounterBloc, int>(
+    test('BlocProvider.bloc with name', () {
+      final counterBlocProvider = BlocProv(
         (ref) => CounterBloc(0),
         name: 'counter',
       );
-      expect(counterBlocProvider.notifier.name, 'counter.notifier');
+      expect(counterBlocProvider.bloc.name, 'counter.notifier');
       expect(counterBlocProvider.stream.name, 'counter.stream');
     });
   });
 
-  group('BlocProvider.bloc', () {
-    test('BlocProvider.bloc get BlocBase Object', () {
+  group('BlocProvider.notifier', () {
+    test('BlocProvider.notifier gets BlocBase Object', () {
       final container = ProviderContainer();
-      final counterCubit = container.read(counterCubitProvider.bloc);
+      final counterCubit = container.read(counterCubitProvider.notifier);
 
-      expect(counterCubit, isA<BlocBase>());
+      expect(counterCubit, isA<CounterCubit>());
     });
 
-    test('BlocProvider.bloc equals BlocProvider.notifier', () {
+    test('BlocProvider.notifier equals BlocProvider.bloc', () {
       final container = ProviderContainer();
       final bloc = container.read(counterCubitProvider.bloc);
       final notifier = container.read(counterCubitProvider.notifier);
@@ -54,62 +52,62 @@ void main() {
         () async {
       final container = ProviderContainer();
 
-      final counterBloc = container.read(counterBlocProvider.notifier);
+      final counterBloc = container.read(counterProvider.bloc);
 
       expect(counterBloc.state, 0);
 
-      container.read(counterBlocProvider.notifier).add(Incremented());
+      container.read(counterProvider.bloc).add(Incremented());
       await Future(() {});
       expect(counterBloc.state, 1);
 
-      container.read(counterBlocProvider.notifier).add(Incremented());
-      container.read(counterBlocProvider.notifier).add(Incremented());
+      container.read(counterProvider.bloc).add(Incremented());
+      container.read(counterProvider.bloc).add(Incremented());
       await Future(() {});
       expect(counterBloc.state, 3);
 
-      container.read(counterBlocProvider.notifier).add(Decremented());
+      container.read(counterProvider.bloc).add(Decremented());
       await Future(() {});
       expect(counterBloc.state, 2);
     });
 
     test('defaults to 0 and notify listeners when value changes', () async {
       final container = ProviderContainer();
-      final counterBloc = container.read(counterBlocProvider.notifier);
+      final counterBloc = container.read(counterProvider.bloc);
 
       expect(counterBloc.state, 0);
-      expect(container.read(counterBlocProvider), 0);
+      expect(container.read(counterProvider), 0);
 
       for (var count = 0; count < 10; count++) {
-        container.read(counterBlocProvider.notifier).add(Incremented());
-        expect(container.read(counterBlocProvider), count);
+        container.read(counterProvider.bloc).add(Incremented());
+        expect(container.read(counterProvider), count);
         await Future(() {});
         expect(counterBloc.state, count + 1);
-        expect(container.read(counterBlocProvider), count + 1);
+        expect(container.read(counterProvider), count + 1);
       }
     });
 
     test('bloc resubscribe', () async {
       final container = ProviderContainer();
-      final counterBloc = container.read(counterBlocProvider.notifier);
+      final counterBloc = container.read(counterProvider.bloc);
 
       expect(counterBloc.state, 0);
-      expect(container.read(counterBlocProvider), 0);
+      expect(container.read(counterProvider), 0);
 
       for (var i = 0; i < 2; i++) {
         counterBloc.add(Incremented());
       }
       await Future(() {});
-      expect(container.read(counterBlocProvider), 2);
+      expect(container.read(counterProvider), 2);
 
-      final counterBloc2 = container.refresh(counterBlocProvider.notifier);
+      final counterBloc2 = container.refresh(counterProvider.bloc);
       expect(counterBloc2, isNot(equals(counterBloc)));
       expect(
-        container.read(counterBlocProvider.notifier),
+        container.read(counterProvider.bloc),
         equals(counterBloc2),
       );
 
       expect(counterBloc2.state, 0);
-      expect(container.read(counterBlocProvider), 0);
+      expect(container.read(counterProvider), 0);
     });
 
     test('BlocProvider with auto dispose', () async {
@@ -120,7 +118,7 @@ void main() {
       final counterBlocProvider = BlocProvider<CounterBloc, int>(
         (ref) => CounterBloc(0, onClose: () => isBlocClosed = true),
       );
-      final counterBloc = container.read(counterBlocProvider.notifier);
+      final counterBloc = container.read(counterBlocProvider.bloc);
 
       expect(counterBloc.state, 0);
       expect(container.read(counterBlocProvider), 0);
@@ -139,27 +137,27 @@ void main() {
           BlocProvider<CounterBloc, int>((ref) => counterBloc);
       final container = ProviderContainer(
         overrides: [
-          counterBlocProvider.overrideWithProvider(counterProvider2),
+          counterProvider.overrideWithProvider(counterProvider2),
         ],
       );
 
-      expect(container.read(counterBlocProvider.notifier), equals(counterBloc));
-      expect(container.read(counterProvider2.notifier), equals(counterBloc));
+      expect(container.read(counterProvider.bloc), equals(counterBloc));
+      expect(container.read(counterProvider2.bloc), equals(counterBloc));
 
       expect(counterBloc.state, 3);
-      expect(container.read(counterBlocProvider), 3);
+      expect(container.read(counterProvider), 3);
       expect(container.read(counterProvider2), 3);
 
-      container.read(counterProvider2.notifier).add(Incremented());
+      container.read(counterProvider2.bloc).add(Incremented());
       await Future(() {});
       expect(counterBloc.state, 4);
-      expect(container.read(counterBlocProvider), 4);
+      expect(container.read(counterProvider), 4);
       expect(container.read(counterProvider2), 4);
 
-      container.read(counterBlocProvider.notifier).add(Incremented());
+      container.read(counterProvider.bloc).add(Incremented());
       await Future(() {});
       expect(counterBloc.state, 5);
-      expect(container.read(counterBlocProvider), 5);
+      expect(container.read(counterProvider), 5);
       expect(container.read(counterProvider2), 5);
     });
 
@@ -167,23 +165,23 @@ void main() {
       final bloc2 = CounterBloc(3);
       final container = ProviderContainer(
         overrides: [
-          counterBlocProvider.overrideWithValue(bloc2),
+          counterProvider.overrideWithValue(bloc2),
         ],
       );
 
-      expect(container.read(counterBlocProvider.notifier), equals(bloc2));
+      expect(container.read(counterProvider.bloc), equals(bloc2));
 
-      expect(container.read(counterBlocProvider), 3);
+      expect(container.read(counterProvider), 3);
       expect(bloc2.state, 3);
 
       bloc2.add(Incremented());
       await Future(() {});
-      expect(container.read(counterBlocProvider), 4);
+      expect(container.read(counterProvider), 4);
       expect(bloc2.state, 4);
 
-      container.read(counterBlocProvider.notifier).add(Incremented());
+      container.read(counterProvider.bloc).add(Incremented());
       await Future(() {});
-      expect(container.read(counterBlocProvider), 5);
+      expect(container.read(counterProvider), 5);
       expect(bloc2.state, 5);
     });
   });
@@ -192,11 +190,11 @@ void main() {
     test('reads cubit with default state 0 and increments it', () {
       final container = ProviderContainer();
 
-      final counterCubit = container.read(counterCubitProvider.notifier);
+      final counterCubit = container.read(counterCubitProvider.bloc);
 
       expect(counterCubit.state, 0);
 
-      container.read(counterCubitProvider.notifier).increment();
+      container.read(counterCubitProvider.bloc).increment();
 
       expect(counterCubit.state, 1);
     });
@@ -204,13 +202,13 @@ void main() {
     test('defaults to 0 and notify listeners when value changes', () async {
       final container = ProviderContainer();
 
-      final counterCubit = container.read(counterCubitProvider.notifier);
+      final counterCubit = container.read(counterCubitProvider.bloc);
 
       expect(counterCubit.state, 0);
       expect(container.read(counterCubitProvider), 0);
 
       for (var count = 0; count < 10; count++) {
-        container.read(counterCubitProvider.notifier).increment();
+        container.read(counterCubitProvider.bloc).increment();
         expect(container.read(counterCubitProvider), count);
         expect(counterCubit.state, count + 1);
         await Future(() {});
@@ -220,7 +218,7 @@ void main() {
 
     test('cubit resubscribe', () async {
       final container = ProviderContainer();
-      final counterCubit = container.read(counterCubitProvider.notifier);
+      final counterCubit = container.read(counterCubitProvider.bloc);
 
       expect(counterCubit.state, 0);
       expect(container.read(counterCubitProvider), 0);
@@ -233,18 +231,35 @@ void main() {
 
       expect(
         container.refresh(counterCubitProvider),
-        equals(counterCubit.state),
+        isNot(equals(counterCubit.state)),
+      );
+      expect(
+        container.read(counterCubitProvider.bloc),
+        isNot(equals(counterCubit)),
       );
 
-      final counterCubit2 = container.refresh(counterCubitProvider.notifier);
-      expect(counterCubit2, isNot(equals(counterCubit)));
+      final counterCubit2 = container.read(counterCubitProvider.bloc);
+      expect(counterCubit2.state, 0);
+      expect(container.read(counterCubitProvider), 0);
+
+      for (var i = 0; i < 2; i++) {
+        counterCubit2.increment();
+      }
+      await Future(() {});
       expect(
-        container.read(counterCubitProvider.notifier),
+        container.read(counterCubitProvider.bloc),
         equals(counterCubit2),
       );
 
-      expect(counterCubit2.state, 0);
+      expect(counterCubit2.state, 2);
+      expect(container.read(counterCubitProvider), 2);
+
+      final counterCubit3 = container.refresh(counterCubitProvider.bloc);
+      expect(counterCubit3.state, 0);
       expect(container.read(counterCubitProvider), 0);
+      expect(container.read(counterCubitProvider.bloc), equals(counterCubit3));
+      expect(counterCubit3, isNot(equals(counterCubit)));
+      expect(counterCubit3, isNot(equals(counterCubit2)));
     });
 
     test('Cubit<T>.stream with non-null T', () async {
@@ -253,7 +268,7 @@ void main() {
 
       expect(container.read(pod.stream), equals(const AsyncLoading<int>()));
 
-      container.read(pod.notifier).increment();
+      container.read(pod.bloc).increment();
       await Future(() {});
 
       expect(container.read(pod.stream), equals(const AsyncData(6)));
@@ -269,7 +284,7 @@ void main() {
       expect(container.read(pod.stream), equals(const AsyncLoading<int?>()));
       expect(container.read(pod), isNull);
 
-      container.read(pod.notifier).increment();
+      container.read(pod.bloc).increment();
       await Future(() {});
 
       expect(container.read(pod.stream), equals(const AsyncData<int?>(0)));
@@ -286,7 +301,7 @@ void main() {
         ],
       );
 
-      expect(container.read(counterCubitProvider.notifier), counterCubit);
+      expect(container.read(counterCubitProvider.bloc), counterCubit);
       expect(container.read(counterCubitProvider), 3);
     });
 
@@ -298,7 +313,7 @@ void main() {
         ],
       );
       expect(container.read(counterCubitProvider), 5);
-      expect(container.read(counterCubitProvider.notifier).state, 5);
+      expect(container.read(counterCubitProvider.bloc).state, 5);
     });
   });
 
@@ -316,7 +331,7 @@ void main() {
       expect(override, isA<ProviderOverride>());
 
       final container = ProviderContainer(overrides: [override]);
-      final cubit = container.read(counterCubitProvider.notifier);
+      final cubit = container.read(counterCubitProvider.bloc);
       expect(cubit, equals(cubit2));
     });
   });
