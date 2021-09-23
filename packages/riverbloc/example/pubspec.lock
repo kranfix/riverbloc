@@ -136,7 +136,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.0.0-dev.2"
+    version: "1.0.0-dev.3"
   riverpod:
     dependency: transitive
     description:
@@ -213,5 +213,5 @@ packages:
     source: hosted
     version: "2.1.0"
 sdks:
-  dart: ">=2.13.0 <3.0.0"
+  dart: ">=2.14.0 <3.0.0"
   flutter: ">=2.0.0"
