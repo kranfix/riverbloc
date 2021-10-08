@@ -1,7 +1,7 @@
 name: riverbloc
 description: >-
   BlocProvider implementation with riverpod as alternative to provider
-version: 1.0.0-dev.3
+version: 1.0.0-dev.4
 homepage: https://github.com/kranfix/riverbloc/tree/master/packages/riverbloc
 repository: https://github.com/kranfix/riverbloc
 
