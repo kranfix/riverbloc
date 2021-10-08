@@ -23,16 +23,20 @@ class AutoDisposeBlocProvider<B extends BlocBase<S>, S>
     extends AutoDisposeProviderBase<S> with _BlocProviderMixin<B, S> {
   /// {@macro bloc_provider}
 
-  AutoDisposeBlocProvider(this._create, {String? name}) : super(name);
+  AutoDisposeBlocProvider(
+    this._create, {
+    String? name,
+    List<ProviderOrFamily>? dependencies,
+  }) : super(name: name, dependencies: dependencies);
 
   final Create<B, AutoDisposeProviderRefBase> _create;
 
   @override
-  late final AutoDisposeProviderBase<B> notifier =
-      _AutoDisposeNotifierProvider(_create, name: name);
+  AutoDisposeProviderBase<B> get notifier => bloc;
 
   /// {@macro bloc_provider_bloc}
-  AutoDisposeProviderBase<B> get bloc => notifier;
+  late final AutoDisposeProviderBase<B> bloc =
+      _AutoDisposeNotifierProvider(_create, name: name);
 
   /// {@macro bloc_provider_stream}
   late final AutoDisposeProviderBase<AsyncValue<S>> stream =
@@ -44,16 +48,14 @@ class AutoDisposeBlocProvider<B extends BlocBase<S>, S>
   @override
   S create(AutoDisposeProviderElementBase<S> ref) {
     final notifier = ref.watch(this.notifier);
-    ref.state = notifier.state;
+    ref.setState(notifier.state);
 
-    void listener(S newState) {
-      ref.state = newState;
-    }
+    void listener(S newState) => ref.setState(newState);
 
     final removeListener = notifier.stream.listen(listener);
     ref.onDispose(removeListener.cancel);
 
-    return ref.state;
+    return notifier.state;
   }
 
   /// Overrides the behavior of a provider with a another provider.

@@ -255,7 +255,11 @@ part of 'framework.dart';
 class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
     with _BlocProviderMixin<B, S> {
   /// {@macro bloc_provider}
-  BlocProvider(this._create, {String? name}) : super(name);
+  BlocProvider(
+    this._create, {
+    String? name,
+    List<ProviderOrFamily>? dependencies,
+  }) : super(name: name, dependencies: dependencies);
 
   /// {@macro bloc_provider_auto_dispose}
   static const autoDispose = AutoDisposeBlocProviderBuilder();
@@ -290,7 +294,7 @@ class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
   S create(ProviderElementBase<S> ref) {
     final bloc = ref.watch(this.bloc);
 
-    void listener(S newState) => ref.state = newState;
+    void listener(S newState) => ref.setState(newState);
     final removeListener = bloc.stream.listen(listener);
     ref.onDispose(removeListener.cancel);
 

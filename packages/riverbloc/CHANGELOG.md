@@ -1,3 +1,7 @@
+## [1.0.0-dev.4] - 2021-10-08
+
+- Updated riverpod: 1.0.0-dev.10.
+
 ## [1.0.0-dev.3] - 2021-09-22
 
 - `ref.refresh(myBlocProvider)` is equivalent to `ref.refresh(myBlocProvider.bloc)`.

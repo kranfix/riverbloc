@@ -13,6 +13,7 @@ mixin _BlocProviderMixin<B extends BlocBase<S>, S> on ProviderBase<S> {
 
   @override
   void setupOverride(SetupOverride setup) {
+    //super.setupOverride(setup);
     setup(origin: this, override: this);
     setup(origin: notifier, override: notifier);
   }
@@ -36,7 +37,10 @@ mixin _BlocProviderMixin<B extends BlocBase<S>, S> on ProviderBase<S> {
     return newState != previousState;
   }
 
-  late final _onChange = _ChangeProviderFamily<S, BlocUpdateCondition<S>>(this);
+  late final _onChange = _ChangeProviderFamily<S, BlocUpdateCondition<S>>(
+    this,
+    dependencies: dependencies,
+  );
 
   /// {@macro bloc_provider_when}
   ProviderBase<S> when(BlocUpdateCondition<S> shouldUpdate) {
@@ -68,9 +72,14 @@ class _ChangeProvider<S> extends AutoDisposeProvider<S> {
         });
 }
 
+// ignore: subtype_of_sealed_class
 class _ChangeProviderFamily<S, Arg extends BlocUpdateCondition<S>>
     extends Family<S, Arg, _ChangeProvider<S>> {
-  _ChangeProviderFamily(this.origin, {String? name}) : super(name);
+  _ChangeProviderFamily(
+    this.origin, {
+    String? name,
+    List<ProviderOrFamily>? dependencies,
+  }) : super(name: name, dependencies: dependencies);
 
   final ProviderBase<S> origin;
 
