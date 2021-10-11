@@ -276,7 +276,7 @@ class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
 
   /// {@macro bloc_provider_stream}
   late final AlwaysAliveProviderBase<AsyncValue<S>> stream = StreamProvider<S>(
-    (ref) => ref.watch(notifier).stream,
+    (ref) => ref.watch(bloc).stream,
     name: modifierName(name, 'stream'),
   );
 
