@@ -4,7 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' show BuildContext;
 import 'package:flutter_hooks/flutter_hooks.dart';
 
-import 'flutter_bloc.dart' show Cubit, Bloc, BlocBase, ReadContext;
+import 'package:flutter_hooks_bloc/src/flutter_bloc.dart'
+    show Cubit, Bloc, BlocBase, ReadContext;
 
 /// Signature for the `listener` function which takes the `BuildContext` along
 /// with the `current` and `previous` state and is responsible for executing in
@@ -115,9 +116,9 @@ class _BlocHookState<S> extends HookState<BlocBase<S>, _BlocHook<S>> {
   @override
   void didUpdateHook(_BlocHook<S> oldHook) {
     super.didUpdateHook(oldHook);
-    final oldCubit = oldHook.bloc;
-    final currentCubit = hook.bloc;
-    if (oldCubit != currentCubit) {
+    final oldBloc = oldHook.bloc;
+    final currentBloc = hook.bloc;
+    if (oldBloc != currentBloc) {
       if (_subscription != null) {
         _unsubscribe();
         _previous = hook.bloc.state;
