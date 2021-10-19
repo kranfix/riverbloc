@@ -27,7 +27,7 @@ class MyThemeAppState extends State<MyThemeApp> {
   Widget build(BuildContext context) {
     return BlocBuilder<Cubit<ThemeData>, ThemeData>(
       bloc: _themeCubit,
-      builder: ((context, theme) {
+      builder: (context, theme) {
         _onBuild();
         return MaterialApp(
           key: const Key('material_app'),
@@ -51,7 +51,7 @@ class MyThemeAppState extends State<MyThemeApp> {
             ],
           ),
         );
-      }),
+      },
     );
   }
 }
@@ -209,7 +209,7 @@ void main() {
     });
 
     testWidgets(
-        'updates when the cubit is changed at runtime to a different cubit and'
+        'updates when the cubit is changed at runtime to a different cubit and '
         'unsubscribes from old cubit', (tester) async {
       final themeCubit = ThemeCubit();
       var numBuilds = 0;

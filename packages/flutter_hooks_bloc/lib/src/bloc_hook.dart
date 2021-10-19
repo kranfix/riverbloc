@@ -34,7 +34,7 @@ abstract class BlocWidget<B extends BlocBase<S>, S extends Object>
 
   /// The `$use` method is a sugar syntax for the `useBloc`.
   @protected
-  B $use() => useBloc<B, S>(bloc: bloc, onEmitted: onStateEmitted);
+  S $use() => useBloc<B, S>(bloc: bloc, onEmitted: onStateEmitted);
 
   /// The `onStateEmitted` method allows to customize the behavior
   /// of the implementation of the [BlocWidget]
@@ -78,25 +78,25 @@ abstract class BlocWidget<B extends BlocBase<S>, S extends Object>
 ///  * [Cubit]
 ///  * [Bloc]
 ///  * [BlocBase]
-B useBloc<B extends BlocBase<S>, S extends Object>({
+S useBloc<B extends BlocBase<S>, S extends Object>({
   B? bloc,
   BlocHookListener<S>? onEmitted,
 }) {
   final _bloc = bloc ?? useContext().read<B>();
-  return use(_BlocHook<S>(_bloc, onEmitted)) as B;
+  return use(_BlocHook<S>(_bloc, onEmitted));
 }
 
-class _BlocHook<S> extends Hook<BlocBase<S>> {
+class _BlocHook<S> extends Hook<S> {
   const _BlocHook(this.bloc, this.onEmitted);
 
   final BlocBase<S> bloc;
   final BlocHookListener<S>? onEmitted;
 
   @override
-  HookState<BlocBase<S>, _BlocHook<S>> createState() => _BlocHookState<S>();
+  HookState<S, _BlocHook<S>> createState() => _BlocHookState<S>();
 }
 
-class _BlocHookState<S> extends HookState<BlocBase<S>, _BlocHook<S>> {
+class _BlocHookState<S> extends HookState<S, _BlocHook<S>> {
   // ignore: cancel_subscriptions
   StreamSubscription<S>? _subscription;
 
@@ -104,7 +104,7 @@ class _BlocHookState<S> extends HookState<BlocBase<S>, _BlocHook<S>> {
   late S _previous;
 
   @override
-  BlocBase<S> build(BuildContext context) => hook.bloc;
+  S build(BuildContext context) => hook.bloc.state;
 
   @override
   void initHook() {

@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
 
-import 'bloc_builder.dart';
-import 'bloc_listener.dart';
+import 'package:flutter_hooks_bloc/src/bloc_builder.dart';
+import 'package:flutter_hooks_bloc/src/bloc_listener.dart';
 
 /// {@template bloc_consumer}
 /// [BlocConsumer] exposes a [builder] and [listener] in order react to new
@@ -99,8 +99,8 @@ class BlocConsumer<B extends BlocBase<S>, S extends Object>
   /// [builder] with the current `state`.
   @override
   Widget build(BuildContext context) {
-    final _cubit = $use();
-    return builder(context, _cubit.state);
+    final state = $use();
+    return builder(context, state);
   }
 
   @override
