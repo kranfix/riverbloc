@@ -116,9 +116,7 @@ class _BlocHookState<S> extends HookState<BlocBase<S>, _BlocHook<S>> {
   @override
   void didUpdateHook(_BlocHook<S> oldHook) {
     super.didUpdateHook(oldHook);
-    final oldBloc = oldHook.bloc;
-    final currentBloc = hook.bloc;
-    if (oldBloc != currentBloc) {
+    if (oldHook.bloc != hook.bloc) {
       if (_subscription != null) {
         _unsubscribe();
         _previous = hook.bloc.state;
