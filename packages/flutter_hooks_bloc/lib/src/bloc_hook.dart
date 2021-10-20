@@ -103,13 +103,17 @@ class _BlocHookState<S> extends HookState<S, _BlocHook<S>> {
   /// Previous state from cubit
   late S _previous;
 
+  /// Previous state from cubit
+  late S latest;
+
   @override
-  S build(BuildContext context) => hook.bloc.state;
+  S build(BuildContext context) => latest;
 
   @override
   void initHook() {
     super.initHook();
     _previous = hook.bloc.state;
+    latest = hook.bloc.state;
     _subscribe();
   }
 
@@ -120,6 +124,7 @@ class _BlocHookState<S> extends HookState<S, _BlocHook<S>> {
       if (_subscription != null) {
         _unsubscribe();
         _previous = hook.bloc.state;
+        latest = hook.bloc.state;
       }
       _subscribe();
     }
@@ -132,12 +137,14 @@ class _BlocHookState<S> extends HookState<S, _BlocHook<S>> {
   }
 
   void _subscribe() {
-    _subscription = hook.bloc.stream.listen((state) {
-      if (hook.onEmitted?.call(context, _previous, state) ?? true) {
-        setState(() {});
-      }
-      _previous = state;
-    });
+    _subscription = hook.bloc.stream.listen(listen);
+  }
+
+  void listen(S state) {
+    if (hook.onEmitted?.call(context, _previous, state) ?? true) {
+      setState(() => latest = hook.bloc.state);
+    }
+    _previous = state;
   }
 
   void _unsubscribe() {
