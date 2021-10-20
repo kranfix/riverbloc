@@ -142,7 +142,7 @@ class _BlocHookState<S> extends HookState<S, _BlocHook<S>> {
 
   void listen(S state) {
     if (hook.onEmitted?.call(context, _previous, state) ?? true) {
-      setState(() => latest = hook.bloc.state);
+      setState(() => latest = state);
     }
     _previous = state;
   }
