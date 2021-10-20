@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks_bloc/flutter_hooks_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class MyApp extends StatelessWidget {
