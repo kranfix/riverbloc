@@ -1,9 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_hooks_bloc/src/bloc_hook.dart';
+import 'package:flutter_hooks_bloc/src/flutter_bloc.dart' hide BlocProvider;
 import 'package:flutter_hooks_bloc/src/multi_bloc_listener.dart';
-
-import 'bloc_hook.dart';
-import 'flutter_bloc.dart' hide BlocProvider;
 
 /// Signature for the `listener` function which takes the `BuildContext` along
 /// with the `state` and is responsible for executing in response to
@@ -101,7 +100,7 @@ class BlocListener<B extends BlocBase<S>, S extends Object>
   @override
   DiagnosticsNode asDiagnosticsNode() {
     return DiagnosticsProperty<S>(
-      '$runtimeType',
+      'BlocListener<$B, $S>',
       bloc?.state,
       ifNull: '',
       showSeparator: bloc?.state != null,
