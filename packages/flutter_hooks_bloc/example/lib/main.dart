@@ -53,9 +53,9 @@ class MyHomePage extends HookWidget {
               final counter = useBloc<CounterCubit, int>(
                 onEmitted: (_, prev, curr) {
                   print('listener: $prev $curr');
-                  return true; // allows rebuild
+                  return curr % 3 == 0; // allows rebuild
                 },
-              ).state;
+              );
               return Text(
                 '$counter',
                 style: Theme.of(context).textTheme.headline4,

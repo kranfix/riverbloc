@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
-import 'bloc_hook.dart';
-import 'flutter_bloc.dart' hide BlocProvider;
+import 'package:flutter_hooks_bloc/src/bloc_hook.dart';
+import 'package:flutter_hooks_bloc/src/flutter_bloc.dart' hide BlocProvider;
 
 /// Signature for the `builder` function which takes the `BuildContext` and
 /// [state] and is responsible for returning a widget which is to be rendered.
@@ -85,8 +85,8 @@ class BlocBuilder<B extends BlocBase<S>, S extends Object>
 
   @override
   Widget build(BuildContext context) {
-    final _bloc = $use();
-    return builder(context, _bloc.state);
+    final state = $use();
+    return builder(context, state);
   }
 
   @override

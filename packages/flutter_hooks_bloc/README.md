@@ -18,13 +18,13 @@ The `useBloc` hook function allows to listen state changes and rebuild
 the widget if necessary.
 
 ```dart
-C useBloc<C extends Cubit<S>, S>({
-  /// cubit to subscribe. if it is null, it will be infered
-  C cubit,
+S useBloc<B extends BlocBase<S>, S>({
+  /// bloc or cubit to subscribe. if it is null, it will be infered
+  B? bloc,
 
   /// If `onEmitted` is not provided or its invocation returns `true`,
   /// the widget will rebuild.
-  BlocHookListener<S> onEmitted,
+  BlocHookListener<S>? onEmitted,
 });
 ```
 
@@ -38,7 +38,7 @@ HookBuilder(builder: (ctx) {
       print('listener: $prev $curr');
       return true;
     }
-  ).state;
+  );
   return Text(
     '$counter',
     style: Theme.of(context).textTheme.headline4,
@@ -49,36 +49,42 @@ HookBuilder(builder: (ctx) {
 And also into a widget that extends a HookWidget:
 
 ```dart
-class BlocBuilder<C extends Cubit<S>, S> extends HookWidget
-    with CubitComposer<C>, BlocBuilderInterface<C, S> {
+class BlocBuilder<B extends BlocBase<S>, S> extends BlocWidget<B, S> {
   const BlocBuilder({
     Key? key,
-    this.cubit,
+    this.bloc,
     @required this.builder,
     this.buildWhen,
   })  : assert(builder != null),
         super(key: key);
 
   @override
-  final C cubit;
+  final B? bloc;
 
   @override
   final BlocWidgetBuilder<S> builder;
 
   @override
-  final BlocBuilderCondition<S> buildWhen;
+  final BlocBuilderCondition<S>? buildWhen;
 
   @override
   Widget build(BuildContext context) {
-    final _cubit = useBloc<C, S>(
-      cubit: cubit,
+    final state = useBloc<B, S>(
+      bloc: cubit,
       onEmitted: (context, previous, state) {
         return buildWhen?.call(previous, state) ?? true;
       }
     );
-    return builder(context, _cubit.state);
+    return builder(context, state);
   }
 }
+```
+
+And a `BlocWidget<B, S>` y defined as following:
+
+```dart
+abstract class BlocWidget<B extends BlocBase<S>, S extends Object>
+    extends HookWidget {}
 ```
 
 # Alternative to MultiBlocBuilder
@@ -94,12 +100,12 @@ class MyMultiBlocBuilder extends HookWidget {
   @override
   Widget build(BuildContext context){
     // onEmitted is called every time that the state is emitter in a cubit/bloc
-    final cubitA = useBloc<CubitA, int>(onEmitted: (context, previousState, state){
+    final stateA = useBloc<CubitA, int>(onEmitted: (context, previousState, state){
       // with true, the widget rebuild, otherwise, it behave like a BlocListener
       return buildWhenA?.call(previousState, state) ?? true;
     });
 
-    final blocB = useBloc<BlocB, String>(onEmitted: (context, previousState, state){
+    final stateB = useBloc<BlocB, String>(onEmitted: (context, previousState, state){
       // If you also want to have a BlocListener behavior, you can add some code here
       if(listenWhen?.call(previousState, state) ?? true){
         listener(context, state);
@@ -108,13 +114,13 @@ class MyMultiBlocBuilder extends HookWidget {
     });
 
     // always rebuild when cubit emits a new state
-    final cubitC = useBloc<CubitC, double>();
+    final stateC = useBloc<CubitC, double>();
 
     return Column(
       children: [
-        Text('${cubitA.state}'),
-        Text('${blocB.state}'),
-        Text('${cubitC.state}'),
+        Text('${stateAA}'),
+        Text('${statecB}'),
+        Text('${stateC}'),
       ],
     );
   }

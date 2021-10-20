@@ -4,7 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' show BuildContext;
 import 'package:flutter_hooks/flutter_hooks.dart';
 
-import 'flutter_bloc.dart' show Cubit, Bloc, BlocBase, ReadContext;
+import 'package:flutter_hooks_bloc/src/flutter_bloc.dart'
+    show Cubit, Bloc, BlocBase, ReadContext;
 
 /// Signature for the `listener` function which takes the `BuildContext` along
 /// with the `current` and `previous` state and is responsible for executing in
@@ -33,7 +34,7 @@ abstract class BlocWidget<B extends BlocBase<S>, S extends Object>
 
   /// The `$use` method is a sugar syntax for the `useBloc`.
   @protected
-  B $use() => useBloc<B, S>(bloc: bloc, onEmitted: onStateEmitted);
+  S $use() => useBloc<B, S>(bloc: bloc, onEmitted: onStateEmitted);
 
   /// The `onStateEmitted` method allows to customize the behavior
   /// of the implementation of the [BlocWidget]
@@ -77,50 +78,53 @@ abstract class BlocWidget<B extends BlocBase<S>, S extends Object>
 ///  * [Cubit]
 ///  * [Bloc]
 ///  * [BlocBase]
-B useBloc<B extends BlocBase<S>, S extends Object>({
+S useBloc<B extends BlocBase<S>, S extends Object>({
   B? bloc,
   BlocHookListener<S>? onEmitted,
 }) {
   final _bloc = bloc ?? useContext().read<B>();
-  return use(_BlocHook<S>(_bloc, onEmitted)) as B;
+  return use(_BlocHook<S>(_bloc, onEmitted));
 }
 
-class _BlocHook<S> extends Hook<BlocBase<S>> {
+class _BlocHook<S> extends Hook<S> {
   const _BlocHook(this.bloc, this.onEmitted);
 
   final BlocBase<S> bloc;
   final BlocHookListener<S>? onEmitted;
 
   @override
-  HookState<BlocBase<S>, _BlocHook<S>> createState() => _BlocHookState<S>();
+  HookState<S, _BlocHook<S>> createState() => _BlocHookState<S>();
 }
 
-class _BlocHookState<S> extends HookState<BlocBase<S>, _BlocHook<S>> {
+class _BlocHookState<S> extends HookState<S, _BlocHook<S>> {
   // ignore: cancel_subscriptions
   StreamSubscription<S>? _subscription;
 
   /// Previous state from cubit
   late S _previous;
 
+  /// Previous state from cubit
+  late S latest;
+
   @override
-  BlocBase<S> build(BuildContext context) => hook.bloc;
+  S build(BuildContext context) => latest;
 
   @override
   void initHook() {
     super.initHook();
     _previous = hook.bloc.state;
+    latest = hook.bloc.state;
     _subscribe();
   }
 
   @override
   void didUpdateHook(_BlocHook<S> oldHook) {
     super.didUpdateHook(oldHook);
-    final oldCubit = oldHook.bloc;
-    final currentCubit = hook.bloc;
-    if (oldCubit != currentCubit) {
+    if (oldHook.bloc != hook.bloc) {
       if (_subscription != null) {
         _unsubscribe();
         _previous = hook.bloc.state;
+        latest = hook.bloc.state;
       }
       _subscribe();
     }
@@ -133,12 +137,14 @@ class _BlocHookState<S> extends HookState<BlocBase<S>, _BlocHook<S>> {
   }
 
   void _subscribe() {
-    _subscription = hook.bloc.stream.listen((state) {
-      if (hook.onEmitted?.call(context, _previous, state) ?? true) {
-        setState(() {});
-      }
-      _previous = state;
-    });
+    _subscription = hook.bloc.stream.listen(listen);
+  }
+
+  void listen(S state) {
+    if (hook.onEmitted?.call(context, _previous, state) ?? true) {
+      setState(() => latest = state);
+    }
+    _previous = state;
   }
 
   void _unsubscribe() {

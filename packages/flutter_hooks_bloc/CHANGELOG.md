@@ -1,3 +1,10 @@
+## [0.16.0] - 2021-10-20
+
+- Using bloc 7.2
+- Fix rebuild of state
+- breaking: `useBloc<B, S>` returns `S` instead of `B`
+- Updating README docs
+
 ## [0.15.0+1] - 2021-07-04
 
 - Updating README docs
