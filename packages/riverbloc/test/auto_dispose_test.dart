@@ -6,7 +6,6 @@ import 'package:riverpod/riverpod.dart';
 import 'helpers/helpers.dart';
 
 void main() {
-  /*
   group('AutoDispose Provider names', () {
     test('AutoDisposeBlocProvider.notifier with no name', () {
       final counterBlocProvider = AutoDisposeBlocProvider<CounterBloc, int>(
@@ -69,9 +68,9 @@ void main() {
       container.read(counterProvider2.notifier).increment();
       await Future(() {});
       expect(sub1.read(), 1);
-      verify(() => listener1(1)).called(1);
+      verify(() => listener1(0, 1)).called(1);
       expect(sub2.read(), 1);
-      verify(() => listener2(1)).called(1);
+      verify(() => listener2(0, 1)).called(1);
 
       verifyNoMoreInteractions(listener1);
       verifyNoMoreInteractions(listener2);
@@ -140,17 +139,19 @@ void main() {
       container.read(counterProvider2.notifier).increment();
       await Future(() {});
       expect(sub1.read(), const AsyncData(1));
-      verify(() => listener1(const AsyncData(1))).called(1);
+      verify(() => listener1(const AsyncLoading(), const AsyncData(1)))
+          .called(1);
       expect(sub2.read(), const AsyncData(1));
-      verify(() => listener2(const AsyncData(1))).called(1);
+      verify(() => listener2(const AsyncLoading(), const AsyncData(1)))
+          .called(1);
 
       container.read(counterProvider1.notifier).increment();
       container.read(counterProvider2.notifier).increment();
       await Future(() {});
       expect(sub1.read(), const AsyncData(2));
-      verify(() => listener1(const AsyncData(2))).called(1);
+      verify(() => listener1(const AsyncData(1), const AsyncData(2))).called(1);
       expect(sub2.read(), const AsyncData(2));
-      verify(() => listener2(const AsyncData(2))).called(1);
+      verify(() => listener2(const AsyncData(1), const AsyncData(2))).called(1);
 
       verifyNoMoreInteractions(listener1);
       verifyNoMoreInteractions(listener2);
@@ -253,5 +254,4 @@ void main() {
       expect(bloc, equals(notifier));
     });
   });
-  */
 }
