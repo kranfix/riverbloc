@@ -63,17 +63,17 @@ class MyHomePage extends ConsumerWidget {
                 style: Theme.of(context).textTheme.headline4,
               );
             }),
-            HookConsumer(builder: (context, ref, __) {
-              final provider = useMemoized(() {
-                return counterProvider
-                    .when((prev, curr) => (curr + prev) % 5 == 0);
-              });
-              final _counter = ref.watch(provider.select((state) => 2 * state));
-              return Text(
-                '$_counter',
-                style: Theme.of(context).textTheme.headline4,
-              );
-            }),
+            //HookConsumer(builder: (context, ref, __) {
+            //  final provider = useMemoized(() {
+            //    return counterProvider
+            //        .when((prev, curr) => (curr + prev) % 5 == 0);
+            //  });
+            //  final _counter = ref.watch(provider.select((state) => 2 * state));
+            //  return Text(
+            //    '$_counter',
+            //    style: Theme.of(context).textTheme.headline4,
+            //  );
+            //}),
           ],
         ),
       ),

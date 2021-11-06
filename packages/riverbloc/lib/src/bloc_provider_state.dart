@@ -11,83 +11,17 @@ mixin _BlocProviderMixin<B extends BlocBase<S>, S> on ProviderBase<S> {
   /// {@macro bloc_provider_notifier}
   ProviderBase<B> get notifier;
 
-  @override
-  void setupOverride(SetupOverride setup) {
-    //super.setupOverride(setup);
-    setup(origin: this, override: this);
-    setup(origin: notifier, override: notifier);
-  }
-
-  /// Overrides the behavior of a provider with a value.
-  ///
-  /// {@macro riverpod.overideWith}
-  Override overrideWithValue(B bloc) {
-    return ProviderOverride((setup) {
-      setup(
-        origin: notifier,
-        override: ValueProvider<B>(bloc),
-      );
-      setup(origin: this, override: this);
-    });
-  }
+  // TODO(kranfix) - Add a `BlocProvider.of` method that takes a context and
+  //@override
+  //void setupOverride(SetupOverride setup) {
+  //  //super.setupOverride(setup);
+  //  setup(origin: this, override: this);
+  //  setup(origin: notifier, override: notifier);
+  //}
 
   /// The bloc notifies when the state changes.
   @override
   bool updateShouldNotify(S previousState, S newState) {
     return newState != previousState;
-  }
-
-  late final _onChange = _ChangeProviderFamily<S, BlocUpdateCondition<S>>(
-    this,
-    dependencies: dependencies,
-  );
-
-  /// {@macro bloc_provider_when}
-  ProviderBase<S> when(BlocUpdateCondition<S> shouldUpdate) {
-    return _onChange.call(shouldUpdate);
-  }
-
-  @override
-  ProviderBase<B> get providerToRefresh => notifier;
-}
-
-// ignore: subtype_of_sealed_class
-class _ChangeProvider<S> extends AutoDisposeProvider<S> {
-  _ChangeProvider(
-    ProviderBase<S> origin, {
-    required BlocUpdateCondition<S> shouldNotify,
-  }) : super((ref) {
-          var previous = ref.read(origin);
-          ref.listen<S>(
-            origin,
-            (state) {
-              if (shouldNotify(previous, state)) {
-                ref.state = state;
-              }
-              previous = state;
-            },
-            fireImmediately: true,
-          );
-          return previous;
-        });
-}
-
-// ignore: subtype_of_sealed_class
-class _ChangeProviderFamily<S, Arg extends BlocUpdateCondition<S>>
-    extends Family<S, Arg, _ChangeProvider<S>> {
-  _ChangeProviderFamily(
-    this.origin, {
-    String? name,
-    List<ProviderOrFamily>? dependencies,
-  }) : super(name: name, dependencies: dependencies);
-
-  final ProviderBase<S> origin;
-
-  @override
-  _ChangeProvider<S> create(Arg shouldNotify) {
-    return _ChangeProvider<S>(
-      origin,
-      shouldNotify: shouldNotify,
-    );
   }
 }

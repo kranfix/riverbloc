@@ -336,6 +336,8 @@ void main() {
     });
   });
 
+  /*
+
   group('BlocProvider.when', () {
     test('rebuilds when current is even', () async {
       final container = ProviderContainer();
@@ -406,4 +408,5 @@ void main() {
       sub3.close();
     });
   });
+  */
 }

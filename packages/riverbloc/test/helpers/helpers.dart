@@ -3,7 +3,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:riverpod/riverpod.dart';
 
 class Listener<T> extends Mock {
-  void call(T value);
+  void call(T prev, T value);
 }
 
 class MockSetupOverride extends Mock {

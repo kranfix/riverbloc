@@ -1,5 +1,7 @@
 part of 'framework.dart';
 
+/*
+
 // ignore: subtype_of_sealed_class
 class _AutoDisposeNotifierProvider<B extends BlocBase<Object?>>
     extends AutoDisposeProvider<B> {
@@ -89,3 +91,6 @@ class AutoDisposeBlocProviderBuilder {
     return AutoDisposeBlocProvider(create, name: name);
   }
 }
+
+
+*/

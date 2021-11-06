@@ -253,42 +253,44 @@ part of 'framework.dart';
 /// ```
 /// {@endtemplate}
 class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
-    with _BlocProviderMixin<B, S> {
+    with
+        BlocProviderOverrideMixin<B, S>,
+        OverrideWithProviderMixin<B, BlocProvider<B, S>>,
+        _BlocProviderMixin<B, S> {
   /// {@macro bloc_provider}
   BlocProvider(
-    this._create, {
+    Create<B, BlocProviderRef<B, S>> create, {
     String? name,
     List<ProviderOrFamily>? dependencies,
-  }) : super(name: name, dependencies: dependencies);
+    Family? from,
+    Object? argument,
+  })  : bloc = _NotifierProvider(
+          create,
+          name: name,
+          dependencies: dependencies,
+          from: from,
+          argument: argument,
+        ),
+        super(name: name, from: from, argument: argument);
 
   /// {@macro bloc_provider_auto_dispose}
-  static const autoDispose = AutoDisposeBlocProviderBuilder();
+  //static const autoDispose = AutoDisposeBlocProviderBuilder();
 
-  final Create<B, ProviderRefBase> _create;
+  @override
 
   /// {@macro bloc_provider_notifier}
   @override
   AlwaysAliveProviderBase<B> get notifier => bloc;
 
   /// {@macro bloc_provider_bloc}
-  late final AlwaysAliveProviderBase<B> bloc =
-      _NotifierProvider(_create, name: name);
+  @override
+  final AlwaysAliveProviderBase<B> bloc;
 
   /// {@macro bloc_provider_stream}
   late final AlwaysAliveProviderBase<AsyncValue<S>> stream = StreamProvider<S>(
     (ref) => ref.watch(bloc).stream,
     name: modifierName(name, 'stream'),
   );
-
-  /// Overrides the behavior of a provider with a another provider.
-  ///
-  /// {@macro riverpod.overideWith}
-  Override overrideWithProvider(BlocProvider<B, S> provider) {
-    return ProviderOverride((setup) {
-      setup(origin: bloc, override: provider.bloc);
-      setup(origin: this, override: this);
-    });
-  }
 
   @override
   S create(ProviderElementBase<S> ref) {

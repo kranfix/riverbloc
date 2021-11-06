@@ -6,6 +6,7 @@ import 'package:riverpod/riverpod.dart';
 import 'helpers/helpers.dart';
 
 void main() {
+  /*
   group('AutoDispose Provider names', () {
     test('AutoDisposeBlocProvider.notifier with no name', () {
       final counterBlocProvider = AutoDisposeBlocProvider<CounterBloc, int>(
@@ -252,4 +253,5 @@ void main() {
       expect(bloc, equals(notifier));
     });
   });
+  */
 }
