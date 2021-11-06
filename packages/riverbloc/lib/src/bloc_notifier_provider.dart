@@ -53,7 +53,7 @@ class _NotifierProvider<B extends BlocBase<S>, S>
 }
 
 // ignore: subtype_of_sealed_class
-/// Add [overrideWithValue] to [AutoDisposeStateNotifierProvider]
+/// Add [overrideWithValue] to [AutoDisposeBlocProvider]
 mixin BlocProviderOverrideMixin<B extends BlocBase<S>, S> on ProviderBase<S> {
   ///
   ProviderBase<B> get bloc;
