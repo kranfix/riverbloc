@@ -1,7 +1,7 @@
 part of 'framework.dart';
 
 /// {@macro riverpod.providerrefbase}
-abstract class AutoDisposeBlocProviderRef<B extends BlocBase<S>, S>
+abstract class AutoDisposeBlocProviderRef<B extends BlocBase<Object?>>
     implements AutoDisposeRef {
   /// The [Bloc] currently exposed by this provider.
   ///
@@ -10,7 +10,7 @@ abstract class AutoDisposeBlocProviderRef<B extends BlocBase<S>, S>
 }
 
 // ignore: subtype_of_sealed_class
-class _AutoDisposeNotifierProvider<B extends BlocBase<S>, S>
+class _AutoDisposeNotifierProvider<B extends BlocBase<Object?>>
     extends AutoDisposeProviderBase<B> {
   _AutoDisposeNotifierProvider(
     this._create, {
@@ -24,13 +24,13 @@ class _AutoDisposeNotifierProvider<B extends BlocBase<S>, S>
           argument: argument,
         );
 
-  final Create<B, AutoDisposeBlocProviderRef<B, S>> _create;
+  final Create<B, AutoDisposeBlocProviderRef<B>> _create;
 
   @override
   final List<ProviderOrFamily>? dependencies;
 
   @override
-  B create(covariant AutoDisposeBlocProviderRef<B, S> ref) {
+  B create(covariant AutoDisposeBlocProviderRef<B> ref) {
     final bloc = _create(ref);
     ref.onDispose(bloc.close);
     return bloc;
@@ -42,16 +42,16 @@ class _AutoDisposeNotifierProvider<B extends BlocBase<S>, S>
   }
 
   @override
-  _AutoDisposeNotifierProviderElement<B, S> createElement() {
+  _AutoDisposeNotifierProviderElement<B> createElement() {
     return _AutoDisposeNotifierProviderElement(this);
   }
 }
 
-class _AutoDisposeNotifierProviderElement<B extends BlocBase<S>, S>
+class _AutoDisposeNotifierProviderElement<B extends BlocBase<Object?>>
     extends AutoDisposeProviderElementBase<B>
-    implements AutoDisposeBlocProviderRef<B, S> {
+    implements AutoDisposeBlocProviderRef<B> {
   _AutoDisposeNotifierProviderElement(
-    _AutoDisposeNotifierProvider<B, S> provider,
+    _AutoDisposeNotifierProvider<B> provider,
   ) : super(provider);
 
   @override
@@ -68,7 +68,7 @@ class AutoDisposeBlocProvider<B extends BlocBase<S>, S>
         OverrideWithProviderMixin<B, AutoDisposeBlocProvider<B, S>> {
   /// {@macro riverpod.statenotifierprovider}
   AutoDisposeBlocProvider(
-    Create<B, AutoDisposeBlocProviderRef<B, S>> create, {
+    Create<B, AutoDisposeBlocProviderRef<B>> create, {
     String? name,
     List<ProviderOrFamily>? dependencies,
     Family? from,
@@ -134,7 +134,7 @@ class AutoDisposeBlocProviderBuilder {
 
   /// {@macro riverpod.autoDispose}
   AutoDisposeBlocProvider<B, S> call<B extends BlocBase<S>, S>(
-    B Function(AutoDisposeBlocProviderRef<B, S> ref) create, {
+    B Function(AutoDisposeBlocProviderRef<B> ref) create, {
     String? name,
   }) {
     return AutoDisposeBlocProvider(create, name: name);
