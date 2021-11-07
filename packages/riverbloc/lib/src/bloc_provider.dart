@@ -259,7 +259,7 @@ class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
         _BlocProviderMixin<B, S> {
   /// {@macro bloc_provider}
   BlocProvider(
-    Create<B, BlocProviderRef<B, S>> create, {
+    Create<B, BlocProviderRef<B>> create, {
     String? name,
     List<ProviderOrFamily>? dependencies,
     Family? from,
