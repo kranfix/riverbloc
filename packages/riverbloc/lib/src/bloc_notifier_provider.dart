@@ -69,4 +69,10 @@ mixin BlocProviderOverrideMixin<B extends BlocBase<S>, S> on ProviderBase<S> {
       override: ValueProvider<B>(value),
     );
   }
+
+  /// The bloc notifies when the state changes.
+  @override
+  bool updateShouldNotify(S previousState, S newState) {
+    return newState != previousState;
+  }
 }

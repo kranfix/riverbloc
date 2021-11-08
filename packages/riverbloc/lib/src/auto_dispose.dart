@@ -117,11 +117,6 @@ class AutoDisposeBlocProvider<B extends BlocBase<S>, S>
   }
 
   @override
-  bool updateShouldNotify(S previousState, S newState) {
-    return true;
-  }
-
-  @override
   AutoDisposeProviderElementBase<S> createElement() {
     return AutoDisposeProviderElement(this);
   }

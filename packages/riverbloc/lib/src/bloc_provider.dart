@@ -255,8 +255,7 @@ part of 'framework.dart';
 class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
     with
         BlocProviderOverrideMixin<B, S>,
-        OverrideWithProviderMixin<B, BlocProvider<B, S>>,
-        _BlocProviderMixin<B, S> {
+        OverrideWithProviderMixin<B, BlocProvider<B, S>> {
   /// {@macro bloc_provider}
   BlocProvider(
     Create<B, BlocProviderRef<B>> create, {
