@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:riverbloc/riverbloc.dart';
 import 'package:riverpod/riverpod.dart';
 
@@ -108,6 +107,24 @@ void main() {
 
       expect(counterBloc2.state, 0);
       expect(container.read(counterProvider), 0);
+    });
+
+    test('Refresh provider must refresh notifier provider', () {
+      var times = 0;
+      final counterProvider = BlocProv((ref) {
+        times++;
+        return CounterCubit(0);
+      });
+
+      final container = ProviderContainer();
+
+      final firstBloc = container.read(counterProvider.bloc);
+      expect(times, 1);
+
+      container.refresh(counterProvider);
+      final secondBloc = container.read(counterProvider.bloc);
+      expect(times, 2);
+      expect(firstBloc, isNot(same(secondBloc)));
     });
 
     test('BlocProvider with auto dispose', () async {
