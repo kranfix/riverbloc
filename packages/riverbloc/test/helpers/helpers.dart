@@ -1,6 +1,11 @@
 import 'package:bloc/bloc.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:riverbloc/riverbloc.dart';
 import 'package:riverpod/riverpod.dart';
+
+typedef BlocProv<B extends BlocBase<int>> = BlocProvider<B, int>;
+typedef AutoDisposeBlocProv<B extends BlocBase<int>>
+    = AutoDisposeBlocProvider<B, int>;
 
 class Listener<T> extends Mock {
   void call(T? prev, T value);

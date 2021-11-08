@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:riverbloc/riverbloc.dart';
@@ -35,6 +36,21 @@ void main() {
       );
       expect(counterCubitProvider.notifier.name, 'counterCubit.notifier');
       expect(counterCubitProvider.stream.name, 'counterCubit.stream');
+    });
+  });
+
+  group('ref.bloc', () {
+    test('ref.bloc is same than created bloc', () {
+      late ValueGetter<CounterCubit> getBloc;
+      final counterCubitProvider = AutoDisposeBlocProv<CounterCubit>((ref) {
+        getBloc = () => ref.bloc;
+        return CounterCubit(0);
+      });
+
+      final container = ProviderContainer();
+
+      final bloc = container.read(counterCubitProvider.bloc);
+      expect(getBloc(), same(bloc));
     });
   });
 

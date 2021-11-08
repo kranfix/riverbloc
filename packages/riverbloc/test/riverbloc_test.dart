@@ -1,10 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:riverbloc/riverbloc.dart';
 import 'package:riverpod/riverpod.dart';
 
 import 'helpers/helpers.dart';
-
-typedef BlocProv<B extends BlocBase<int>> = BlocProvider<B, int>;
 
 final counterProvider = BlocProv((ref) => CounterBloc(0));
 
@@ -42,6 +41,21 @@ void main() {
       final notifier = container.read(counterCubitProvider.notifier);
 
       expect(bloc, equals(notifier));
+    });
+  });
+
+  group('ref.bloc', () {
+    test('ref.bloc is same than created bloc', () {
+      late ValueGetter<CounterCubit> getBloc;
+      final counterCubitProvider = BlocProv<CounterCubit>((ref) {
+        getBloc = () => ref.bloc;
+        return CounterCubit(0);
+      });
+
+      final container = ProviderContainer();
+
+      final bloc = container.read(counterCubitProvider.bloc);
+      expect(getBloc(), same(bloc));
     });
   });
 
