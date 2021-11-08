@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:riverbloc/riverbloc.dart';
 import 'package:riverpod/riverpod.dart';
@@ -46,7 +45,7 @@ void main() {
 
   group('ref.bloc', () {
     test('ref.bloc is same than created bloc', () {
-      late ValueGetter<CounterCubit> getBloc;
+      late CounterCubit Function() getBloc;
       final counterCubitProvider = BlocProv<CounterCubit>((ref) {
         getBloc = () => ref.bloc;
         return CounterCubit(0);
