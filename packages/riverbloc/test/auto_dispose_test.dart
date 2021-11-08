@@ -54,6 +54,57 @@ void main() {
     });
   });
 
+  group('refresh', () {
+    test(
+        'Reading the same provider twice synchronously must return '
+        'the same blocs', () {
+      final container = ProviderContainer();
+      final counterCubitProvider =
+          AutoDisposeBlocProv((ref) => CounterCubit(0));
+      final bloc1 = container.read(counterCubitProvider.bloc);
+      final bloc2 = container.read(counterCubitProvider.bloc);
+      expect(bloc1, same(bloc2));
+    });
+
+    test(
+        'Reading the same provider twice asynchronously must return '
+        'different blocs', () async {
+      final container = ProviderContainer();
+      final counterCubitProvider =
+          AutoDisposeBlocProv((ref) => CounterCubit(0));
+      final bloc1 = container.read(counterCubitProvider.bloc);
+
+      await Future(() {});
+      final bloc2 = container.read(counterCubitProvider.bloc);
+      expect(bloc1, isNot(same(bloc2)));
+    });
+
+    test('listening the provider must keep the bloc', () async {
+      final container = ProviderContainer();
+      final counterCubitProvider =
+          AutoDisposeBlocProv((ref) => CounterCubit(0));
+
+      final listener = Listener<CounterCubit>();
+
+      final sub = container.listen<CounterCubit>(
+        counterCubitProvider.bloc,
+        listener,
+        fireImmediately: true,
+      );
+
+      final bloc1 = container.read(counterCubitProvider.bloc);
+      verify(() => listener(null, bloc1)).called(1);
+
+      final bloc2 = container.refresh(counterCubitProvider.bloc);
+      verify(() => listener(bloc1, bloc2)).called(1);
+
+      final bloc3 = container.refresh(counterCubitProvider.bloc);
+      verify(() => listener(bloc2, bloc3)).called(1);
+
+      sub.close();
+    });
+  });
+
   group('AlwaysAlive vs AutoDispose', () {
     test('BlocProvider', () async {
       var closeCounter1 = 0;
