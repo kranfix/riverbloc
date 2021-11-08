@@ -44,9 +44,7 @@ class _NotifierProvider<B extends BlocBase<Object?>>
   }
 
   @override
-  bool updateShouldNotify(B previousState, B newState) {
-    return true;
-  }
+  bool updateShouldNotify(B previousState, B newState) => true;
 
   @override
   _BlocProviderElement<B> createElement() => _BlocProviderElement(this);

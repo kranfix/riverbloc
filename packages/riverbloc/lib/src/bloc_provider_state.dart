@@ -11,14 +11,6 @@ mixin _BlocProviderMixin<B extends BlocBase<S>, S> on ProviderBase<S> {
   /// {@macro bloc_provider_notifier}
   ProviderBase<B> get notifier;
 
-  // TODO(kranfix) - Add a `BlocProvider.of` method that takes a context and
-  //@override
-  //void setupOverride(SetupOverride setup) {
-  //  //super.setupOverride(setup);
-  //  setup(origin: this, override: this);
-  //  setup(origin: notifier, override: notifier);
-  //}
-
   /// The bloc notifies when the state changes.
   @override
   bool updateShouldNotify(S previousState, S newState) {
