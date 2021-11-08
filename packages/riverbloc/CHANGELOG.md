@@ -1,3 +1,8 @@
+## [1.0.0-dev.5] - 2021-11-08
+
+- Updated riverpod: 1.0.0-dev
+- Full coverage
+
 ## [1.0.0-dev.4] - 2021-10-08
 
 - Updated riverpod: 1.0.0-dev.10.
