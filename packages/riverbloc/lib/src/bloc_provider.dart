@@ -275,10 +275,7 @@ class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
   /// {@macro bloc_provider_auto_dispose}
   static const autoDispose = AutoDisposeBlocProviderBuilder();
 
-  @override
-
   /// {@macro bloc_provider_notifier}
-  @override
   AlwaysAliveProviderBase<B> get notifier => bloc;
 
   /// {@macro bloc_provider_bloc}
