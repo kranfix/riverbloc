@@ -101,6 +101,51 @@ part of 'framework.dart';
 /// ```
 /// {@endtemplate}
 ///
+/// {@template bloc_provider_scoped}
+/// Creates a [BlocProvider] that needs to be overrided
+///
+/// With pure dart:
+///
+/// ```dart
+/// final blocProvider = BlocProvider<CounterBloc, int>.scoped('blocProvider');
+///
+/// final container = ProviderContainer(
+///   overrides: [
+///     blocProvider
+///         .overrideWithProvider(BlocProvider((ref) => CounterBloc(0))),
+///   ],
+/// );
+///
+/// final counter = container.read(blocProvider); // counter = 0
+/// ```
+///
+/// With Flutter:
+///
+/// ```dart
+/// final blocProvider = BlocProvider<CounterBloc, int>.scoped('blocProvider');
+///
+/// class MyApp extends StatelessWidget {
+///   const MyApp({Key? key}) : super(key: key);
+///
+///   @override
+///   Widget build(BuildContext context) {
+///     return ProviderScope(
+///       overrides: [
+///         blocProvider
+///             .overrideWithProvider(BlocProvider((ref) => CounterBloc(0))),
+///       ],
+///       child: Consumer(
+///         builder: (context, ref, child) {
+///           final counter = ref.watch(blocProvider);  // counter = 0
+///           return Text('$counter');
+///         }
+///       )
+///     );
+///   }
+/// }
+/// ```
+/// {@endtemplate}
+///
 /// {@template bloc_provider_stream}
 /// ## `BlocProvider.stream`
 /// Listen to the `Bloc.stream` or `Cubit.stream`
@@ -271,6 +316,13 @@ class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
           argument: argument,
         ),
         super(name: name, from: from, argument: argument);
+
+  /// {@macro bloc_provider_scoped}
+  BlocProvider.scoped(String name)
+      : this(
+          (ref) => throw UnimplementedProviderError<BlocProvider<B, S>>(name),
+          name: name,
+        );
 
   /// {@macro bloc_provider_auto_dispose}
   static const autoDispose = AutoDisposeBlocProviderBuilder();

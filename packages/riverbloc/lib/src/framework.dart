@@ -1,6 +1,7 @@
 // ignore_for_file: implementation_imports
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:riverbloc/src/unimplemented_provider_error.dart';
 import 'package:riverpod/riverpod.dart';
 
 import 'package:riverpod/src/common.dart';
