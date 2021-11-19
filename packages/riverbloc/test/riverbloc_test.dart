@@ -26,6 +26,28 @@ void main() {
     });
   });
 
+  group('BlocProvider.scoped', () {
+    test('direct usage must throw UnimplementedProviderError', () {
+      final provider = BlocProvider<CounterBloc, int>.scoped('someName');
+      final container = ProviderContainer();
+      expect(
+        () => container.read(provider.bloc),
+        throwsA(isA<ProviderException>()),
+      );
+
+      try {
+        container.read(provider.bloc);
+      } on ProviderException catch (e) {
+        expect(e.exception, isA<UnimplementedProviderError>());
+        final unimplementedProviderError =
+            e.exception as UnimplementedProviderError;
+        expect(unimplementedProviderError.name, 'someName');
+      } catch (e) {
+        fail('unexpected exception $e');
+      }
+    });
+  });
+
   group('BlocProvider.notifier', () {
     test('BlocProvider.notifier gets BlocBase Object', () {
       final container = ProviderContainer();
