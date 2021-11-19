@@ -131,7 +131,16 @@ class AutoDisposeBlocProviderBuilder {
   AutoDisposeBlocProvider<B, S> call<B extends BlocBase<S>, S>(
     B Function(AutoDisposeBlocProviderRef<B> ref) create, {
     String? name,
+    List<ProviderOrFamily>? dependencies,
+    Family? from,
+    Object? argument,
   }) {
-    return AutoDisposeBlocProvider(create, name: name);
+    return AutoDisposeBlocProvider(
+      create,
+      name: name,
+      dependencies: dependencies,
+      from: from,
+      argument: argument,
+    );
   }
 }
