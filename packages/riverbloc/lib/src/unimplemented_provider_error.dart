@@ -2,7 +2,7 @@
 import 'package:riverpod/src/framework.dart';
 
 /// {@template unimplemented_provider_error}
-/// Exception that will be throw when the provider is not
+/// Error that will be throw when the provider is not
 /// implemented and must be overrided.
 /// {@endtemplate}
 class UnimplementedProviderError<P extends ProviderOrFamily> extends Error {
