@@ -3,7 +3,7 @@ import 'package:riverbloc/riverbloc.dart';
 
 import '../helpers/helpers.dart';
 
-final counterProviderFamily = BlocProviderFamily<CounterCubit, int, int>(
+final counterProviderFamily = BlocProvider.family<CounterCubit, int, int>(
   (ref, int arg) => CounterCubit(arg),
 );
 
@@ -62,7 +62,7 @@ void main() {
   });
 
   group('Override BlocProviderFamily', () {
-    final _family = BlocProviderFamily<CounterCubit, int, int>(
+    final _family = BlocProvider.family<CounterCubit, int, int>(
       (ref, arg) {
         throw UnimplementedProviderError<BlocProvider<CounterCubit, int>>(
           'someName',
