@@ -66,7 +66,7 @@ class AutoDisposeBlocProvider<B extends BlocBase<S>, S>
     with
         BlocProviderOverrideMixin<B, S>,
         OverrideWithProviderMixin<B, AutoDisposeBlocProvider<B, S>> {
-  /// {@macro riverpod.statenotifierprovider}
+  /// {@macro riverpod.Blocprovider}
   AutoDisposeBlocProvider(
     Create<B, AutoDisposeBlocProviderRef<B>> create, {
     String? name,
@@ -83,9 +83,9 @@ class AutoDisposeBlocProvider<B extends BlocBase<S>, S>
         super(name: name, from: from, argument: argument);
 
   /// {@macro riverpod.family}
-  //static const family = AutoDisposeStateNotifierProviderFamilyBuilder();
+  static const family = AutoDisposeBlocProviderFamilyBuilder();
 
-  /// {@template riverpod.statenotifierprovider.notifier}
+  /// {@template riverpod.Blocprovider.notifier}
   /// Obtains the [BlocBase] associated with this [AutoDisposeBlocProvider],
   /// without listening to it.
   ///

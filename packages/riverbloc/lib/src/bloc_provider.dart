@@ -327,6 +327,9 @@ class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
   /// {@macro bloc_provider_auto_dispose}
   static const autoDispose = AutoDisposeBlocProviderBuilder();
 
+  /// {@macro riverpod.family}
+  static const family = BlocProviderFamilyBuilder();
+
   /// {@macro bloc_provider_notifier}
   AlwaysAliveProviderBase<B> get notifier => bloc;
 
