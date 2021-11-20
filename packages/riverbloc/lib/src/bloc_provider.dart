@@ -102,7 +102,7 @@ part of 'framework.dart';
 /// {@endtemplate}
 ///
 /// {@template bloc_provider_scoped}
-/// Creates a [BlocProvider] that needs to be overrided
+/// Creates a [BlocProvider] that needs to be overridden
 ///
 /// With pure dart:
 ///

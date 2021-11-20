@@ -11,4 +11,5 @@ import 'package:riverpod/src/value_provider.dart';
 part 'auto_dispose.dart';
 part 'bloc_notifier_provider.dart';
 part 'bloc_provider.dart';
+part 'bloc_provider_family.dart';
 part 'bloc_provider_state.dart';

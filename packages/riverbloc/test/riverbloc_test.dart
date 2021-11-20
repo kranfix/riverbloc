@@ -343,7 +343,7 @@ void main() {
       expect(container.read(pod), 0);
     });
 
-    test('BlocProvider overrided with provider', () {
+    test('BlocProvider overridden with provider', () {
       final counterCubit = CounterCubit(3);
       final counterProvider2 =
           BlocProvider<CounterCubit, int>((ref) => counterCubit);
@@ -357,7 +357,7 @@ void main() {
       expect(container.read(counterCubitProvider), 3);
     });
 
-    test('BlocProvider overrided with value', () {
+    test('BlocProvider overridden with value', () {
       final counterCubit = CounterCubit(5);
       final container = ProviderContainer(
         overrides: [
