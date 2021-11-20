@@ -62,14 +62,8 @@ void main() {
   });
 
   group('Override BlocProviderFamily', () {
-    final _family = BlocProvider.family<CounterCubit, int, int>(
-      (ref, arg) {
-        throw UnimplementedProviderError<BlocProvider<CounterCubit, int>>(
-          'someName',
-        );
-      },
-      name: 'someName',
-    );
+    final _family =
+        BlocProviderFamily<CounterCubit, int, int>.scoped('someName');
 
     test('reads with error', () {
       final container = ProviderContainer();
