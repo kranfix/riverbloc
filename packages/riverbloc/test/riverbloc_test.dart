@@ -388,8 +388,23 @@ void main() {
     });
   });
 
-  /*
+  group('BlocProvider overrides itself', () {
+    test('without overrideWithProvider', () async {
+      final container1 = ProviderContainer();
 
+      final container2 = ProviderContainer(
+        parent: container1,
+        overrides: [counterProvider],
+      );
+
+      expect(
+        container1.read(counterProvider.bloc),
+        isNot(equals(container2.read(counterProvider.bloc))),
+      );
+    });
+  });
+
+  /*
   group('BlocProvider.when', () {
     test('rebuilds when current is even', () async {
       final container = ProviderContainer();

@@ -343,4 +343,23 @@ void main() {
       expect(bloc, equals(notifier));
     });
   });
+
+  group('AutoDisposeBlocProvider overrides itself', () {
+    final counterProvider = AutoDisposeBlocProvider<CounterBloc, int>(
+      (ref) => CounterBloc(0),
+    );
+    test('without overrideWithProvider', () async {
+      final container1 = ProviderContainer();
+
+      final container2 = ProviderContainer(
+        parent: container1,
+        overrides: [counterProvider],
+      );
+
+      expect(
+        container1.read(counterProvider.bloc),
+        isNot(equals(container2.read(counterProvider.bloc))),
+      );
+    });
+  });
 }
