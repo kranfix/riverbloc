@@ -11,6 +11,13 @@ typedef AutoDisposeBlocFamilyCreate<B extends BlocBase<Object?>, Arg>
 /// A class that allows building a [AutoDisposeBlocProvider] from an
 /// external parameter.
 /// {@endtemplate}
+///
+/// {@template riverbloc.auto_dispose_bloc_provider_family_scoped}
+/// # AutoDisposeBlocProviderFamily.scoped
+/// Creates an [AutoDisposeBlocProvider] that will be scoped and must be
+/// overridden.
+/// Otherwise, it will throw an [UnimplementedProviderError].
+/// {@endtemplate}
 @sealed
 class AutoDisposeBlocProviderFamily<B extends BlocBase<S>, S, Arg>
     extends Family<S, Arg, AutoDisposeBlocProvider<B, S>> {
@@ -20,6 +27,17 @@ class AutoDisposeBlocProviderFamily<B extends BlocBase<S>, S, Arg>
     String? name,
     List<ProviderOrFamily>? dependencies,
   }) : super(name: name, dependencies: dependencies);
+
+  /// {@macro riverbloc.auto_dispose_bloc_provider_family_scoped}
+  AutoDisposeBlocProviderFamily.scoped(String name)
+      : this(
+          (ref, arg) {
+            throw UnimplementedProviderError<AutoDisposeBlocProvider<B, S>>(
+              name,
+            );
+          },
+          name: name,
+        );
 
   final AutoDisposeBlocFamilyCreate<B, Arg> _create;
 

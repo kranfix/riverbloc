@@ -13,6 +13,7 @@ typedef BlocFamilyCreate<B extends BlocBase<Object?>, Arg>
 /// {@endtemplate}
 ///
 /// {@template bloc_provider_family_scoped}
+/// # BlocProviderFamily.scoped
 /// Creates a [BlocProvider] that will be scoped and must be overridden.
 /// Otherwise, it will throw an [UnimplementedProviderError].
 /// {@endtemplate}
@@ -26,7 +27,7 @@ class BlocProviderFamily<B extends BlocBase<S>, S, Arg>
     List<ProviderOrFamily>? dependencies,
   }) : super(name: name, dependencies: dependencies);
 
-  ///
+  /// {@macro bloc_provider_family_scoped}
   BlocProviderFamily.scoped(String name)
       : this(
           (ref, arg) => throw UnimplementedProviderError(name),
@@ -48,6 +49,7 @@ class BlocProviderFamily<B extends BlocBase<S>, S, Arg>
   @override
   void setupOverride(Arg argument, SetupOverride setup) {
     final provider = call(argument);
+    setup(origin: provider, override: provider);
     setup(origin: provider.bloc, override: provider.bloc);
   }
 
