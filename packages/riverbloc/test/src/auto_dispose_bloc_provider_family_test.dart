@@ -83,4 +83,42 @@ void main() {
       expect(counterBloc1.isClosed, true);
     });
   });
+
+  group('Override AutoDisposeBlocProviderFamily', () {
+    final _family =
+        AutoDisposeBlocProviderFamily<CounterCubit, int, int>.scoped(
+            'someName');
+
+    test('reads with error', () {
+      final container = ProviderContainer();
+
+      expect(
+        () => container.read(_family(1)),
+        throwsA(isA<ProviderException>()),
+      );
+
+      try {
+        container.read(_family(1).bloc);
+      } on ProviderException catch (e) {
+        expect(e.exception, isA<UnimplementedProviderError>());
+        final unimplementedProviderError =
+            e.exception as UnimplementedProviderError;
+        expect(unimplementedProviderError.name, 'someName');
+      } catch (e) {
+        fail('unexpected exception $e');
+      }
+    });
+
+    test('reads with success', () {
+      final container = ProviderContainer(
+        overrides: [
+          _family.overrideWithProvider((arg) {
+            return AutoDisposeBlocProvider((ref) => CounterCubit(arg));
+          }),
+        ],
+      );
+
+      expect(container.read(_family(1)), 1);
+    });
+  });
 }
