@@ -97,4 +97,25 @@ void main() {
       expect(container.read(_family(1)), 1);
     });
   });
+
+  group('BlocProviderFamily overrides itself', () {
+    final family = BlocProviderFamily<CounterCubit, int, int>(
+      (ref, int arg) => CounterCubit(arg),
+    );
+
+    test('without overrideWithProvider', () async {
+      final container1 = ProviderContainer();
+
+      final container2 = ProviderContainer(
+        parent: container1,
+        overrides: [family],
+      );
+
+      container1.read(family(1).bloc).increment();
+      await Future(() {});
+
+      expect(container1.read(family(1)), 2);
+      expect(container2.read(family(1)), 1);
+    });
+  });
 }
