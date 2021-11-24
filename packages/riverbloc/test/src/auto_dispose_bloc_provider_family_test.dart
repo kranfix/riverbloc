@@ -121,4 +121,27 @@ void main() {
       expect(container.read(_family(1)), 1);
     });
   });
+
+  group('AutoDisposeBlocProviderFamily overrides itself', () {
+    final family = AutoDisposeBlocProviderFamily<CounterCubit, int, int>(
+      (ref, int arg) => CounterCubit(arg),
+    );
+
+    test('without overrideWithProvider', () async {
+      final container1 = ProviderContainer();
+
+      final container2 = ProviderContainer(
+        parent: container1,
+        overrides: [family],
+      );
+
+      container1.read(family(1).bloc).increment();
+      await Future(() {});
+
+      expect(
+        container1.read(family(1).bloc),
+        isNot(equals(container2.read(family(1).bloc))),
+      );
+    });
+  });
 }
