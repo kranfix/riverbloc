@@ -38,6 +38,29 @@ void main() {
     });
   });
 
+  group('AutoDisposeBlocProvider.scoped', () {
+    test('direct usage must throw UnimplementedProviderError', () {
+      final provider =
+          AutoDisposeBlocProvider<CounterBloc, int>.scoped('someName');
+      final container = ProviderContainer();
+      expect(
+        () => container.read(provider.bloc),
+        throwsA(isA<ProviderException>()),
+      );
+
+      try {
+        container.read(provider.bloc);
+      } on ProviderException catch (e) {
+        expect(e.exception, isA<UnimplementedProviderError>());
+        final unimplementedProviderError =
+            e.exception as UnimplementedProviderError;
+        expect(unimplementedProviderError.name, 'someName');
+      } catch (e) {
+        fail('unexpected exception $e');
+      }
+    });
+  });
+
   group('ref.bloc', () {
     test('ref.bloc is same than created bloc', () {
       late CounterCubit Function() getBloc;

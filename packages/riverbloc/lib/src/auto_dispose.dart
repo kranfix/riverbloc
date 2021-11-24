@@ -82,6 +82,16 @@ class AutoDisposeBlocProvider<B extends BlocBase<S>, S>
         ),
         super(name: name, from: from, argument: argument);
 
+  /// {@macro bloc_provider_scoped}
+  AutoDisposeBlocProvider.scoped(String name)
+      : this(
+          (ref) =>
+              throw UnimplementedProviderError<AutoDisposeBlocProvider<B, S>>(
+            name,
+          ),
+          name: name,
+        );
+
   /// {@macro riverpod.family}
   static const family = AutoDisposeBlocProviderFamilyBuilder();
 
