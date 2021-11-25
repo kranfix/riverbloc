@@ -101,6 +101,51 @@ part of 'framework.dart';
 /// ```
 /// {@endtemplate}
 ///
+/// {@template bloc_provider_scoped}
+/// Creates a [BlocProvider] that needs to be overridden
+///
+/// With pure dart:
+///
+/// ```dart
+/// final blocProvider = BlocProvider<CounterBloc, int>.scoped('blocProvider');
+///
+/// final container = ProviderContainer(
+///   overrides: [
+///     blocProvider
+///         .overrideWithProvider(BlocProvider((ref) => CounterBloc(0))),
+///   ],
+/// );
+///
+/// final counter = container.read(blocProvider); // counter = 0
+/// ```
+///
+/// With Flutter:
+///
+/// ```dart
+/// final blocProvider = BlocProvider<CounterBloc, int>.scoped('blocProvider');
+///
+/// class MyApp extends StatelessWidget {
+///   const MyApp({Key? key}) : super(key: key);
+///
+///   @override
+///   Widget build(BuildContext context) {
+///     return ProviderScope(
+///       overrides: [
+///         blocProvider
+///             .overrideWithProvider(BlocProvider((ref) => CounterBloc(0))),
+///       ],
+///       child: Consumer(
+///         builder: (context, ref, child) {
+///           final counter = ref.watch(blocProvider);  // counter = 0
+///           return Text('$counter');
+///         }
+///       )
+///     );
+///   }
+/// }
+/// ```
+/// {@endtemplate}
+///
 /// {@template bloc_provider_stream}
 /// ## `BlocProvider.stream`
 /// Listen to the `Bloc.stream` or `Cubit.stream`
@@ -253,42 +298,50 @@ part of 'framework.dart';
 /// ```
 /// {@endtemplate}
 class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
-    with _BlocProviderMixin<B, S> {
+    with
+        BlocProviderOverrideMixin<B, S>,
+        OverrideWithProviderMixin<B, BlocProvider<B, S>> {
   /// {@macro bloc_provider}
   BlocProvider(
-    this._create, {
+    Create<B, BlocProviderRef<B>> create, {
     String? name,
     List<ProviderOrFamily>? dependencies,
-  }) : super(name: name, dependencies: dependencies);
+    Family? from,
+    Object? argument,
+  })  : bloc = _NotifierProvider(
+          create,
+          name: name,
+          dependencies: dependencies,
+          from: from,
+          argument: argument,
+        ),
+        super(name: name, from: from, argument: argument);
+
+  /// {@macro bloc_provider_scoped}
+  BlocProvider.scoped(String name)
+      : this(
+          (ref) => throw UnimplementedProviderError<BlocProvider<B, S>>(name),
+          name: name,
+        );
 
   /// {@macro bloc_provider_auto_dispose}
   static const autoDispose = AutoDisposeBlocProviderBuilder();
 
-  final Create<B, ProviderRefBase> _create;
+  /// {@macro riverpod.family}
+  static const family = BlocProviderFamilyBuilder();
 
   /// {@macro bloc_provider_notifier}
-  @override
   AlwaysAliveProviderBase<B> get notifier => bloc;
 
   /// {@macro bloc_provider_bloc}
-  late final AlwaysAliveProviderBase<B> bloc =
-      _NotifierProvider(_create, name: name);
+  @override
+  final AlwaysAliveProviderBase<B> bloc;
 
   /// {@macro bloc_provider_stream}
   late final AlwaysAliveProviderBase<AsyncValue<S>> stream = StreamProvider<S>(
     (ref) => ref.watch(bloc).stream,
     name: modifierName(name, 'stream'),
   );
-
-  /// Overrides the behavior of a provider with a another provider.
-  ///
-  /// {@macro riverpod.overideWith}
-  Override overrideWithProvider(BlocProvider<B, S> provider) {
-    return ProviderOverride((setup) {
-      setup(origin: bloc, override: provider.bloc);
-      setup(origin: this, override: this);
-    });
-  }
 
   @override
   S create(ProviderElementBase<S> ref) {

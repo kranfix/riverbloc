@@ -1,16 +1,13 @@
 import 'package:bloc/bloc.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:riverpod/riverpod.dart';
+import 'package:riverbloc/riverbloc.dart';
+
+typedef BlocProv<B extends BlocBase<int>> = BlocProvider<B, int>;
+typedef AutoDisposeBlocProv<B extends BlocBase<int>>
+    = AutoDisposeBlocProvider<B, int>;
 
 class Listener<T> extends Mock {
-  void call(T value);
-}
-
-class MockSetupOverride extends Mock {
-  void call({
-    required ProviderBase<dynamic> origin,
-    required ProviderBase<dynamic> override,
-  });
+  void call(T? prev, T value);
 }
 
 abstract class CounterEvent {}

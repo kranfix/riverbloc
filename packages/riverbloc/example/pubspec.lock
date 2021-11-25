@@ -14,7 +14,7 @@ packages:
       name: bloc
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "7.2.0"
+    version: "8.0.1"
   boolean_selector:
     dependency: transitive
     description:
@@ -122,14 +122,14 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.0.0-dev.4"
+    version: "1.0.0"
   riverpod:
     dependency: transitive
     description:
       name: riverpod
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.0-dev.10"
+    version: "1.0.0"
   sky_engine:
     dependency: transitive
     description: flutter

@@ -1,11 +1,8 @@
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:riverbloc/riverbloc.dart';
 import 'package:riverpod/riverpod.dart';
+import 'package:test/test.dart';
 
 import 'helpers/helpers.dart';
-
-typedef BlocProv<B extends BlocBase<int>> = BlocProvider<B, int>;
 
 final counterProvider = BlocProv((ref) => CounterBloc(0));
 
@@ -29,6 +26,28 @@ void main() {
     });
   });
 
+  group('BlocProvider.scoped', () {
+    test('direct usage must throw UnimplementedProviderError', () {
+      final provider = BlocProvider<CounterBloc, int>.scoped('someName');
+      final container = ProviderContainer();
+      expect(
+        () => container.read(provider.bloc),
+        throwsA(isA<ProviderException>()),
+      );
+
+      try {
+        container.read(provider.bloc);
+      } on ProviderException catch (e) {
+        expect(e.exception, isA<UnimplementedProviderError>());
+        final unimplementedProviderError =
+            e.exception as UnimplementedProviderError;
+        expect(unimplementedProviderError.name, 'someName');
+      } catch (e) {
+        fail('unexpected exception $e');
+      }
+    });
+  });
+
   group('BlocProvider.notifier', () {
     test('BlocProvider.notifier gets BlocBase Object', () {
       final container = ProviderContainer();
@@ -43,6 +62,21 @@ void main() {
       final notifier = container.read(counterCubitProvider.notifier);
 
       expect(bloc, equals(notifier));
+    });
+  });
+
+  group('ref.bloc', () {
+    test('ref.bloc is same than created bloc', () {
+      late CounterCubit Function() getBloc;
+      final counterCubitProvider = BlocProv<CounterCubit>((ref) {
+        getBloc = () => ref.bloc;
+        return CounterCubit(0);
+      });
+
+      final container = ProviderContainer();
+
+      final bloc = container.read(counterCubitProvider.bloc);
+      expect(getBloc(), same(bloc));
     });
   });
 
@@ -108,6 +142,24 @@ void main() {
 
       expect(counterBloc2.state, 0);
       expect(container.read(counterProvider), 0);
+    });
+
+    test('Refresh provider must refresh notifier provider', () {
+      var times = 0;
+      final counterProvider = BlocProv((ref) {
+        times++;
+        return CounterCubit(0);
+      });
+
+      final container = ProviderContainer();
+
+      final firstBloc = container.read(counterProvider.bloc);
+      expect(times, 1);
+
+      container.refresh(counterProvider);
+      final secondBloc = container.read(counterProvider.bloc);
+      expect(times, 2);
+      expect(firstBloc, isNot(same(secondBloc)));
     });
 
     test('BlocProvider with auto dispose', () async {
@@ -291,7 +343,7 @@ void main() {
       expect(container.read(pod), 0);
     });
 
-    test('BlocProvider overrided with provider', () {
+    test('BlocProvider overridden with provider', () {
       final counterCubit = CounterCubit(3);
       final counterProvider2 =
           BlocProvider<CounterCubit, int>((ref) => counterCubit);
@@ -305,7 +357,7 @@ void main() {
       expect(container.read(counterCubitProvider), 3);
     });
 
-    test('BlocProvider overrided with value', () {
+    test('BlocProvider overridden with value', () {
       final counterCubit = CounterCubit(5);
       final container = ProviderContainer(
         overrides: [
@@ -336,6 +388,23 @@ void main() {
     });
   });
 
+  group('BlocProvider overrides itself', () {
+    test('without overrideWithProvider', () async {
+      final container1 = ProviderContainer();
+
+      final container2 = ProviderContainer(
+        parent: container1,
+        overrides: [counterProvider],
+      );
+
+      expect(
+        container1.read(counterProvider.bloc),
+        isNot(equals(container2.read(counterProvider.bloc))),
+      );
+    });
+  });
+
+  /*
   group('BlocProvider.when', () {
     test('rebuilds when current is even', () async {
       final container = ProviderContainer();
@@ -406,4 +475,5 @@ void main() {
       sub3.close();
     });
   });
+  */
 }

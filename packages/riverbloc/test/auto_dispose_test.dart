@@ -1,7 +1,7 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:riverbloc/riverbloc.dart';
 import 'package:riverpod/riverpod.dart';
+import 'package:test/test.dart';
 
 import 'helpers/helpers.dart';
 
@@ -38,6 +38,95 @@ void main() {
     });
   });
 
+  group('AutoDisposeBlocProvider.scoped', () {
+    test('direct usage must throw UnimplementedProviderError', () {
+      final provider =
+          AutoDisposeBlocProvider<CounterBloc, int>.scoped('someName');
+      final container = ProviderContainer();
+      expect(
+        () => container.read(provider.bloc),
+        throwsA(isA<ProviderException>()),
+      );
+
+      try {
+        container.read(provider.bloc);
+      } on ProviderException catch (e) {
+        expect(e.exception, isA<UnimplementedProviderError>());
+        final unimplementedProviderError =
+            e.exception as UnimplementedProviderError;
+        expect(unimplementedProviderError.name, 'someName');
+      } catch (e) {
+        fail('unexpected exception $e');
+      }
+    });
+  });
+
+  group('ref.bloc', () {
+    test('ref.bloc is same than created bloc', () {
+      late CounterCubit Function() getBloc;
+      final counterCubitProvider = AutoDisposeBlocProv<CounterCubit>((ref) {
+        getBloc = () => ref.bloc;
+        return CounterCubit(0);
+      });
+
+      final container = ProviderContainer();
+
+      final bloc = container.read(counterCubitProvider.bloc);
+      expect(getBloc(), same(bloc));
+    });
+  });
+
+  group('refresh', () {
+    test(
+        'Reading the same provider twice synchronously must return '
+        'the same blocs', () {
+      final container = ProviderContainer();
+      final counterCubitProvider =
+          AutoDisposeBlocProv((ref) => CounterCubit(0));
+      final bloc1 = container.read(counterCubitProvider.bloc);
+      final bloc2 = container.read(counterCubitProvider.bloc);
+      expect(bloc1, same(bloc2));
+    });
+
+    test(
+        'Reading the same provider twice asynchronously must return '
+        'different blocs', () async {
+      final container = ProviderContainer();
+      final counterCubitProvider =
+          AutoDisposeBlocProv((ref) => CounterCubit(0));
+      final bloc1 = container.read(counterCubitProvider.bloc);
+
+      await Future(() {});
+      final bloc2 = container.read(counterCubitProvider.bloc);
+      expect(bloc1, isNot(same(bloc2)));
+    });
+
+    test('listening the provider must keep the bloc', () async {
+      final container = ProviderContainer();
+      final counterCubitProvider =
+          AutoDisposeBlocProv((ref) => CounterCubit(0));
+
+      final listener = Listener<CounterCubit>();
+
+      final sub = container.listen<CounterCubit>(
+        counterCubitProvider.bloc,
+        listener,
+        fireImmediately: true,
+      );
+
+      final bloc1 = container.read(counterCubitProvider.bloc);
+      verify(() => listener(null, bloc1)).called(1);
+
+      final bloc2 = container.refresh(counterCubitProvider.bloc);
+      verify(() => listener(bloc1, bloc2)).called(1);
+
+      final bloc3 = container.refresh(counterCubitProvider.bloc);
+      verify(() => listener(bloc2, bloc3)).called(1);
+
+      sub.close();
+    });
+  });
+
   group('AlwaysAlive vs AutoDispose', () {
     test('BlocProvider', () async {
       var closeCounter1 = 0;
@@ -68,9 +157,9 @@ void main() {
       container.read(counterProvider2.notifier).increment();
       await Future(() {});
       expect(sub1.read(), 1);
-      verify(() => listener1(1)).called(1);
+      verify(() => listener1(0, 1)).called(1);
       expect(sub2.read(), 1);
-      verify(() => listener2(1)).called(1);
+      verify(() => listener2(0, 1)).called(1);
 
       verifyNoMoreInteractions(listener1);
       verifyNoMoreInteractions(listener2);
@@ -139,17 +228,19 @@ void main() {
       container.read(counterProvider2.notifier).increment();
       await Future(() {});
       expect(sub1.read(), const AsyncData(1));
-      verify(() => listener1(const AsyncData(1))).called(1);
+      verify(() => listener1(const AsyncLoading(), const AsyncData(1)))
+          .called(1);
       expect(sub2.read(), const AsyncData(1));
-      verify(() => listener2(const AsyncData(1))).called(1);
+      verify(() => listener2(const AsyncLoading(), const AsyncData(1)))
+          .called(1);
 
       container.read(counterProvider1.notifier).increment();
       container.read(counterProvider2.notifier).increment();
       await Future(() {});
       expect(sub1.read(), const AsyncData(2));
-      verify(() => listener1(const AsyncData(2))).called(1);
+      verify(() => listener1(const AsyncData(1), const AsyncData(2))).called(1);
       expect(sub2.read(), const AsyncData(2));
-      verify(() => listener2(const AsyncData(2))).called(1);
+      verify(() => listener2(const AsyncData(1), const AsyncData(2))).called(1);
 
       verifyNoMoreInteractions(listener1);
       verifyNoMoreInteractions(listener2);
@@ -250,6 +341,25 @@ void main() {
       final notifier = container.read(counterCubitProvider.notifier);
 
       expect(bloc, equals(notifier));
+    });
+  });
+
+  group('AutoDisposeBlocProvider overrides itself', () {
+    final counterProvider = AutoDisposeBlocProvider<CounterBloc, int>(
+      (ref) => CounterBloc(0),
+    );
+    test('without overrideWithProvider', () async {
+      final container1 = ProviderContainer();
+
+      final container2 = ProviderContainer(
+        parent: container1,
+        overrides: [counterProvider],
+      );
+
+      expect(
+        container1.read(counterProvider.bloc),
+        isNot(equals(container2.read(counterProvider.bloc))),
+      );
     });
   });
 }
