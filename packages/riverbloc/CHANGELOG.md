@@ -1,8 +1,16 @@
+## [1.0.0+1] - 2021-11-25
+
+- Added library docs.
+- Fix for bad name in some documentation macros
+
 ## [1.0.0] - 2021-11-24
 
 - Updated riverpod: 1.0.0
 - Updated bloc: 8.0.0
 - `ref.refresh(myBlocProvider)` is equivalent to `ref.refresh(myBlocProvider.bloc)`.
+- Added `BlocProviderFamily`
+- Added `AutoDisposeBlocProviderFamily`.
+- Builders `BlocProvider.autodispose`, `BlocProvider.family` and `BlocProvider.family.autodispose`.
 
 ## [0.5.0] - 2021-05-02
 
