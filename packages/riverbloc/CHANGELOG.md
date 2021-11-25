@@ -1,3 +1,8 @@
+- ## [1.0.0+2] - 2021-11-25
+
+- Removed `BlocFamilyCreate`.
+- Removed `AutoDisposeBlocFamilyCreate`.
+
 ## [1.0.0+1] - 2021-11-25
 
 - Added library docs.

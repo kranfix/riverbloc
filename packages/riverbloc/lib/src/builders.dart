@@ -7,7 +7,7 @@ class BlocProviderFamilyBuilder {
 
   /// {@macro riverpod.family}
   BlocProviderFamily<B, S, Arg> call<B extends BlocBase<S>, S, Arg>(
-    BlocFamilyCreate<B, Arg> create, {
+    FamilyCreate<B, BlocProviderRef<B>, Arg> create, {
     String? name,
     List<ProviderOrFamily>? dependencies,
   }) {
