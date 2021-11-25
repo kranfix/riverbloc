@@ -1,5 +1,5 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:riverbloc/riverbloc.dart';
+import 'package:test/test.dart';
 
 import '../helpers/helpers.dart';
 
@@ -8,7 +8,7 @@ final counterProviderFamily = BlocProvider.family<CounterCubit, int, int>(
 );
 
 void main() {
-  testWidgets('bloc provider family contructor', (tester) async {
+  test('bloc provider family contructor', () async {
     final container = ProviderContainer();
 
     final counter1a = container.read(counterProviderFamily(1));
@@ -35,7 +35,7 @@ void main() {
   });
 
   group('BlocProviderFamily.name', () {
-    testWidgets('Unamed BlocProviderFamily', (tester) async {
+    test('Unamed BlocProviderFamily', () async {
       final counterProviderFamily = BlocProviderFamily<CounterCubit, int, int>(
         (ref, int arg) => CounterCubit(arg),
       );
@@ -45,7 +45,7 @@ void main() {
       expect(counterProvider.bloc.name, isNull);
     });
 
-    testWidgets('Named BlocProviderFamily', (tester) async {
+    test('Named BlocProviderFamily', () async {
       final counterProviderFamily = BlocProviderFamily<CounterCubit, int, int>(
         (ref, int arg) => CounterCubit(arg),
         name: 'counterProvider',
