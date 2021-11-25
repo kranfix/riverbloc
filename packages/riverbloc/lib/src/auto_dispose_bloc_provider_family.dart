@@ -7,7 +7,7 @@ typedef AutoDisposeBlocFamilyCreate<B extends BlocBase<Object?>, Arg>
     = FamilyCreate<B, AutoDisposeBlocProviderRef<B>, Arg>;
 
 // ignore: subtype_of_sealed_class
-/// {@template riverbloc.bloc_provider.family}
+/// {@template riverbloc.auto_dispose_bloc_provider.family}
 /// A class that allows building a [AutoDisposeBlocProvider] from an
 /// external parameter.
 /// {@endtemplate}
@@ -21,7 +21,7 @@ typedef AutoDisposeBlocFamilyCreate<B extends BlocBase<Object?>, Arg>
 @sealed
 class AutoDisposeBlocProviderFamily<B extends BlocBase<S>, S, Arg>
     extends Family<S, Arg, AutoDisposeBlocProvider<B, S>> {
-  /// {@macro riverpod.Blocprovider.family}
+  /// {@macro riverbloc.auto_dispose_bloc_provider.family}
   AutoDisposeBlocProviderFamily(
     this._create, {
     String? name,
