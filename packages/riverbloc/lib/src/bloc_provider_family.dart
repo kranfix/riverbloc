@@ -1,11 +1,5 @@
 part of 'framework.dart';
 
-/// {@template riverbloc.bloc_family_create}
-/// A [FamilyCreate] for [BlocProviderFamily]
-/// {@endtemplate}
-typedef BlocFamilyCreate<B extends BlocBase<Object?>, Arg>
-    = FamilyCreate<B, BlocProviderRef<B>, Arg>;
-
 // ignore: subtype_of_sealed_class
 /// {@template bloc_provider_family}
 /// A class that allows building a [BlocProvider] from an external
@@ -34,7 +28,7 @@ class BlocProviderFamily<B extends BlocBase<S>, S, Arg>
           name: name,
         );
 
-  final BlocFamilyCreate<B, Arg> _create;
+  final FamilyCreate<B, BlocProviderRef<B>, Arg> _create;
 
   @override
   BlocProvider<B, S> create(Arg argument) {

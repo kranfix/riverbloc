@@ -1,11 +1,5 @@
 part of 'framework.dart';
 
-/// {@template riverbloc.bloc_family_create}
-/// A [FamilyCreate] for [AutoDisposeBlocProviderFamily]
-/// {@endtemplate}
-typedef AutoDisposeBlocFamilyCreate<B extends BlocBase<Object?>, Arg>
-    = FamilyCreate<B, AutoDisposeBlocProviderRef<B>, Arg>;
-
 // ignore: subtype_of_sealed_class
 /// {@template riverbloc.auto_dispose_bloc_provider.family}
 /// A class that allows building a [AutoDisposeBlocProvider] from an
@@ -39,7 +33,7 @@ class AutoDisposeBlocProviderFamily<B extends BlocBase<S>, S, Arg>
           name: name,
         );
 
-  final AutoDisposeBlocFamilyCreate<B, Arg> _create;
+  final FamilyCreate<B, AutoDisposeBlocProviderRef<B>, Arg> _create;
 
   @override
   AutoDisposeBlocProvider<B, S> create(Arg argument) {

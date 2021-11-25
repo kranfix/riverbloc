@@ -87,7 +87,8 @@ void main() {
   group('Override AutoDisposeBlocProviderFamily', () {
     final _family =
         AutoDisposeBlocProviderFamily<CounterCubit, int, int>.scoped(
-            'someName');
+      'someName',
+    );
 
     test('reads with error', () {
       final container = ProviderContainer();
