@@ -2,7 +2,7 @@ name: riverbloc
 description: >-
   BlocProvider implementation with riverpod as alternative to provider,
   similar to StateNotifierProvider
-version: 1.0.0
+version: 1.0.0+1
 homepage: https://github.com/kranfix/riverbloc/tree/master/packages/riverbloc
 repository: https://github.com/kranfix/riverbloc
 
