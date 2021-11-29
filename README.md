@@ -5,7 +5,7 @@ A collection of dart & flutter packages to work with
 
 ## Packages
 
-**[flutter_hooks_bloc](pacakges/flutter_hooks_bloc)**
+**[flutter_hooks_bloc](packages/flutter_hooks_bloc)**
 
 A reimplementation of [flutter_bloc](https://pub.dev/packages/flutter_bloc)
 based on [flutter_hooks](https://pub.dev/packages/flutter_hooks).
