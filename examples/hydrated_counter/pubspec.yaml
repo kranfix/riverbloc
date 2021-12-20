@@ -1,0 +1,26 @@
+name: hydrated_counter
+description: A new Flutter project.
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.15.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  bloc: ^8.0.1
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^1.0.0
+  hydrated_bloc: ^8.0.0
+  path_provider: ^2.0.8
+  riverbloc: ^1.0.0+2
+  hooks_riverpod: ^1.0.3
+
+flutter:
+  uses-material-design: true
