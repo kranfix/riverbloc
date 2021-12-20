@@ -1,5 +1,4 @@
 import 'package:riverbloc/riverbloc.dart';
-import 'package:riverpod/riverpod.dart';
 import 'package:test/test.dart';
 
 import 'helpers/helpers.dart';
