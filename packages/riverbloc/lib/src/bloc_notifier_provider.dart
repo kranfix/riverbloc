@@ -1,7 +1,7 @@
 part of 'framework.dart';
 
 /// {@macro riverpod.providerrefbase}
-abstract class BlocProviderRef<B extends BlocBase<Object?>> implements Ref {
+abstract class BlocProviderRef<B extends BlocBase<Object?>> implements Ref<B> {
   /// The [Bloc] currently exposed by this provider.
   ///
   /// Cannot be accessed while creating the provider.

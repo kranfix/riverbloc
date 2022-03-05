@@ -44,18 +44,17 @@ void main() {
       final container = ProviderContainer();
       expect(
         () => container.read(provider.bloc),
-        throwsA(isA<ProviderException>()),
+        throwsA(isA<UnimplementedProviderError>()),
       );
 
       try {
         container.read(provider.bloc);
-      } on ProviderException catch (e) {
-        expect(e.exception, isA<UnimplementedProviderError>());
-        final unimplementedProviderError =
-            e.exception as UnimplementedProviderError;
-        expect(unimplementedProviderError.name, 'someName');
       } catch (e) {
-        fail('unexpected exception $e');
+        if (e is UnimplementedProviderError) {
+          expect(e.name, 'someName');
+        } else {
+          fail('unexpected exception $e');
+        }
       }
     });
   });

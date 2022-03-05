@@ -2,7 +2,7 @@ part of 'framework.dart';
 
 /// {@macro riverpod.providerrefbase}
 abstract class AutoDisposeBlocProviderRef<B extends BlocBase<Object?>>
-    implements AutoDisposeRef {
+    implements AutoDisposeRef<B> {
   /// The [Bloc] currently exposed by this provider.
   ///
   /// Cannot be accessed while creating the provider.
@@ -18,10 +18,14 @@ class _AutoDisposeNotifierProvider<B extends BlocBase<Object?>>
     required this.dependencies,
     Family? from,
     Object? argument,
+    Duration? cacheTime,
+    Duration? disposeDelay,
   }) : super(
           name: modifierName(name, 'notifier'),
           from: from,
           argument: argument,
+          cacheTime: cacheTime,
+          disposeDelay: disposeDelay,
         );
 
   final Create<B, AutoDisposeBlocProviderRef<B>> _create;
@@ -73,6 +77,8 @@ class AutoDisposeBlocProvider<B extends BlocBase<S>, S>
     List<ProviderOrFamily>? dependencies,
     Family? from,
     Object? argument,
+    Duration? cacheTime,
+    Duration? disposeDelay,
   })  : bloc = _AutoDisposeNotifierProvider(
           create,
           name: name,
@@ -80,7 +86,13 @@ class AutoDisposeBlocProvider<B extends BlocBase<S>, S>
           from: from,
           argument: argument,
         ),
-        super(name: name, from: from, argument: argument);
+        super(
+          name: name,
+          from: from,
+          argument: argument,
+          cacheTime: cacheTime,
+          disposeDelay: disposeDelay,
+        );
 
   /// {@macro bloc_provider_scoped}
   AutoDisposeBlocProvider.scoped(String name)
