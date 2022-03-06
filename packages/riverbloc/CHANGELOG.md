@@ -1,3 +1,8 @@
+- ## [2.0.0-dev.1] - 2022-03-06
+
+- Upgraded to `riverpod-2.0.0-dev.4`.
+- SDK upgraded to 2.16
+
 - ## [2.0.0-dev.0] - 2022-01-25
 
 - Upgraded to `riverpod-2.0.0-dev.0`.
