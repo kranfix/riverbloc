@@ -1,3 +1,7 @@
+- ## [2.0.0-dev.2] - 2022-03-22
+
+- Upgraded to `riverpod-2.0.0-dev.5`.
+
 - ## [2.0.0-dev.1] - 2022-03-06
 
 - Upgraded to `riverpod-2.0.0-dev.4`.
