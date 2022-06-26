@@ -10,7 +10,7 @@ abstract class BlocProviderRef<B extends BlocBase<Object?>> implements Ref<B> {
 
 class _BlocProviderElement<B extends BlocBase<Object?>>
     extends ProviderElementBase<B> implements BlocProviderRef<B> {
-  _BlocProviderElement(_NotifierProvider<B> provider) : super(provider);
+  _BlocProviderElement(_NotifierProvider<B> super.provider);
 
   @override
   B get bloc => requireState;
@@ -23,12 +23,10 @@ class _NotifierProvider<B extends BlocBase<Object?>>
     this._create, {
     required String? name,
     required this.dependencies,
-    Family? from,
-    Object? argument,
+    super.from,
+    super.argument,
   }) : super(
           name: modifierName(name, 'notifier'),
-          from: from,
-          argument: argument,
         );
 
   final Create<B, BlocProviderRef<B>> _create;

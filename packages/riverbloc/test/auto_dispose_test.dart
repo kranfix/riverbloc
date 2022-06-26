@@ -330,7 +330,7 @@ void main() {
       final container = ProviderContainer();
       final counterCubit = container.read(counterCubitProvider.bloc);
 
-      expect(counterCubit, isA<BlocBase>());
+      expect(counterCubit, isA<BlocBase<int>>());
     });
 
     test('BlocProvider.bloc equals BlocProvider.notifier', () {

@@ -304,18 +304,17 @@ class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
   /// {@macro bloc_provider}
   BlocProvider(
     Create<B, BlocProviderRef<B>> create, {
-    String? name,
+    super.name,
     List<ProviderOrFamily>? dependencies,
-    Family? from,
-    Object? argument,
-  })  : bloc = _NotifierProvider(
+    super.from,
+    super.argument,
+  }) : bloc = _NotifierProvider(
           create,
           name: name,
           dependencies: dependencies,
           from: from,
           argument: argument,
-        ),
-        super(name: name, from: from, argument: argument);
+        );
 
   /// {@macro bloc_provider_scoped}
   BlocProvider.scoped(String name)

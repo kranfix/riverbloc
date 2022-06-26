@@ -17,9 +17,9 @@ class BlocProviderFamily<B extends BlocBase<S>, S, Arg>
   /// {@macro bloc_provider_family}
   BlocProviderFamily(
     this._create, {
-    String? name,
-    List<ProviderOrFamily>? dependencies,
-  }) : super(name: name, dependencies: dependencies);
+    super.name,
+    super.dependencies,
+  });
 
   /// {@macro bloc_provider_family_scoped}
   BlocProviderFamily.scoped(String name)

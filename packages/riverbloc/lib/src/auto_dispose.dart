@@ -16,16 +16,12 @@ class _AutoDisposeNotifierProvider<B extends BlocBase<Object?>>
     this._create, {
     required String? name,
     required this.dependencies,
-    Family? from,
-    Object? argument,
-    Duration? cacheTime,
-    Duration? disposeDelay,
+    super.from,
+    super.argument,
+    super.cacheTime,
+    super.disposeDelay,
   }) : super(
           name: modifierName(name, 'notifier'),
-          from: from,
-          argument: argument,
-          cacheTime: cacheTime,
-          disposeDelay: disposeDelay,
         );
 
   final Create<B, AutoDisposeBlocProviderRef<B>> _create;
@@ -55,8 +51,8 @@ class _AutoDisposeNotifierProviderElement<B extends BlocBase<Object?>>
     extends AutoDisposeProviderElementBase<B>
     implements AutoDisposeBlocProviderRef<B> {
   _AutoDisposeNotifierProviderElement(
-    _AutoDisposeNotifierProvider<B> provider,
-  ) : super(provider);
+    _AutoDisposeNotifierProvider<B> super.provider,
+  );
 
   @override
   B get bloc => requireState;
@@ -73,25 +69,18 @@ class AutoDisposeBlocProvider<B extends BlocBase<S>, S>
   /// {@macro bloc_provider_auto_dispose}
   AutoDisposeBlocProvider(
     Create<B, AutoDisposeBlocProviderRef<B>> create, {
-    String? name,
+    super.name,
     List<ProviderOrFamily>? dependencies,
-    Family? from,
-    Object? argument,
-    Duration? cacheTime,
-    Duration? disposeDelay,
-  })  : bloc = _AutoDisposeNotifierProvider(
+    super.from,
+    super.argument,
+    super.cacheTime,
+    super.disposeDelay,
+  }) : bloc = _AutoDisposeNotifierProvider(
           create,
           name: name,
           dependencies: dependencies,
           from: from,
           argument: argument,
-        ),
-        super(
-          name: name,
-          from: from,
-          argument: argument,
-          cacheTime: cacheTime,
-          disposeDelay: disposeDelay,
         );
 
   /// {@macro bloc_provider_scoped}
@@ -154,7 +143,7 @@ class AutoDisposeBlocProviderBuilder {
     B Function(AutoDisposeBlocProviderRef<B> ref) create, {
     String? name,
     List<ProviderOrFamily>? dependencies,
-    Family? from,
+    Family<S, dynamic, AutoDisposeBlocProvider<B, S>>? from,
     Object? argument,
   }) {
     return AutoDisposeBlocProvider(

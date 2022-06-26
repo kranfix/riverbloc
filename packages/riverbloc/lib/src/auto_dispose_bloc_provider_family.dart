@@ -18,9 +18,9 @@ class AutoDisposeBlocProviderFamily<B extends BlocBase<S>, S, Arg>
   /// {@macro riverbloc.auto_dispose_bloc_provider.family}
   AutoDisposeBlocProviderFamily(
     this._create, {
-    String? name,
-    List<ProviderOrFamily>? dependencies,
-  }) : super(name: name, dependencies: dependencies);
+    super.name,
+    super.dependencies,
+  });
 
   /// {@macro riverbloc.auto_dispose_bloc_provider_family_scoped}
   AutoDisposeBlocProviderFamily.scoped(String name)
