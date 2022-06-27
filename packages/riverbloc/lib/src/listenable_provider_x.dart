@@ -14,7 +14,6 @@ extension ProviderListenableWhenable<S> on ProviderListenable<S> {
   /// {@macro riverbloc.ProviderListenableWhenable.when}
   ///
   /// ```dart
-  ///
   /// class CounterCubit extends Cubit<int> {
   ///   CounterCubit(super.state);
   ///
@@ -39,6 +38,40 @@ extension ProviderListenableWhenable<S> on ProviderListenable<S> {
   /// )
   /// ```
   ProviderListenable<S> when(ListenWhen<S> filter) {
+    _Ref<S>? val;
+    return select((curr) {
+      val = val?.update(curr) ?? _Ref(curr, filter);
+      return val!.aux;
+    }).select((_) => val!.last);
+  }
+}
+
+/// {@macro riverbloc.ProviderListenableWhenable.when}
+extension AlwaysAliveProviderListenableWhenable<S>
+    on AlwaysAliveProviderListenable<S> {
+  /// {@macro riverbloc.ProviderListenableWhenable.when}
+  ///
+  /// ```dart
+  ///
+  /// class CounterCubit extends Cubit<int> {
+  ///   CounterCubit(super.state);
+  ///
+  ///   void increment() => emit(state + 1);
+  /// }
+  ///
+  /// final counterProvider =
+  ///     BlocProvider<CounterCubit, int>((ref) => CounterCubit(0));
+  ///
+  /// final previousOddCounterProvider = Provider((ref) {
+  ///   final _counter = ref.watch(
+  ///     counterProvider
+  ///         .when((prev, curr) => prev & 2 == 1)
+  ///         .select((state) => 2 * state),
+  ///   );
+  ///   return _counter;
+  /// });
+  /// ```
+  AlwaysAliveProviderListenable<S> when(ListenWhen<S> filter) {
     _Ref<S>? val;
     return select((curr) {
       val = val?.update(curr) ?? _Ref(curr, filter);
