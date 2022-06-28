@@ -11,7 +11,7 @@ If you are interested in `hooks` with `bloc`, see also
 
 ## Usage
 
-It's similar to `StateNotiferProvider` but with bloc instead of StateNofier.
+It's similar to `StateNotiferProvider` but with `Bloc` instead of `StateNotifier`.
 
 ```dart
 class CounterCubit extends Cubit<int> {
@@ -53,11 +53,24 @@ class MyHomePage extends ConsumerWidget {
                 style: Theme.of(context).textTheme.headline4,
               );
             }),
+            Consumer(
+              builder: (context, ref, __) {
+                final _counter = ref.watch(
+                  counterProvider
+                      .when((prev, curr) => (curr + prev) % 5 == 0)
+                      .select((state) => 2 * state),
+                );
+                return Text(
+                  '$_counter',
+                  style: Theme.of(context).textTheme.headline4,
+                );
+              },
+            ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => ref.read(counterProvider.notifier).increment(),
+        onPressed: () => ref.read(counterProvider.bloc).increment(),
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ),
