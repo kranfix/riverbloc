@@ -1,3 +1,8 @@
+- ## [2.0.0-dev.3] - 2022-06-27
+
+- Upgraded to `riverpod-2.0.0-dev.9`.
+- Added `when` provider listenable.
+
 - ## [2.0.0-dev.2] - 2022-03-22
 
 - Upgraded to `riverpod-2.0.0-dev.5`.
