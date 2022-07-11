@@ -336,8 +336,8 @@ class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
     final bloc = ref.watch(this.bloc);
 
     void listener(S newState) => ref.setState(newState);
-    final removeListener = bloc.stream.listen(listener);
-    ref.onDispose(removeListener.cancel);
+    final sub = bloc.stream.listen(listener);
+    ref.onDispose(sub.cancel);
 
     return bloc.state;
   }
