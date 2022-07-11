@@ -12,7 +12,6 @@ void main() {
     test('BlocProvider.bloc with no name', () {
       final counterBlocProvider = BlocProv((ref) => CounterBloc(0));
       expect(counterBlocProvider.bloc.name, isNull);
-      expect(counterBlocProvider.stream.name, isNull);
     });
 
     test('BlocProvider.bloc with name', () {
@@ -21,7 +20,6 @@ void main() {
         name: 'counter',
       );
       expect(counterBlocProvider.bloc.name, 'counter.notifier');
-      expect(counterBlocProvider.stream.name, 'counter.stream');
     });
   });
 
@@ -316,12 +314,9 @@ void main() {
       final pod = BlocProvider<CounterCubit, int>((ref) => CounterCubit(5));
       final container = ProviderContainer();
 
-      expect(container.read(pod.stream), equals(const AsyncLoading<int>()));
-
       container.read(pod.bloc).increment();
       await Future(() {});
 
-      expect(container.read(pod.stream), equals(const AsyncData(6)));
       expect(container.read(pod), 6);
     });
 
@@ -331,13 +326,11 @@ void main() {
       );
       final container = ProviderContainer();
 
-      expect(container.read(pod.stream), equals(const AsyncLoading<int?>()));
       expect(container.read(pod), isNull);
 
       container.read(pod.bloc).increment();
       await Future(() {});
 
-      expect(container.read(pod.stream), equals(const AsyncData<int?>(0)));
       expect(container.read(pod), 0);
     });
 

@@ -11,13 +11,11 @@ void main() {
         (ref) => CounterBloc(0),
       );
       expect(counterBlocProvider.notifier.name, isNull);
-      expect(counterBlocProvider.stream.name, isNull);
 
       final counterCubitProvider = BlocProvider.autoDispose<CounterCubit, int>(
         (ref) => CounterCubit(0),
       );
       expect(counterCubitProvider.notifier.name, isNull);
-      expect(counterCubitProvider.stream.name, isNull);
     });
 
     test('BlocProvider.notifier with name', () {
@@ -26,14 +24,12 @@ void main() {
         name: 'counterBloc',
       );
       expect(counterBlocProvider.notifier.name, 'counterBloc.notifier');
-      expect(counterBlocProvider.stream.name, 'counterBloc.stream');
 
       final counterCubitProvider = BlocProvider.autoDispose<CounterCubit, int>(
         (ref) => CounterCubit(0),
         name: 'counterCubit',
       );
       expect(counterCubitProvider.notifier.name, 'counterCubit.notifier');
-      expect(counterCubitProvider.stream.name, 'counterCubit.stream');
     });
   });
 
@@ -185,99 +181,6 @@ void main() {
 
       expect(container.read(counterProvider1), 2);
       expect(container.read(counterProvider2), 0);
-
-      await Future(() {});
-      expect(closeCounter1, 0);
-      expect(closeCounter2, 4);
-    });
-
-    test('BlocProvider.stream', () async {
-      var closeCounter1 = 0;
-      var closeCounter2 = 0;
-      void onClose1() => closeCounter1++;
-      void onClose2() => closeCounter2++;
-
-      final listener1 = Listener<AsyncValue<int>>();
-      final listener2 = Listener<AsyncValue<int>>();
-
-      final counterProvider1 = BlocProvider<CounterCubit, int>(
-        (ref) => CounterCubit(0, onClose: onClose1),
-      );
-      final counterProvider2 = BlocProvider.autoDispose<CounterCubit, int>(
-        (ref) => CounterCubit(0, onClose: onClose2),
-      );
-
-      final container = ProviderContainer();
-
-      final sub1 = container.listen<AsyncValue<int>>(
-        counterProvider1.stream,
-        listener1,
-      );
-
-      final sub2 = container.listen<AsyncValue<int>>(
-        counterProvider2.stream,
-        listener2,
-      );
-
-      expect(sub1.read(), equals(const AsyncLoading<int>()));
-      expect(sub2.read(), equals(const AsyncLoading<int>()));
-
-      container.read(counterProvider1.notifier).increment();
-      container.read(counterProvider2.notifier).increment();
-      await Future(() {});
-      expect(sub1.read(), const AsyncData(1));
-      verify(() => listener1(const AsyncLoading(), const AsyncData(1)))
-          .called(1);
-      expect(sub2.read(), const AsyncData(1));
-      verify(() => listener2(const AsyncLoading(), const AsyncData(1)))
-          .called(1);
-
-      container.read(counterProvider1.notifier).increment();
-      container.read(counterProvider2.notifier).increment();
-      await Future(() {});
-      expect(sub1.read(), const AsyncData(2));
-      verify(() => listener1(const AsyncData(1), const AsyncData(2))).called(1);
-      expect(sub2.read(), const AsyncData(2));
-      verify(() => listener2(const AsyncData(1), const AsyncData(2))).called(1);
-
-      verifyNoMoreInteractions(listener1);
-      verifyNoMoreInteractions(listener2);
-
-      expect(closeCounter1, 0);
-      expect(closeCounter2, 0);
-      sub1.close();
-      sub2.close();
-      await Future(() {});
-      expect(closeCounter1, 0);
-      expect(closeCounter2, 1);
-
-      expect(
-        container.read(counterProvider1.stream),
-        const AsyncData(2),
-      );
-      expect(
-        container.read(counterProvider2.stream),
-        const AsyncLoading<int>(),
-      );
-
-      await Future(() {});
-      expect(closeCounter1, 0);
-      expect(closeCounter2, 2);
-
-      container.read(counterProvider1.notifier).increment();
-      container.read(counterProvider2.notifier).increment();
-      await Future(() {});
-      expect(closeCounter1, 0);
-      expect(closeCounter2, 3);
-
-      expect(
-        container.read(counterProvider1.stream),
-        const AsyncData(3),
-      );
-      expect(
-        container.read(counterProvider2.stream),
-        const AsyncLoading<int>(),
-      );
 
       await Future(() {});
       expect(closeCounter1, 0);

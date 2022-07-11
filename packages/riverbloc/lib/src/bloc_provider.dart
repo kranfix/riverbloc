@@ -146,11 +146,6 @@ part of 'framework.dart';
 /// ```
 /// {@endtemplate}
 ///
-/// {@template bloc_provider_stream}
-/// ## `BlocProvider.stream`
-/// Listen to the `Bloc.stream` or `Cubit.stream`
-/// {@endtemplate}
-///
 /// {@template bloc_provider_override_with_provider}
 /// ## `BlocProvider.overrideWithProvider`
 ///
@@ -335,12 +330,6 @@ class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
   /// {@macro bloc_provider_bloc}
   @override
   final AlwaysAliveProviderBase<B> bloc;
-
-  /// {@macro bloc_provider_stream}
-  late final AlwaysAliveProviderBase<AsyncValue<S>> stream = StreamProvider<S>(
-    (ref) => ref.watch(bloc).stream,
-    name: modifierName(name, 'stream'),
-  );
 
   @override
   S create(ProviderElementBase<S> ref) {

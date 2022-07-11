@@ -109,13 +109,6 @@ class AutoDisposeBlocProvider<B extends BlocBase<S>, S>
   /// Equivalent to [bloc]
   AutoDisposeProviderBase<B> get notifier => bloc;
 
-  /// {@macro bloc_provider_stream}
-  late final AutoDisposeProviderBase<AsyncValue<S>> stream =
-      AutoDisposeStreamProvider<S>(
-    (ref) => ref.watch(bloc).stream,
-    name: modifierName(name, 'stream'),
-  );
-
   @override
   S create(AutoDisposeProviderElementBase<S> ref) {
     final bloc = ref.watch(this.bloc);
