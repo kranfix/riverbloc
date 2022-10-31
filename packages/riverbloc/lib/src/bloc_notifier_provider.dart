@@ -1,76 +1,114 @@
+// ignore_for_file: invalid_use_of_internal_member
+
 part of 'framework.dart';
 
 /// {@macro riverpod.providerrefbase}
-abstract class BlocProviderRef<B extends BlocBase<Object?>> implements Ref<B> {
+abstract class BlocProviderRef<B extends BlocBase<S>, S> implements Ref<S> {
   /// The [Bloc] currently exposed by this provider.
   ///
   /// Cannot be accessed while creating the provider.
   B get bloc;
 }
 
-class _BlocProviderElement<B extends BlocBase<Object?>>
-    extends ProviderElementBase<B> implements BlocProviderRef<B> {
-  _BlocProviderElement(_NotifierProvider<B> super.provider);
+/// The element of [StateNotifierProvider].
+class BlocProviderElement<B extends BlocBase<S>, S>
+    extends ProviderElementBase<S> implements BlocProviderRef<B, S> {
+  BlocProviderElement._(_BlocProviderBase<B, S> super.provider);
 
   @override
-  B get bloc => requireState;
+  B get bloc => _blocNotifier.value;
+  final _blocNotifier = ProxyElementValueNotifier<B>();
+
+  void Function()? _removeListener;
+
+  @override
+  void create({required bool didChangeDependency}) {
+    final provider = this.provider as _BlocProviderBase<B, S>;
+
+    final notifier =
+        _blocNotifier.result = Result.guard(() => provider._create(this));
+
+    setState(notifier.requireState.state);
+
+    final sub = notifier.requireState.stream.listen(setState);
+
+    _removeListener = sub.cancel;
+  }
+
+  @override
+  bool updateShouldNotify(S previous, S next) {
+    return previous != next;
+  }
+
+  @override
+  void runOnDispose() {
+    super.runOnDispose();
+
+    _removeListener?.call();
+    _removeListener = null;
+
+    final notifier = _blocNotifier.result?.stateOrNull;
+    if (notifier != null) {
+      runGuarded(notifier.close);
+    }
+    _blocNotifier.result = null;
+  }
+
+  @override
+  void visitChildren({
+    required void Function(ProviderElementBase<dynamic> element) elementVisitor,
+    required void Function(ProxyElementValueNotifier<dynamic> element)
+        notifierVisitor,
+  }) {
+    super.visitChildren(
+      elementVisitor: elementVisitor,
+      notifierVisitor: notifierVisitor,
+    );
+    notifierVisitor(_blocNotifier);
+  }
+}
+
+ProviderElementProxy<S, B> _notifier<B extends BlocBase<S>, S>(
+  _BlocProviderBase<B, S> that,
+) {
+  return ProviderElementProxy<S, B>(
+    that,
+    (element) {
+      return (element as BlocProviderElement<B, S>)._blocNotifier;
+    },
+  );
 }
 
 // ignore: subtype_of_sealed_class
-class _NotifierProvider<B extends BlocBase<Object?>>
-    extends AlwaysAliveProviderBase<B> {
-  _NotifierProvider(
-    this._create, {
-    required String? name,
+abstract class _BlocProviderBase<B extends BlocBase<S>, S>
+    extends ProviderBase<S> {
+  _BlocProviderBase({
+    required super.name,
+    required super.from,
+    required super.argument,
     required this.dependencies,
-    super.from,
-    super.argument,
-  }) : super(
-          name: modifierName(name, 'notifier'),
-        );
-
-  final Create<B, BlocProviderRef<B>> _create;
+    required super.debugGetCreateSourceHash,
+  });
 
   @override
   final List<ProviderOrFamily>? dependencies;
 
-  @override
-  B create(covariant BlocProviderRef<B> ref) {
-    final bloc = _create(ref);
-    ref.onDispose(bloc.close);
-    return bloc;
-  }
-
-  @override
-  bool updateShouldNotify(B previousState, B newState) => true;
-
-  @override
-  _BlocProviderElement<B> createElement() => _BlocProviderElement(this);
-}
-
-// ignore: subtype_of_sealed_class
-/// Add [overrideWithValue] to [AutoDisposeBlocProvider]
-mixin BlocProviderOverrideMixin<B extends BlocBase<S>, S> on ProviderBase<S> {
+  /// Obtains the [Bloc] associated with this provider, without listening
+  /// to state changes.
   ///
-  ProviderBase<B> get bloc;
+  /// This is typically used to invoke methods on a [Bloc]. For example:
+  ///
+  /// ```dart
+  /// Button(
+  ///   onTap: () => ref.read(counterProvider.bloc).add(Increment()),
+  /// )
+  /// ```
+  ///
+  /// This listenable will notify its state if the [Bloc] or [Cubit] instance
+  /// changes.
+  /// This may happen if the provider is refreshed or one of its dependencies
+  /// has changes.
+  ProviderListenable<B> get bloc;
 
-  @override
-  late final List<ProviderOrFamily>? dependencies = [bloc];
-
-  @override
-  ProviderBase<B> get originProvider => bloc;
-
-  /// {@macro riverpod.overrridewithvalue}
-  Override overrideWithValue(B value) {
-    return ProviderOverride(
-      origin: bloc,
-      override: ValueProvider<B>(value),
-    );
-  }
-
-  /// The bloc notifies when the state changes.
-  @override
-  bool updateShouldNotify(S previousState, S newState) {
-    return newState != previousState;
-  }
+  B _create(covariant BlocProviderElement<B, S> ref);
 }

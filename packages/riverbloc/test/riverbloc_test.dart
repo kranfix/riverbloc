@@ -3,15 +3,15 @@ import 'package:test/test.dart';
 
 import 'helpers/helpers.dart';
 
-final counterProvider = BlocProv((ref) => CounterBloc(0));
+final counterProvider = BlocProv<CounterBloc>((ref) => CounterBloc(0));
 
-final counterCubitProvider = BlocProv((ref) => CounterCubit(0));
+final counterCubitProvider = BlocProv<CounterCubit>((ref) => CounterCubit(0));
 
 void main() {
   group('Provider names', () {
     test('BlocProvider.bloc with no name', () {
       final counterBlocProvider = BlocProv((ref) => CounterBloc(0));
-      expect(counterBlocProvider.bloc.name, isNull);
+      expect(counterBlocProvider.name, isNull);
     });
 
     test('BlocProvider.bloc with name', () {
@@ -19,7 +19,7 @@ void main() {
         (ref) => CounterBloc(0),
         name: 'counter',
       );
-      expect(counterBlocProvider.bloc.name, 'counter.notifier');
+      expect(counterBlocProvider.name, 'counter');
     });
   });
 
@@ -44,20 +44,12 @@ void main() {
     });
   });
 
-  group('BlocProvider.notifier', () {
-    test('BlocProvider.notifier gets BlocBase Object', () {
+  group('BlocProvider.bloc', () {
+    test('BlocProvider.bloc gets BlocBase Object', () {
       final container = ProviderContainer();
-      final counterCubit = container.read(counterCubitProvider.notifier);
+      final counterCubit = container.read(counterCubitProvider.bloc);
 
       expect(counterCubit, isA<CounterCubit>());
-    });
-
-    test('BlocProvider.notifier equals BlocProvider.bloc', () {
-      final container = ProviderContainer();
-      final bloc = container.read(counterCubitProvider.bloc);
-      final notifier = container.read(counterCubitProvider.notifier);
-
-      expect(bloc, equals(notifier));
     });
   });
 
@@ -181,56 +173,26 @@ void main() {
 
     test('BlocProvider override with provider', () async {
       final counterBloc = CounterBloc(3);
-      final counterProvider2 =
-          BlocProvider<CounterBloc, int>((ref) => counterBloc);
       final container = ProviderContainer(
         overrides: [
-          counterProvider.overrideWithProvider(counterProvider2),
+          counterProvider.overrideWith((ref) => counterBloc),
         ],
       );
 
       expect(container.read(counterProvider.bloc), equals(counterBloc));
-      expect(container.read(counterProvider2.bloc), equals(counterBloc));
 
       expect(counterBloc.state, 3);
       expect(container.read(counterProvider), 3);
-      expect(container.read(counterProvider2), 3);
 
-      container.read(counterProvider2.bloc).add(Incremented());
+      container.read(counterProvider.bloc).add(Incremented());
       await Future(() {});
       expect(counterBloc.state, 4);
       expect(container.read(counterProvider), 4);
-      expect(container.read(counterProvider2), 4);
 
       container.read(counterProvider.bloc).add(Incremented());
       await Future(() {});
       expect(counterBloc.state, 5);
       expect(container.read(counterProvider), 5);
-      expect(container.read(counterProvider2), 5);
-    });
-
-    test('BlocStateProvider override with value', () async {
-      final bloc2 = CounterBloc(3);
-      final container = ProviderContainer(
-        overrides: [
-          counterProvider.overrideWithValue(bloc2),
-        ],
-      );
-
-      expect(container.read(counterProvider.bloc), equals(bloc2));
-
-      expect(container.read(counterProvider), 3);
-      expect(bloc2.state, 3);
-
-      bloc2.add(Incremented());
-      await Future(() {});
-      expect(container.read(counterProvider), 4);
-      expect(bloc2.state, 4);
-
-      container.read(counterProvider.bloc).add(Incremented());
-      await Future(() {});
-      expect(container.read(counterProvider), 5);
-      expect(bloc2.state, 5);
     });
   });
 
@@ -334,48 +296,15 @@ void main() {
       expect(container.read(pod), 0);
     });
 
-    test('BlocProvider overridden with provider', () {
-      final counterCubit = CounterCubit(3);
-      final counterProvider2 =
-          BlocProvider<CounterCubit, int>((ref) => counterCubit);
-      final container = ProviderContainer(
-        overrides: [
-          counterCubitProvider.overrideWithProvider(counterProvider2),
-        ],
-      );
-
-      expect(container.read(counterCubitProvider.bloc), counterCubit);
-      expect(container.read(counterCubitProvider), 3);
-    });
-
     test('BlocProvider overridden with value', () {
       final counterCubit = CounterCubit(5);
       final container = ProviderContainer(
         overrides: [
-          counterCubitProvider.overrideWithValue(counterCubit),
+          counterCubitProvider.overrideWith((ref) => counterCubit),
         ],
       );
       expect(container.read(counterCubitProvider), 5);
       expect(container.read(counterCubitProvider.bloc).state, 5);
-    });
-  });
-
-  group('BlocProvider.setupOverride', () {
-    test('override', () {
-      final cubit2 = CounterCubit(3);
-
-      final counterCubitProvider2 = BlocProvider<CounterCubit, int>(
-        (ref) => cubit2,
-        name: 'cubit2',
-      );
-
-      final override =
-          counterCubitProvider.overrideWithProvider(counterCubitProvider2);
-      expect(override, isA<ProviderOverride>());
-
-      final container = ProviderContainer(overrides: [override]);
-      final cubit = container.read(counterCubitProvider.bloc);
-      expect(cubit, equals(cubit2));
     });
   });
 

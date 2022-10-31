@@ -42,7 +42,6 @@ void main() {
 
       final counterProvider = counterProviderFamily(0);
       expect(counterProvider.name, isNull);
-      expect(counterProvider.bloc.name, isNull);
     });
 
     test('Named BlocProviderFamily', () async {
@@ -53,11 +52,9 @@ void main() {
 
       final counterProvider1 = counterProviderFamily(0);
       expect(counterProvider1.name, 'counterProvider');
-      expect(counterProvider1.bloc.name, 'counterProvider.notifier');
 
       final counterProvider2 = counterProviderFamily(1);
       expect(counterProvider2.name, 'counterProvider');
-      expect(counterProvider2.bloc.name, 'counterProvider.notifier');
     });
   });
 

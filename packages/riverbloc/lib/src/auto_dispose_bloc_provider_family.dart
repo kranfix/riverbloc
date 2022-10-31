@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_use_of_internal_member
+
 part of 'framework.dart';
 
 // ignore: subtype_of_sealed_class
@@ -14,13 +16,14 @@ part of 'framework.dart';
 /// {@endtemplate}
 @sealed
 class AutoDisposeBlocProviderFamily<B extends BlocBase<S>, S, Arg>
-    extends Family<S, Arg, AutoDisposeBlocProvider<B, S>> {
-  /// {@macro riverbloc.auto_dispose_bloc_provider.family}
+    extends AutoDisposeFamilyBase<AutoDisposeBlocProviderRef<B, S>, S, Arg, B,
+        AutoDisposeBlocProvider<B, S>> {
+  /// The [Family] of [AutoDisposeBlocProvider].
   AutoDisposeBlocProviderFamily(
-    this._create, {
+    super.create, {
     super.name,
     super.dependencies,
-  });
+  }) : super(providerFactory: AutoDisposeBlocProvider.new);
 
   /// {@macro riverbloc.auto_dispose_bloc_provider_family_scoped}
   AutoDisposeBlocProviderFamily.scoped(String name)
@@ -33,35 +36,17 @@ class AutoDisposeBlocProviderFamily<B extends BlocBase<S>, S, Arg>
           name: name,
         );
 
-  final FamilyCreate<B, AutoDisposeBlocProviderRef<B>, Arg> _create;
-
-  @override
-  AutoDisposeBlocProvider<B, S> create(Arg argument) {
-    return AutoDisposeBlocProvider<B, S>(
-      (ref) => _create(ref, argument),
-      name: name,
-      from: this,
-      argument: argument,
-    );
-  }
-
-  @override
-  void setupOverride(Arg argument, SetupOverride setup) {
-    final provider = call(argument);
-    setup(origin: provider, override: provider);
-    setup(origin: provider.bloc, override: provider.bloc);
-  }
-
-  /// {@macro riverpod.overridewithprovider}
-  Override overrideWithProvider(
-    AutoDisposeBlocProvider<B, S> Function(Arg argument) override,
+  /// {@macro riverpod.overridewith}
+  Override overrideWith(
+    B Function(AutoDisposeBlocProviderRef<B, S> ref, Arg arg) create,
   ) {
-    return FamilyOverride<Arg>(
+    return FamilyOverrideImpl<S, Arg, AutoDisposeBlocProvider<B, S>>(
       this,
-      (arg, setup) {
-        final provider = call(arg);
-        setup(origin: provider.bloc, override: override(arg).bloc);
-      },
+      (arg) => AutoDisposeBlocProvider<B, S>(
+        (ref) => create(ref, arg),
+        from: from,
+        argument: arg,
+      ),
     );
   }
 }

@@ -6,16 +6,16 @@ import 'helpers/helpers.dart';
 
 void main() {
   group('AutoDispose Provider names', () {
-    test('AutoDisposeBlocProvider.notifier with no name', () {
+    test('AutoDisposeBlocProvider.bloc with no name', () {
       final counterBlocProvider = AutoDisposeBlocProvider<CounterBloc, int>(
         (ref) => CounterBloc(0),
       );
-      expect(counterBlocProvider.notifier.name, isNull);
+      expect(counterBlocProvider.name, isNull);
 
       final counterCubitProvider = BlocProvider.autoDispose<CounterCubit, int>(
         (ref) => CounterCubit(0),
       );
-      expect(counterCubitProvider.notifier.name, isNull);
+      expect(counterCubitProvider.name, isNull);
     });
 
     test('BlocProvider.notifier with name', () {
@@ -23,13 +23,13 @@ void main() {
         (ref) => CounterBloc(0),
         name: 'counterBloc',
       );
-      expect(counterBlocProvider.notifier.name, 'counterBloc.notifier');
+      expect(counterBlocProvider.name, 'counterBloc');
 
       final counterCubitProvider = BlocProvider.autoDispose<CounterCubit, int>(
         (ref) => CounterCubit(0),
         name: 'counterCubit',
       );
-      expect(counterCubitProvider.notifier.name, 'counterCubit.notifier');
+      expect(counterCubitProvider.name, 'counterCubit');
     });
   });
 
@@ -95,7 +95,7 @@ void main() {
       expect(bloc1, isNot(same(bloc2)));
     });
 
-    test('listening the provider must keep the bloc', () async {
+    test('listening the provider must refresh the bloc', () async {
       final container = ProviderContainer();
       final counterCubitProvider =
           AutoDisposeBlocProv((ref) => CounterCubit(0));
@@ -112,10 +112,8 @@ void main() {
       verify(() => listener(null, bloc1)).called(1);
 
       final bloc2 = container.refresh(counterCubitProvider.bloc);
-      verify(() => listener(bloc1, bloc2)).called(1);
-
-      final bloc3 = container.refresh(counterCubitProvider.bloc);
-      verify(() => listener(bloc2, bloc3)).called(1);
+      verify(() => listener(null, bloc2)).called(1);
+      expect(bloc1, isNot(equals(bloc2)));
 
       sub.close();
     });
@@ -147,8 +145,8 @@ void main() {
       expect(sub1.read(), 0);
       expect(sub2.read(), 0);
 
-      container.read(counterProvider1.notifier).increment();
-      container.read(counterProvider2.notifier).increment();
+      container.read(counterProvider1.bloc).increment();
+      container.read(counterProvider2.bloc).increment();
       await Future(() {});
       expect(sub1.read(), 1);
       verify(() => listener1(0, 1)).called(1);
@@ -173,8 +171,8 @@ void main() {
       expect(closeCounter1, 0);
       expect(closeCounter2, 2);
 
-      container.read(counterProvider1.notifier).increment();
-      container.read(counterProvider2.notifier).increment();
+      container.read(counterProvider1.bloc).increment();
+      container.read(counterProvider2.bloc).increment();
       await Future(() {});
       expect(closeCounter1, 0);
       expect(closeCounter2, 3);
@@ -197,13 +195,11 @@ void main() {
       final counterProvider1 = AutoDisposeBlocProvider<CounterCubit, int>(
         (ref) => CounterCubit(0, onClose: onClose1),
       );
-      final counterProvider2 = BlocProvider.autoDispose<CounterCubit, int>(
-        (ref) => CounterCubit(5, onClose: onClose2),
-      );
 
       final container = ProviderContainer(
         overrides: [
-          counterProvider1.overrideWithProvider(counterProvider2),
+          counterProvider1
+              .overrideWith((ref) => CounterCubit(5, onClose: onClose2)),
         ],
       );
 
@@ -211,7 +207,7 @@ void main() {
       final sub = container.listen<int>(counterProvider1, listener);
 
       expect(sub.read(), 5);
-      container.read(counterProvider1.notifier).increment();
+      container.read(counterProvider1.bloc).increment();
       await Future(() {});
       expect(sub.read(), 6);
 
@@ -234,14 +230,6 @@ void main() {
       final counterCubit = container.read(counterCubitProvider.bloc);
 
       expect(counterCubit, isA<BlocBase<int>>());
-    });
-
-    test('BlocProvider.bloc equals BlocProvider.notifier', () {
-      final container = ProviderContainer();
-      final bloc = container.read(counterCubitProvider.bloc);
-      final notifier = container.read(counterCubitProvider.notifier);
-
-      expect(bloc, equals(notifier));
     });
   });
 
