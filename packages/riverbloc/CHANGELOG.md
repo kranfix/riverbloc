@@ -1,3 +1,8 @@
+## [2.0.0] - 2022-07-12
+
+- Removed `BlocProvider.notifier` in favor of `BlocProvider.bloc`.
+- Migrated to Riverpod 2.1.0
+
 ## [2.0.0-dev.4] - 2022-07-12
 
 - Removed `BlocProvider.stream` and `AutoDisposeBlocProvider.stream` because of being unnecessary
