@@ -12,7 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_hooks: ^0.18.5+1
-  hooks_riverpod: ^2.0.2
+  hooks_riverpod: ^2.1.0
   riverbloc:
     path: ../
 
@@ -20,12 +20,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   very_good_analysis: ^3.0.1
-
-dependency_overrides:
-  riverpod:
-    git:
-      url: https://github.com/rrousselGit/riverpod.git
-      path: packages/riverpod/
 
 flutter:
   uses-material-design: true
