@@ -49,9 +49,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ProviderScope(
       overrides: [
-        counterProvider.overrideWithProvider(
-          BlocProvider((ref) => CounterCubit('sub')),
-        )
+        counterProvider.overrideWith((ref) => CounterCubit('sub')),
       ],
       child: Scaffold(
         appBar: AppBar(title: const Text('Home')),
@@ -98,7 +96,9 @@ class SubPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ProviderScope(
-      overrides: [counterProvider.overrideWithValue(CounterCubit('sub'))],
+      overrides: [
+        counterProvider.overrideWith((ref) => CounterCubit('sub')),
+      ],
       child: Scaffold(
         appBar: AppBar(title: const Text('Sub')),
         body: SizedBox(
