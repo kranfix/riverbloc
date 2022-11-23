@@ -11,9 +11,11 @@ Future<void> main() async {
   );
 
   HydratedBlocOverrides.runZoned(
-    () => runApp(const ProviderScope(
-      child: App(),
-    )),
+    () => runApp(
+      const ProviderScope(
+        child: App(),
+      ),
+    ),
     storage: storage,
   );
 }

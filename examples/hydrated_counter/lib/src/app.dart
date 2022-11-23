@@ -78,7 +78,7 @@ class HomePage extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const SubPage()),
+                    MaterialPageRoute<dynamic>(builder: (_) => const SubPage()),
                   ),
                   child: const Text('Move to next page'),
                 ),
