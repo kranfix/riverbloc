@@ -52,8 +52,8 @@ class Timer extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 100.0),
                 child: Center(
-                  child: Consumer(builder: (context, watch, _) {
-                    final state = watch(timerProvider);
+                  child: Consumer(builder: (context, ref, _) {
+                    final state = ref.watch(timerProvider);
                     final String minutesStr = ((state.duration / 60) % 60)
                         .floor()
                         .toString()
@@ -80,12 +80,12 @@ class Timer extends StatelessWidget {
 
 class Actions extends ConsumerWidget {
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    watch(timerProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(timerProvider);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: _mapStateToActionButtons(
-        timerBloc: watch(timerProvider.notifier),
+        timerBloc: ref.watch(timerProvider.bloc),
       ),
     );
   }
