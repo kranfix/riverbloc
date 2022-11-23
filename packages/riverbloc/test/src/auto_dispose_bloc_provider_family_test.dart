@@ -85,8 +85,7 @@ void main() {
   });
 
   group('Override AutoDisposeBlocProviderFamily', () {
-    final _family =
-        AutoDisposeBlocProviderFamily<CounterCubit, int, int>.scoped(
+    final family = AutoDisposeBlocProviderFamily<CounterCubit, int, int>.scoped(
       'someName',
     );
 
@@ -97,14 +96,14 @@ void main() {
       final y = x.selectAsync((int val) => 2 * val);
       container.listen<Future<int>>(y, (previous, next) {});
 
-      _family(1);
+      family(1);
       expect(
-        () => container.read(_family(1)),
+        () => container.read(family(1)),
         throwsA(isA<UnimplementedProviderError>()),
       );
 
       try {
-        container.read(_family(1).bloc);
+        container.read(family(1).bloc);
       } catch (e) {
         if (e is UnimplementedProviderError) {
           expect(e.name, 'someName');
@@ -117,13 +116,13 @@ void main() {
     test('reads with success', () {
       final container = ProviderContainer(
         overrides: [
-          _family.overrideWithProvider((arg) {
+          family.overrideWithProvider((arg) {
             return AutoDisposeBlocProvider((ref) => CounterCubit(arg));
           }),
         ],
       );
 
-      expect(container.read(_family(1)), 1);
+      expect(container.read(family(1)), 1);
     });
   });
 

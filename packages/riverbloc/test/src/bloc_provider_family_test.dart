@@ -59,19 +59,19 @@ void main() {
   });
 
   group('Override BlocProviderFamily', () {
-    final _family =
+    final family =
         BlocProviderFamily<CounterCubit, int, int>.scoped('someName');
 
     test('reads with error', () {
       final container = ProviderContainer();
 
       expect(
-        () => container.read(_family(1)),
+        () => container.read(family(1)),
         throwsA(isA<UnimplementedProviderError>()),
       );
 
       try {
-        container.read(_family(1));
+        container.read(family(1));
       } catch (e) {
         if (e is UnimplementedProviderError) {
           expect(e.name, 'someName');
@@ -84,13 +84,13 @@ void main() {
     test('reads with success', () {
       final container = ProviderContainer(
         overrides: [
-          _family.overrideWithProvider((arg) {
+          family.overrideWithProvider((arg) {
             return BlocProvider((ref) => CounterCubit(arg));
           }),
         ],
       );
 
-      expect(container.read(_family(1)), 1);
+      expect(container.read(family(1)), 1);
     });
   });
 
