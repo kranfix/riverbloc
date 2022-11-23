@@ -26,28 +26,29 @@ class Decremented with CounterEvent {
 }
 
 class CounterBloc extends Bloc<CounterEvent, int> {
-  CounterBloc([int initialState = 0]) : super(initialState) {
+  CounterBloc([super.initialState = 0]) {
     on<Incremented>(onIncremented, transformer: droppable());
     on<Decremented>(onDecremented, transformer: sequential());
   }
 
   Future<void> onIncremented(Incremented event, Emitter<int> emit) async {
-    for (int i = 0; i < event.value; i++) {
+    for (var i = 0; i < event.value; i++) {
       emit(state + 1);
-      await Future.delayed(const Duration(seconds: 2));
+      await Future<void>.delayed(const Duration(seconds: 2));
     }
   }
 
   Future<void> onDecremented(Decremented event, Emitter<int> emit) async {
-    for (int i = 0; i < event.value; i++) {
+    for (var i = 0; i < event.value; i++) {
       emit(state - 1);
-      await Future.delayed(const Duration(seconds: 2));
+      await Future<void>.delayed(const Duration(seconds: 2));
     }
   }
 
   @override
   void onTransition(Transition<CounterEvent, int> transition) {
-    if (1 != 1) {
+    if (transition is int) {
+      // never
       super.onTransition(transition);
     }
     log('$transition', name: 'CounterBloc.onTransition');
