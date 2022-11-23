@@ -42,7 +42,6 @@ void main() {
 
       final counterProvider = counterProviderFamily(0);
       expect(counterProvider.name, isNull);
-      expect(counterProvider.bloc.name, isNull);
     });
 
     test('Named BlocProviderFamily', () async {
@@ -53,48 +52,45 @@ void main() {
 
       final counterProvider1 = counterProviderFamily(0);
       expect(counterProvider1.name, 'counterProvider');
-      expect(counterProvider1.bloc.name, 'counterProvider.notifier');
 
       final counterProvider2 = counterProviderFamily(1);
       expect(counterProvider2.name, 'counterProvider');
-      expect(counterProvider2.bloc.name, 'counterProvider.notifier');
     });
   });
 
   group('Override BlocProviderFamily', () {
-    final _family =
+    final family =
         BlocProviderFamily<CounterCubit, int, int>.scoped('someName');
 
     test('reads with error', () {
       final container = ProviderContainer();
 
       expect(
-        () => container.read(_family(1)),
-        throwsA(isA<ProviderException>()),
+        () => container.read(family(1)),
+        throwsA(isA<UnimplementedProviderError>()),
       );
 
       try {
-        container.read(_family(1).bloc);
-      } on ProviderException catch (e) {
-        expect(e.exception, isA<UnimplementedProviderError>());
-        final unimplementedProviderError =
-            e.exception as UnimplementedProviderError;
-        expect(unimplementedProviderError.name, 'someName');
+        container.read(family(1));
       } catch (e) {
-        fail('unexpected exception $e');
+        if (e is UnimplementedProviderError) {
+          expect(e.name, 'someName');
+        } else {
+          fail('unexpected exception $e');
+        }
       }
     });
 
     test('reads with success', () {
       final container = ProviderContainer(
         overrides: [
-          _family.overrideWithProvider((arg) {
+          family.overrideWithProvider((arg) {
             return BlocProvider((ref) => CounterCubit(arg));
           }),
         ],
       );
 
-      expect(container.read(_family(1)), 1);
+      expect(container.read(family(1)), 1);
     });
   });
 

@@ -85,41 +85,44 @@ void main() {
   });
 
   group('Override AutoDisposeBlocProviderFamily', () {
-    final _family =
-        AutoDisposeBlocProviderFamily<CounterCubit, int, int>.scoped(
+    final family = AutoDisposeBlocProviderFamily<CounterCubit, int, int>.scoped(
       'someName',
     );
 
     test('reads with error', () {
       final container = ProviderContainer();
 
+      final x = FutureProvider((_) => 1);
+      final y = x.selectAsync((int val) => 2 * val);
+      container.listen<Future<int>>(y, (previous, next) {});
+
+      family(1);
       expect(
-        () => container.read(_family(1)),
-        throwsA(isA<ProviderException>()),
+        () => container.read(family(1)),
+        throwsA(isA<UnimplementedProviderError>()),
       );
 
       try {
-        container.read(_family(1).bloc);
-      } on ProviderException catch (e) {
-        expect(e.exception, isA<UnimplementedProviderError>());
-        final unimplementedProviderError =
-            e.exception as UnimplementedProviderError;
-        expect(unimplementedProviderError.name, 'someName');
+        container.read(family(1).bloc);
       } catch (e) {
-        fail('unexpected exception $e');
+        if (e is UnimplementedProviderError) {
+          expect(e.name, 'someName');
+        } else {
+          fail('unexpected exception $e');
+        }
       }
     });
 
     test('reads with success', () {
       final container = ProviderContainer(
         overrides: [
-          _family.overrideWithProvider((arg) {
+          family.overrideWithProvider((arg) {
             return AutoDisposeBlocProvider((ref) => CounterCubit(arg));
           }),
         ],
       );
 
-      expect(container.read(_family(1)), 1);
+      expect(container.read(family(1)), 1);
     });
   });
 

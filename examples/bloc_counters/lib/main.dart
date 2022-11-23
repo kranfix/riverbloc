@@ -1,18 +1,21 @@
+// ignore_for_file: avoid_print
+
 import 'package:bloc_counters/app/app_observer.dart';
 import 'package:bloc_counters/blocs/counter_bloc.dart';
-
-import 'blocs/counter_cubit.dart';
+import 'package:bloc_counters/blocs/counter_cubit.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks_bloc/flutter_hooks_bloc.dart';
-import 'package:flutter/foundation.dart';
 
 void main() {
   Bloc.observer = MyBlocObserver();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -28,14 +31,14 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: MyHomePage(title: 'Bloc Counters'),
+        home: const MyHomePage(title: 'Bloc Counters'),
       ),
     );
   }
 }
 
 class MyHomePage extends StatelessWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({super.key, required this.title});
 
   final String title;
 
@@ -88,7 +91,7 @@ class MyHomePage extends StatelessWidget {
 }
 
 class CounterItem<C extends CounterCubitBase> extends StatelessWidget {
-  const CounterItem({Key? key, required this.state}) : super(key: key);
+  const CounterItem({super.key, required this.state});
 
   final int state;
 
@@ -99,21 +102,21 @@ class CounterItem<C extends CounterCubitBase> extends StatelessWidget {
       children: [
         Text(
           '$C.state:',
-          style: TextStyle(fontSize: 24),
+          style: const TextStyle(fontSize: 24),
         ),
         const Expanded(
           child: SizedBox(),
         ),
         IconButton(
-          icon: Icon(Icons.arrow_left),
+          icon: const Icon(Icons.arrow_left),
           onPressed: () => context.read<C>().decrement(3),
         ),
         Text(
           '$state',
-          style: TextStyle(fontSize: 24),
+          style: const TextStyle(fontSize: 24),
         ),
         IconButton(
-          icon: Icon(Icons.arrow_right),
+          icon: const Icon(Icons.arrow_right),
           onPressed: () => context.read<C>().increment(3),
         ),
       ],
@@ -121,14 +124,14 @@ class CounterItem<C extends CounterCubitBase> extends StatelessWidget {
   }
 
   @override
-  void debugFillProperties(properties) {
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(IntProperty('state', state, defaultValue: null));
   }
 }
 
 class CounterBlocItem<B extends CounterBloc> extends StatelessWidget {
-  const CounterBlocItem({Key? key, required this.state}) : super(key: key);
+  const CounterBlocItem({super.key, required this.state});
 
   final int state;
 
@@ -139,29 +142,29 @@ class CounterBlocItem<B extends CounterBloc> extends StatelessWidget {
       children: [
         Text(
           '$B.state:',
-          style: TextStyle(fontSize: 24),
+          style: const TextStyle(fontSize: 24),
         ),
         const Expanded(
           child: SizedBox(),
         ),
         IconButton(
-          icon: Icon(Icons.arrow_left),
-          onPressed: () => context.read<B>().add(Decremented(3)),
+          icon: const Icon(Icons.arrow_left),
+          onPressed: () => context.read<B>().add(const Decremented(3)),
         ),
         Text(
           '$state',
-          style: TextStyle(fontSize: 24),
+          style: const TextStyle(fontSize: 24),
         ),
         IconButton(
-          icon: Icon(Icons.arrow_right),
-          onPressed: () => context.read<B>().add(Incremented(3)),
+          icon: const Icon(Icons.arrow_right),
+          onPressed: () => context.read<B>().add(const Incremented(3)),
         ),
       ],
     );
   }
 
   @override
-  void debugFillProperties(properties) {
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(IntProperty('state', state, defaultValue: null));
   }

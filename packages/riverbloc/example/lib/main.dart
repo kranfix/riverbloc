@@ -1,15 +1,19 @@
+// ignore_for_file: public_member_api_docs
+
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverbloc/riverbloc.dart';
 
 void main() {
-  runApp(const ProviderScope(
-    child: MyApp(),
-  ));
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class CounterCubit extends Cubit<int> {
-  CounterCubit(int state) : super(state);
+  CounterCubit(super.state);
 
   void increment() => emit(state + 1);
 }
@@ -18,7 +22,7 @@ final counterProvider =
     BlocProvider<CounterCubit, int>((ref) => CounterCubit(0));
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -28,13 +32,13 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
 class MyHomePage extends ConsumerWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({super.key, required this.title});
 
   final String title;
 
@@ -42,7 +46,7 @@ class MyHomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Rebuilds the widget if the cubit/bloc changes.
     // But does not rebuild if the state changes with the same cubit/bloc
-    final counterCubit = ref.watch(counterProvider.notifier);
+    final counterCubit = ref.watch(counterProvider.bloc);
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
@@ -54,32 +58,36 @@ class MyHomePage extends ConsumerWidget {
             Text(
               'initial counterCubit.state: ${counterCubit.state}',
             ),
-            Consumer(builder: (context, ref, __) {
-              // Rebuilds on every emitted state
-              final _counter = ref.watch(counterProvider);
-              return Text(
-                '$_counter',
-                style: Theme.of(context).textTheme.headline4,
-              );
-            }),
-            //HookConsumer(builder: (context, ref, __) {
-            //  final provider = useMemoized(() {
-            //    return counterProvider
-            //        .when((prev, curr) => (curr + prev) % 5 == 0);
-            //  });
-            //  final _counter = ref.watch(provider.select((state) => 2 * state));
-            //  return Text(
-            //    '$_counter',
-            //    style: Theme.of(context).textTheme.headline4,
-            //  );
-            //}),
+            Consumer(
+              builder: (context, ref, __) {
+                // Rebuilds on every emitted state
+                final _counter = ref.watch(counterProvider);
+                return Text(
+                  '$_counter',
+                  style: Theme.of(context).textTheme.headline4,
+                );
+              },
+            ),
+            Consumer(
+              builder: (context, ref, __) {
+                final _counter = ref.watch(
+                  counterProvider
+                      .when((prev, curr) => (curr + prev) % 5 == 0)
+                      .select((state) => 2 * state),
+                );
+                return Text(
+                  '$_counter',
+                  style: Theme.of(context).textTheme.headline4,
+                );
+              },
+            ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => ref.read(counterProvider.notifier).increment(),
+        onPressed: () => ref.read(counterProvider.bloc).increment(),
         tooltip: 'Increment',
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

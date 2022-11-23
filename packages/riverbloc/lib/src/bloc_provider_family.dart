@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_use_of_internal_member
+
 part of 'framework.dart';
 
 // ignore: subtype_of_sealed_class
@@ -13,13 +15,13 @@ part of 'framework.dart';
 /// {@endtemplate}
 @sealed
 class BlocProviderFamily<B extends BlocBase<S>, S, Arg>
-    extends Family<S, Arg, BlocProvider<B, S>> {
-  /// {@macro bloc_provider_family}
+    extends FamilyBase<BlocProviderRef<B, S>, S, Arg, B, BlocProvider<B, S>> {
+  /// The [Family] of [BlocProvider].
   BlocProviderFamily(
-    this._create, {
-    String? name,
-    List<ProviderOrFamily>? dependencies,
-  }) : super(name: name, dependencies: dependencies);
+    super.create, {
+    super.name,
+    super.dependencies,
+  }) : super(providerFactory: BlocProvider.new);
 
   /// {@macro bloc_provider_family_scoped}
   BlocProviderFamily.scoped(String name)
@@ -27,36 +29,4 @@ class BlocProviderFamily<B extends BlocBase<S>, S, Arg>
           (ref, arg) => throw UnimplementedProviderError(name),
           name: name,
         );
-
-  final FamilyCreate<B, BlocProviderRef<B>, Arg> _create;
-
-  @override
-  BlocProvider<B, S> create(Arg argument) {
-    return BlocProvider<B, S>(
-      (ref) => _create(ref, argument),
-      name: name,
-      from: this,
-      argument: argument,
-    );
-  }
-
-  @override
-  void setupOverride(Arg argument, SetupOverride setup) {
-    final provider = call(argument);
-    setup(origin: provider, override: provider);
-    setup(origin: provider.bloc, override: provider.bloc);
-  }
-
-  /// {@macro riverpod.overridewithprovider}
-  Override overrideWithProvider(
-    BlocProvider<B, S> Function(Arg argument) override,
-  ) {
-    return FamilyOverride<Arg>(
-      this,
-      (arg, setup) {
-        final provider = call(arg);
-        setup(origin: provider.bloc, override: override(arg).bloc);
-      },
-    );
-  }
 }

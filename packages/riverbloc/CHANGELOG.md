@@ -1,4 +1,31 @@
-- ## [1.0.0+2] - 2021-11-25
+## [2.0.0] - 2022-07-12
+
+- Removed `BlocProvider.notifier` in favor of `BlocProvider.bloc`.
+- Migrated to Riverpod 2.1.0
+
+## [2.0.0-dev.4] - 2022-07-12
+
+- Removed `BlocProvider.stream` and `AutoDisposeBlocProvider.stream` because of being unnecessary
+
+## [2.0.0-dev.3] - 2022-06-27
+
+- Upgraded to `riverpod-2.0.0-dev.9`.
+- Added `when` method to provider listenable.
+
+## [2.0.0-dev.2] - 2022-03-22
+
+- Upgraded to `riverpod-2.0.0-dev.5`.
+
+## [2.0.0-dev.1] - 2022-03-06
+
+- Upgraded to `riverpod-2.0.0-dev.4`.
+- SDK upgraded to 2.16
+
+## [2.0.0-dev.0] - 2022-01-25
+
+- Upgraded to `riverpod-2.0.0-dev.0`.
+
+## [1.0.0+2] - 2021-11-25
 
 - Removed `BlocFamilyCreate`.
 - Removed `AutoDisposeBlocFamilyCreate`.

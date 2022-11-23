@@ -16,7 +16,7 @@ class Incremented extends CounterEvent {}
 class Decremented extends CounterEvent {}
 
 class CounterBloc extends Bloc<CounterEvent, int> {
-  CounterBloc(int state, {this.onClose}) : super(state) {
+  CounterBloc(super.state, {this.onClose}) {
     on<Incremented>(_onIncrement);
     on<Decremented>(_onDecrement);
   }
@@ -34,7 +34,7 @@ class CounterBloc extends Bloc<CounterEvent, int> {
 }
 
 class CounterCubit extends Cubit<int> {
-  CounterCubit(int state, {this.onClose}) : super(state);
+  CounterCubit(super.state, {this.onClose});
 
   void Function()? onClose;
 

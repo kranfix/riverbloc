@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_use_of_internal_member
+
 part of 'framework.dart';
 
 // ignore: subtype_of_sealed_class
@@ -146,11 +148,6 @@ part of 'framework.dart';
 /// ```
 /// {@endtemplate}
 ///
-/// {@template bloc_provider_stream}
-/// ## `BlocProvider.stream`
-/// Listen to the `Bloc.stream` or `Cubit.stream`
-/// {@endtemplate}
-///
 /// {@template bloc_provider_override_with_provider}
 /// ## `BlocProvider.overrideWithProvider`
 ///
@@ -297,25 +294,17 @@ part of 'framework.dart';
 /// );
 /// ```
 /// {@endtemplate}
-class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
-    with
-        BlocProviderOverrideMixin<B, S>,
-        OverrideWithProviderMixin<B, BlocProvider<B, S>> {
-  /// {@macro bloc_provider}
+class BlocProvider<B extends BlocBase<S>, S> extends _BlocProviderBase<B, S>
+    with AlwaysAliveProviderBase<S> {
+  /// {@macro riverpod.statenotifierprovider}
   BlocProvider(
-    Create<B, BlocProviderRef<B>> create, {
-    String? name,
-    List<ProviderOrFamily>? dependencies,
-    Family? from,
-    Object? argument,
-  })  : bloc = _NotifierProvider(
-          create,
-          name: name,
-          dependencies: dependencies,
-          from: from,
-          argument: argument,
-        ),
-        super(name: name, from: from, argument: argument);
+    this._createFn, {
+    super.name,
+    super.from,
+    super.argument,
+    super.dependencies,
+    super.debugGetCreateSourceHash,
+  });
 
   /// {@macro bloc_provider_scoped}
   BlocProvider.scoped(String name)
@@ -324,36 +313,36 @@ class BlocProvider<B extends BlocBase<S>, S> extends AlwaysAliveProviderBase<S>
           name: name,
         );
 
-  /// {@macro bloc_provider_auto_dispose}
+  /// {@macro riverpod.autoDispose}
   static const autoDispose = AutoDisposeBlocProviderBuilder();
 
   /// {@macro riverpod.family}
   static const family = BlocProviderFamilyBuilder();
 
-  /// {@macro bloc_provider_notifier}
-  AlwaysAliveProviderBase<B> get notifier => bloc;
-
-  /// {@macro bloc_provider_bloc}
-  @override
-  final AlwaysAliveProviderBase<B> bloc;
-
-  /// {@macro bloc_provider_stream}
-  late final AlwaysAliveProviderBase<AsyncValue<S>> stream = StreamProvider<S>(
-    (ref) => ref.watch(bloc).stream,
-    name: modifierName(name, 'stream'),
-  );
+  final B Function(BlocProviderRef<B, S> ref) _createFn;
 
   @override
-  S create(ProviderElementBase<S> ref) {
-    final bloc = ref.watch(this.bloc);
-
-    void listener(S newState) => ref.setState(newState);
-    final removeListener = bloc.stream.listen(listener);
-    ref.onDispose(removeListener.cancel);
-
-    return bloc.state;
+  B _create(BlocProviderElement<B, S> ref) {
+    return _createFn(ref);
   }
 
   @override
-  ProviderElementBase<S> createElement() => ProviderElement(this);
+  BlocProviderElement<B, S> createElement() {
+    return BlocProviderElement<B, S>._(this);
+  }
+
+  @override
+  late final AlwaysAliveRefreshable<B> bloc = _notifier(this);
+
+  /// {@macro riverpod.overridewith}
+  Override overrideWith(Create<B, BlocProviderRef<B, S>> create) {
+    return ProviderOverride(
+      origin: this,
+      override: BlocProvider<B, S>(
+        create,
+        from: from,
+        argument: argument,
+      ),
+    );
+  }
 }
