@@ -39,7 +39,7 @@ class MyStatefulApp extends StatefulWidget {
   final Widget child;
 
   @override
-  _MyStatefulAppState createState() => _MyStatefulAppState();
+  State<MyStatefulApp> createState() => _MyStatefulAppState();
 }
 
 class _MyStatefulAppState extends State<MyStatefulApp> {
@@ -168,11 +168,13 @@ void main() {
     testWidgets('passes value to children via value', (tester) async {
       const repository = Repository(0);
       const child = CounterPage();
-      await tester.pumpWidget(const MyApp(
-        repository: repository,
-        useValueProvider: true,
-        child: child,
-      ));
+      await tester.pumpWidget(
+        const MyApp(
+          repository: repository,
+          useValueProvider: true,
+          child: child,
+        ),
+      );
 
       final _counterFinder = find.byKey(const Key('value_data'));
       expect(_counterFinder, findsOneWidget);

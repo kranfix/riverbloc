@@ -61,22 +61,22 @@ class MyHomePage extends ConsumerWidget {
             Consumer(
               builder: (context, ref, __) {
                 // Rebuilds on every emitted state
-                final _counter = ref.watch(counterProvider);
+                final counter = ref.watch(counterProvider);
                 return Text(
-                  '$_counter',
+                  '$counter',
                   style: Theme.of(context).textTheme.headline4,
                 );
               },
             ),
             Consumer(
               builder: (context, ref, __) {
-                final _counter = ref.watch(
+                final counter = ref.watch(
                   counterProvider
                       .when((prev, curr) => (curr + prev) % 5 == 0)
                       .select((state) => 2 * state),
                 );
                 return Text(
-                  '$_counter',
+                  '$counter',
                   style: Theme.of(context).textTheme.headline4,
                 );
               },
