@@ -82,16 +82,14 @@ ProviderElementProxy<S, B> _notifier<B extends BlocBase<S>, S>(
 // ignore: subtype_of_sealed_class
 abstract class _BlocProviderBase<B extends BlocBase<S>, S>
     extends ProviderBase<S> {
-  _BlocProviderBase({
+  const _BlocProviderBase({
     required super.name,
     required super.from,
     required super.argument,
-    required this.dependencies,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
   });
-
-  @override
-  final List<ProviderOrFamily>? dependencies;
 
   /// Obtains the [Bloc] associated with this provider, without listening
   /// to state changes.
