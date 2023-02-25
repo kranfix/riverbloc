@@ -73,8 +73,9 @@ void main() {
       expect(
         multiListener
             .toDiagnosticsNode(
-                name: 'MyMultiBlocListener',
-                style: DiagnosticsTreeStyle.singleLine)
+              name: 'MyMultiBlocListener',
+              style: DiagnosticsTreeStyle.singleLine,
+            )
             .toStringDeep(),
         equalsIgnoringHashCodes(
           'MyMultiBlocListener: MultiBlocListener(\n'

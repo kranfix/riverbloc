@@ -46,27 +46,29 @@ class MyHomePage extends HookWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            HookBuilder(builder: (ctx) {
-              final value = useListenable(valueNotifier).value;
-              final counter = useBloc<CounterCubit, int>(
-                onEmitted: (_, prev, curr) => curr % 3 == 0,
-              );
+            HookBuilder(
+              builder: (ctx) {
+                final value = useListenable(valueNotifier).value;
+                final counter = useBloc<CounterCubit, int>(
+                  onEmitted: (_, prev, curr) => curr % 3 == 0,
+                );
 
-              return Column(
-                children: [
-                  Text(
-                    '$counter',
-                    style: Theme.of(context).textTheme.headline4,
-                    key: const Key('counter_text'),
-                  ),
-                  Text(
-                    '$value',
-                    style: Theme.of(context).textTheme.headline4,
-                    key: const Key('value_text'),
-                  ),
-                ],
-              );
-            }),
+                return Column(
+                  children: [
+                    Text(
+                      '$counter',
+                      style: Theme.of(context).textTheme.headlineMedium,
+                      key: const Key('counter_text'),
+                    ),
+                    Text(
+                      '$value',
+                      style: Theme.of(context).textTheme.headlineMedium,
+                      key: const Key('value_text'),
+                    ),
+                  ],
+                );
+              },
+            ),
           ],
         ),
       ),

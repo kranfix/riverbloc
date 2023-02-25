@@ -402,7 +402,7 @@ void main() {
         BlocBuilder<CounterCubit, int>(
           bloc: counterCubit,
           buildWhen: (previous, state) {
-            if (state % 2 == 0) {
+            if (state.isEven) {
               buildWhenPreviousState.add(previous);
               buildWhenCurrentState.add(state);
               return true;
@@ -439,7 +439,7 @@ void main() {
           child: StatefulBuilder(
             builder: (context, setState) => BlocBuilder<CounterCubit, int>(
               bloc: counterCubit,
-              buildWhen: (previous, state) => state % 2 == 0,
+              buildWhen: (previous, state) => state.isEven,
               builder: (_, state) {
                 states.add(state);
                 return ElevatedButton(
