@@ -78,7 +78,7 @@ void _test({
 
   final sub = container.listen(
     listenable,
-    listener,
+    listener.call,
     fireImmediately: true,
   );
   addTearDown(sub.close);

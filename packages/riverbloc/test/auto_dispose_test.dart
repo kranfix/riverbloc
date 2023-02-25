@@ -104,7 +104,7 @@ void main() {
 
       final sub = container.listen<CounterCubit>(
         counterCubitProvider.bloc,
-        listener,
+        listener.call,
         fireImmediately: true,
       );
 
@@ -138,9 +138,9 @@ void main() {
 
       final container = ProviderContainer();
 
-      final sub1 = container.listen<int>(counterProvider1, listener1);
+      final sub1 = container.listen<int>(counterProvider1, listener1.call);
 
-      final sub2 = container.listen<int>(counterProvider2, listener2);
+      final sub2 = container.listen<int>(counterProvider2, listener2.call);
 
       expect(sub1.read(), 0);
       expect(sub2.read(), 0);
@@ -204,7 +204,7 @@ void main() {
       );
 
       final listener = Listener<int>();
-      final sub = container.listen<int>(counterProvider1, listener);
+      final sub = container.listen<int>(counterProvider1, listener.call);
 
       expect(sub.read(), 5);
       container.read(counterProvider1.bloc).increment();

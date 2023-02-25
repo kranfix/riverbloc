@@ -298,28 +298,28 @@ class BlocProvider<B extends BlocBase<S>, S> extends _BlocProviderBase<B, S>
     with AlwaysAliveProviderBase<S> {
   /// {@macro riverpod.statenotifierprovider}
   BlocProvider(
-      this._createFn, {
-        super.name,
-        super.dependencies,
-        @Deprecated('Will be removed in 3.0.0') super.from,
-        @Deprecated('Will be removed in 3.0.0') super.argument,
-        @Deprecated('Will be removed in 3.0.0') super.debugGetCreateSourceHash,
-      }) : super(
-    allTransitiveDependencies:
-    computeAllTransitiveDependencies(dependencies),
-  );
+    this._createFn, {
+    super.name,
+    super.dependencies,
+    @Deprecated('Will be removed in 3.0.0') super.from,
+    @Deprecated('Will be removed in 3.0.0') super.argument,
+    @Deprecated('Will be removed in 3.0.0') super.debugGetCreateSourceHash,
+  }) : super(
+          allTransitiveDependencies:
+              computeAllTransitiveDependencies(dependencies),
+        );
 
   /// An implementation detail of Riverpod
   @internal
   BlocProvider.internal(
-      this._createFn, {
-        required super.name,
-        required super.dependencies,
-        required super.allTransitiveDependencies,
-        required super.debugGetCreateSourceHash,
-        super.from,
-        super.argument,
-      });
+    this._createFn, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    super.from,
+    super.argument,
+  });
 
   /// {@macro bloc_provider_scoped}
   BlocProvider.scoped(String name)

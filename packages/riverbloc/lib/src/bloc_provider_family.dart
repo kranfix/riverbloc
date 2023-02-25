@@ -20,7 +20,7 @@ class BlocProviderFamily<B extends BlocBase<S>, S, Arg>
   BlocProviderFamily(
     super.create, {
     super.name,
-    super.dependencies
+    super.dependencies,
   }) : super(
       providerFactory: BlocProvider.internal,
       allTransitiveDependencies: computeAllTransitiveDependencies(dependencies),

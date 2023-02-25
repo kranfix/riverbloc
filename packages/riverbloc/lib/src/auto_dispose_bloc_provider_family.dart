@@ -23,9 +23,12 @@ class AutoDisposeBlocProviderFamily<B extends BlocBase<S>, S, Arg>
     super.create, {
     super.name,
     super.dependencies,
-  }) : super(providerFactory: AutoDisposeBlocProvider.internal,
-      debugGetCreateSourceHash: null,
-      allTransitiveDependencies: computeAllTransitiveDependencies(dependencies));
+  }) : super(
+          providerFactory: AutoDisposeBlocProvider.internal,
+          debugGetCreateSourceHash: null,
+          allTransitiveDependencies:
+              computeAllTransitiveDependencies(dependencies),
+        );
 
   /// {@macro riverbloc.auto_dispose_bloc_provider_family_scoped}
   AutoDisposeBlocProviderFamily.scoped(String name)

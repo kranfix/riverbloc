@@ -64,7 +64,7 @@ class MyHomePage extends ConsumerWidget {
                 final _counter = ref.watch(counterProvider);
                 return Text(
                   '$_counter',
-                  style: Theme.of(context).textTheme.headline4,
+                  style: Theme.of(context).textTheme.headlineMedium,
                 );
               },
             ),
@@ -77,7 +77,7 @@ class MyHomePage extends ConsumerWidget {
                 );
                 return Text(
                   '$_counter',
-                  style: Theme.of(context).textTheme.headline4,
+                  style: Theme.of(context).textTheme.headlineMedium,
                 );
               },
             ),
