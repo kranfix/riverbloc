@@ -66,7 +66,7 @@ class MyStatefulApp extends StatefulWidget {
   final Widget child;
 
   @override
-  _MyStatefulAppState createState() => _MyStatefulAppState();
+  State<MyStatefulApp> createState() => _MyStatefulAppState();
 }
 
 class _MyStatefulAppState extends State<MyStatefulApp> {
@@ -249,10 +249,12 @@ void main() {
     });
 
     testWidgets('passes cubit to children', (tester) async {
-      await tester.pumpWidget(MyApp(
-        create: (_) => CounterCubit(),
-        child: const CounterPage(),
-      ));
+      await tester.pumpWidget(
+        MyApp(
+          create: (_) => CounterCubit(),
+          child: const CounterPage(),
+        ),
+      );
 
       final counterText = tester.widget<Text>(
         find.byKey(const Key('counter_text')),
@@ -352,10 +354,12 @@ void main() {
     testWidgets('does not call close on cubit if it was not loaded (lazily)',
         (tester) async {
       var closeCalled = false;
-      await tester.pumpWidget(MyApp(
-        create: (_) => CounterCubit(onClose: () => closeCalled = true),
-        child: const RoutePage(),
-      ));
+      await tester.pumpWidget(
+        MyApp(
+          create: (_) => CounterCubit(onClose: () => closeCalled = true),
+          child: const RoutePage(),
+        ),
+      );
 
       final routeButtonFinder = find.byKey(const Key('route_button'));
       expect(routeButtonFinder, findsOneWidget);
@@ -370,10 +374,12 @@ void main() {
     testWidgets('calls close on cubit automatically when invoked (lazily)',
         (tester) async {
       var closeCalled = false;
-      await tester.pumpWidget(MyApp(
-        create: (_) => CounterCubit(onClose: () => closeCalled = true),
-        child: const RoutePage(),
-      ));
+      await tester.pumpWidget(
+        MyApp(
+          create: (_) => CounterCubit(onClose: () => closeCalled = true),
+          child: const RoutePage(),
+        ),
+      );
       final incrementButtonFinder = find.byKey(const Key('increment_buton'));
       expect(incrementButtonFinder, findsOneWidget);
       await tester.tap(incrementButtonFinder);
@@ -494,9 +500,9 @@ void main() {
         'changed', (tester) async {
       var numBuilds = 0;
       final Widget _child = CounterPage(onBuild: () => numBuilds++);
-      await tester.pumpWidget(MyStatefulApp(
-        child: _child,
-      ));
+      await tester.pumpWidget(
+        MyStatefulApp(child: _child),
+      );
       await tester.tap(find.byKey(const Key('iconButtonKey')));
       await tester.pump();
       expect(numBuilds, 1);
@@ -697,11 +703,13 @@ void main() {
 
     testWidgets('should not throw if listen returns null subscription',
         (tester) async {
-      await tester.pumpWidget(BlocProvider(
-        lazy: false,
-        create: (_) => MockCubit(0),
-        child: const SizedBox(),
-      ));
+      await tester.pumpWidget(
+        BlocProvider(
+          lazy: false,
+          create: (_) => MockCubit(0),
+          child: const SizedBox(),
+        ),
+      );
       expect(tester.takeException(), isNull);
     });
   });

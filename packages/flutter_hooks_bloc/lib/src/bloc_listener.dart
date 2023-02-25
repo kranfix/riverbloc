@@ -155,11 +155,13 @@ abstract class BlocListenerBase<B extends BlocBase<S>, S extends Object>
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<S>(
-      'state',
-      bloc?.state,
-      ifNull: '<null>',
-      showSeparator: bloc?.state != null,
-    ));
+    properties.add(
+      DiagnosticsProperty<S>(
+        'state',
+        bloc?.state,
+        ifNull: '<null>',
+        showSeparator: bloc?.state != null,
+      ),
+    );
   }
 }

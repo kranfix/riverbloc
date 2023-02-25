@@ -1,3 +1,7 @@
+## [2.1.0] - 2023-02-25
+
+- Migrated to Riverpod 2.2.0 (thanks @Z2Y)
+
 ## [2.0.0] - 2022-07-12
 
 - Removed `BlocProvider.notifier` in favor of `BlocProvider.bloc`.

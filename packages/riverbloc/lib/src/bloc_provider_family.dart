@@ -21,7 +21,12 @@ class BlocProviderFamily<B extends BlocBase<S>, S, Arg>
     super.create, {
     super.name,
     super.dependencies,
-  }) : super(providerFactory: BlocProvider.new);
+  }) : super(
+          providerFactory: BlocProvider.internal,
+          allTransitiveDependencies:
+              computeAllTransitiveDependencies(dependencies),
+          debugGetCreateSourceHash: null,
+        );
 
   /// {@macro bloc_provider_family_scoped}
   BlocProviderFamily.scoped(String name)

@@ -59,7 +59,7 @@ void main() {
 
       final sub = container.listen<int>(
         counterProviderFamily(1),
-        listener,
+        listener.call,
         fireImmediately: true,
       );
 

@@ -58,7 +58,7 @@ class MyHomePage extends HookWidget {
               );
               return Text(
                 '$counter',
-                style: Theme.of(context).textTheme.headline4,
+                style: Theme.of(context).textTheme.headlineMedium,
               );
             }),
           ],
