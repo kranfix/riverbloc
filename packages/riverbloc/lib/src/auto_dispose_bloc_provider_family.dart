@@ -47,10 +47,14 @@ class AutoDisposeBlocProviderFamily<B extends BlocBase<S>, S, Arg>
   ) {
     return FamilyOverrideImpl<S, Arg, AutoDisposeBlocProvider<B, S>>(
       this,
-      (arg) => AutoDisposeBlocProvider<B, S>(
+      (arg) => AutoDisposeBlocProvider<B, S>.internal(
         (ref) => create(ref, arg),
         from: from,
         argument: arg,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        name: null,
       ),
     );
   }

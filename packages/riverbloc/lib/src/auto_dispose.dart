@@ -13,28 +13,28 @@ class AutoDisposeBlocProvider<B extends BlocBase<S>, S>
   /// {@macro riverpod.statenotifierprovider}
 
   AutoDisposeBlocProvider(
-      this._createFn, {
-        super.name,
-        super.dependencies,
-        @Deprecated('Will be removed in 3.0.0') super.from,
-        @Deprecated('Will be removed in 3.0.0') super.argument,
-        @Deprecated('Will be removed in 3.0.0') super.debugGetCreateSourceHash,
-      }) : super(
-    allTransitiveDependencies:
-    computeAllTransitiveDependencies(dependencies),
-  );
+    this._createFn, {
+    super.name,
+    super.dependencies,
+    @Deprecated('Will be removed in 3.0.0') super.from,
+    @Deprecated('Will be removed in 3.0.0') super.argument,
+    @Deprecated('Will be removed in 3.0.0') super.debugGetCreateSourceHash,
+  }) : super(
+          allTransitiveDependencies:
+              computeAllTransitiveDependencies(dependencies),
+        );
 
   /// An implementation detail of Riverpod
   @internal
   AutoDisposeBlocProvider.internal(
-      this._createFn, {
-        required super.name,
-        required super.dependencies,
-        required super.allTransitiveDependencies,
-        required super.debugGetCreateSourceHash,
-        super.from,
-        super.argument,
-      });
+    this._createFn, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    super.from,
+    super.argument,
+  });
 
   /// {@macro bloc_provider_scoped}
   AutoDisposeBlocProvider.scoped(String name)
@@ -70,10 +70,14 @@ class AutoDisposeBlocProvider<B extends BlocBase<S>, S>
   ) {
     return ProviderOverride(
       origin: this,
-      override: AutoDisposeBlocProvider<B, S>(
+      override: AutoDisposeBlocProvider<B, S>.internal(
         create,
         from: from,
         argument: argument,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        name: null,
       ),
     );
   }

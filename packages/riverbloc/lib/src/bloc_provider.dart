@@ -357,10 +357,10 @@ class BlocProvider<B extends BlocBase<S>, S> extends _BlocProviderBase<B, S>
         create,
         from: from,
         argument: argument,
-        name: null,
         dependencies: null,
         allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null
+        debugGetCreateSourceHash: null,
+        name: null,
       ),
     );
   }
