@@ -33,7 +33,7 @@ class MyHomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Rebuilds the widget if the cubit/bloc changes.
     // But does not rebuild if the state changes with the same cubit/bloc
-    final counterCubit = ref.watch(counterProvider.notifier);
+    final counterCubit = ref.watch(counterProvider.bloc);
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
