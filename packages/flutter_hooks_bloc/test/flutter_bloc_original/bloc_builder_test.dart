@@ -4,9 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 class MyThemeApp extends StatefulWidget {
   const MyThemeApp({
-    Key? key,
     required Cubit<ThemeData> themeCubit,
     required VoidCallback onBuild,
+    Key? key,
   })  : _themeCubit = themeCubit,
         _onBuild = onBuild,
         super(key: key);

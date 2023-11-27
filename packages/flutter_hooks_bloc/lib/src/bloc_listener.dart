@@ -77,10 +77,10 @@ class BlocListener<B extends BlocBase<S>, S extends Object>
     extends BlocListenerBase<B, S> implements NestableBlocListener {
   /// {@macro bloc_listener}
   const BlocListener({
+    required BlocWidgetListener<S> listener,
     Key? key,
     B? bloc,
     BlocListenerCondition<S>? listenWhen,
-    required BlocWidgetListener<S> listener,
     Widget? child,
   }) : super(
           key: key,
@@ -119,10 +119,10 @@ abstract class BlocListenerBase<B extends BlocBase<S>, S extends Object>
     extends BlocWidget<B, S> {
   /// {@macro bloc_listener_base}
   const BlocListenerBase({
+    required this.listener,
     Key? key,
     B? bloc,
     this.listenWhen,
-    required this.listener,
     this.child,
   }) : super(key: key, bloc: bloc);
 

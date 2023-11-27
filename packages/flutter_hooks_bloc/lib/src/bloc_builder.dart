@@ -64,13 +64,13 @@ class BlocBuilder<B extends BlocBase<S>, S extends Object>
     extends BlocWidget<B, S> {
   ///The [BlocBuilder] constuctor builds a widget when a `bloc` state change.
   const BlocBuilder({
+    required this.builder,
     Key? key,
 
     /// The [bloc] that the [BlocBuilder] will interact with.
     /// If omitted, [BlocBuilder] will automatically perform a lookup using
     /// the current `BuildContext`.
     B? bloc,
-    required this.builder,
     this.buildWhen,
   }) : super(key: key, bloc: bloc);
 

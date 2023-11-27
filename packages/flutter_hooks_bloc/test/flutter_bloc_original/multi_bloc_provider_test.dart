@@ -3,7 +3,7 @@ import 'package:flutter_hooks_bloc/flutter_hooks_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class MyAppWithNavigation extends MaterialApp {
-  MyAppWithNavigation({Key? key, required Widget child})
+  MyAppWithNavigation({required Widget child, Key? key})
       : super(key: key, home: Scaffold(body: child));
 }
 
@@ -23,40 +23,25 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<BlocProvider<BlocBase<Object?>>> getProviders() {
-      final providers = <BlocProvider>[];
-      if (counterCubitValue != null) {
-        providers.add(
+    return MultiBlocProvider(
+      providers: [
+        if (counterCubitValue != null)
           BlocProvider<CounterCubit>.value(
             value: counterCubitValue!,
-          ),
-        );
-      } else {
-        providers.add(
+          )
+        else
           BlocProvider<CounterCubit>(
             create: (_) => CounterCubit(onClose: onCounterCubitClosed),
           ),
-        );
-      }
-
-      if (themeCubitValue != null) {
-        providers.add(
+        if (themeCubitValue != null)
           BlocProvider<ThemeCubit>.value(
             value: themeCubitValue!,
-          ),
-        );
-      } else {
-        providers.add(
+          )
+        else
           BlocProvider<ThemeCubit>(
             create: (_) => ThemeCubit(onClose: onThemeCubitClosed),
           ),
-        );
-      }
-      return providers;
-    }
-
-    return MultiBlocProvider(
-      providers: getProviders(),
+      ],
       child: Builder(
         builder: (context) {
           return Column(

@@ -1,12 +1,12 @@
 export 'package:flutter_bloc/flutter_bloc.dart'
     hide
-        MultiBlocListener,
-        BlocListener,
-        BlocWidgetListener,
-        BlocListenerCondition,
         BlocBuilder,
-        BlocWidgetBuilder,
+        BlocBuilderBase,
         BlocBuilderCondition,
         BlocConsumer,
+        BlocListener,
         BlocListenerBase,
-        BlocBuilderBase;
+        BlocListenerCondition,
+        BlocWidgetBuilder,
+        BlocWidgetListener,
+        MultiBlocListener;

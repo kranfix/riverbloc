@@ -66,6 +66,8 @@ class BlocConsumer<B extends BlocBase<S>, S extends Object>
   /// The [BlocConsumer] constuctor listen and rebuilds a widget
   /// when a `bloc` state change.
   const BlocConsumer({
+    required BlocWidgetListener<S> listener,
+    required this.builder,
     Key? key,
 
     /// The [bloc] that the [BlocConsumer] will interact with.
@@ -73,9 +75,7 @@ class BlocConsumer<B extends BlocBase<S>, S extends Object>
     /// `BlocProvider` and the current `BuildContext`.
     B? bloc,
     BlocListenerCondition<S>? listenWhen,
-    required BlocWidgetListener<S> listener,
     this.buildWhen,
-    required this.builder,
   }) : super(
           key: key,
           bloc: bloc,
