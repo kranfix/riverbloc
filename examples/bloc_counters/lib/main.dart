@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({required this.title, super.key});
 
   final String title;
 
@@ -91,7 +91,7 @@ class MyHomePage extends StatelessWidget {
 }
 
 class CounterItem<C extends CounterCubitBase> extends StatelessWidget {
-  const CounterItem({super.key, required this.state});
+  const CounterItem({required this.state, super.key});
 
   final int state;
 
@@ -131,7 +131,7 @@ class CounterItem<C extends CounterCubitBase> extends StatelessWidget {
 }
 
 class CounterBlocItem<B extends CounterBloc> extends StatelessWidget {
-  const CounterBlocItem({super.key, required this.state});
+  const CounterBlocItem({required this.state, super.key});
 
   final int state;
 
