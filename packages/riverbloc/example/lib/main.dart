@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends ConsumerWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({required this.title, super.key});
 
   final String title;
 
@@ -61,22 +61,22 @@ class MyHomePage extends ConsumerWidget {
             Consumer(
               builder: (context, ref, __) {
                 // Rebuilds on every emitted state
-                final _counter = ref.watch(counterProvider);
+                final counter = ref.watch(counterProvider);
                 return Text(
-                  '$_counter',
+                  '$counter',
                   style: Theme.of(context).textTheme.headlineMedium,
                 );
               },
             ),
             Consumer(
               builder: (context, ref, __) {
-                final _counter = ref.watch(
+                final counter0 = ref.watch(
                   counterProvider
                       .when((prev, curr) => (curr + prev) % 5 == 0)
                       .select((state) => 2 * state),
                 );
                 return Text(
-                  '$_counter',
+                  '$counter0',
                   style: Theme.of(context).textTheme.headlineMedium,
                 );
               },

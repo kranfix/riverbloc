@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks_bloc/flutter_hooks_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -7,28 +5,28 @@ import 'package:flutter_test/flutter_test.dart';
 class MockCubit<S> extends Cubit<S> {
   MockCubit(S state) : super(state);
 
-  @override
-  StreamSubscription<S> listen(
-    void Function(S p1)? onData, {
-    Function? onError,
-    VoidCallback? onDone,
-    bool? cancelOnError,
-  }) {
-    return Stream<S>.empty().listen(
-      onData,
-      onError: onError,
-      onDone: onDone,
-      cancelOnError: cancelOnError,
-    );
-  }
+  // @override
+  // StreamSubscription<S> listen(
+  //   void Function(S p1)? onData, {
+  //   Function? onError,
+  //   VoidCallback? onDone,
+  //   bool? cancelOnError,
+  // }) {
+  //   return Stream<S>.empty().listen(
+  //     onData,
+  //     onError: onError,
+  //     onDone: onDone,
+  //     cancelOnError: cancelOnError,
+  //   );
+  // }
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({
+    required Widget child,
     Key? key,
     CounterCubit Function(BuildContext context)? create,
     CounterCubit? value,
-    required Widget child,
   })  : _create = create,
         _value = value,
         _child = child,
@@ -59,8 +57,8 @@ class MyApp extends StatelessWidget {
 
 class MyStatefulApp extends StatefulWidget {
   const MyStatefulApp({
-    Key? key,
     required this.child,
+    Key? key,
   }) : super(key: key);
 
   final Widget child;
@@ -111,8 +109,8 @@ class _MyStatefulAppState extends State<MyStatefulApp> {
 
 class MyAppNoProvider extends MaterialApp {
   const MyAppNoProvider({
-    Key? key,
     required Widget home,
+    Key? key,
   }) : super(key: key, home: home);
 }
 
@@ -396,8 +394,7 @@ void main() {
     testWidgets('does not close when created using value', (tester) async {
       var closeCalled = false;
       final value = CounterCubit(onClose: () => closeCalled = true);
-      const Widget _child = RoutePage();
-      await tester.pumpWidget(MyApp(value: value, child: _child));
+      await tester.pumpWidget(MyApp(value: value, child: const RoutePage()));
 
       final routeButtonFinder = find.byKey(const Key('route_button'));
       expect(routeButtonFinder, findsOneWidget);
@@ -499,9 +496,8 @@ void main() {
         'should not rebuild widgets that inherited the cubit if the cubit is '
         'changed', (tester) async {
       var numBuilds = 0;
-      final Widget _child = CounterPage(onBuild: () => numBuilds++);
       await tester.pumpWidget(
-        MyStatefulApp(child: _child),
+        MyStatefulApp(child: CounterPage(onBuild: () => numBuilds++)),
       );
       await tester.tap(find.byKey(const Key('iconButtonKey')));
       await tester.pump();

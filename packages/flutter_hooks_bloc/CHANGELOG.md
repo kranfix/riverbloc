@@ -1,3 +1,8 @@
+## [0.17.0] - 2021-11-26
+
+- Upgraded bloc to 8.1.3
+- Upgraded flutter_hooks to 0.20.3
+
 ## [0.16.0] - 2021-10-20
 
 - Using bloc 7.2

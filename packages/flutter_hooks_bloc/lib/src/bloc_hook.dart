@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart' show BuildContext;
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 import 'package:flutter_hooks_bloc/src/flutter_bloc.dart'
-    show Cubit, Bloc, BlocBase, ReadContext;
+    show Bloc, BlocBase, Cubit, ReadContext;
 
 /// Signature for the `listener` function which takes the `BuildContext` along
 /// with the `current` and `previous` state and is responsible for executing in
@@ -82,8 +82,8 @@ S useBloc<B extends BlocBase<S>, S extends Object>({
   B? bloc,
   BlocHookListener<S>? onEmitted,
 }) {
-  final _bloc = bloc ?? useContext().read<B>();
-  return use(_BlocHook<S>(_bloc, onEmitted));
+  final bloc0 = bloc ?? useContext().read<B>();
+  return use(_BlocHook<S>(bloc0, onEmitted));
 }
 
 class _BlocHook<S> extends Hook<S> {

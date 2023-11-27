@@ -4,9 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({
-    Key? key,
     required this.repository,
     required this.child,
+    Key? key,
     this.useValueProvider = false,
   }) : super(key: key);
 
@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyStatefulApp extends StatefulWidget {
-  const MyStatefulApp({Key? key, required this.child}) : super(key: key);
+  const MyStatefulApp({required this.child, Key? key}) : super(key: key);
 
   final Widget child;
 
@@ -76,7 +76,7 @@ class _MyStatefulAppState extends State<MyStatefulApp> {
 }
 
 class MyAppNoProvider extends MaterialApp {
-  const MyAppNoProvider({Key? key, required Widget child})
+  const MyAppNoProvider({required Widget child, Key? key})
       : super(key: key, home: child);
 }
 
@@ -158,11 +158,11 @@ void main() {
         const MyApp(repository: repository, child: child),
       );
 
-      final _counterFinder = find.byKey(const Key('value_data'));
-      expect(_counterFinder, findsOneWidget);
+      final counterFinder1 = find.byKey(const Key('value_data'));
+      expect(counterFinder1, findsOneWidget);
 
-      final _counterText = _counterFinder.evaluate().first.widget as Text;
-      expect(_counterText.data, '0');
+      final counterText1 = counterFinder1.evaluate().first.widget as Text;
+      expect(counterText1.data, '0');
     });
 
     testWidgets('passes value to children via value', (tester) async {
@@ -176,11 +176,11 @@ void main() {
         ),
       );
 
-      final _counterFinder = find.byKey(const Key('value_data'));
-      expect(_counterFinder, findsOneWidget);
+      final counterFinder0 = find.byKey(const Key('value_data'));
+      expect(counterFinder0, findsOneWidget);
 
-      final _counterText = _counterFinder.evaluate().first.widget as Text;
-      expect(_counterText.data, '0');
+      final counterText0 = counterFinder0.evaluate().first.widget as Text;
+      expect(counterText0.data, '0');
     });
 
     testWidgets(
@@ -369,11 +369,11 @@ void main() {
           ),
         ),
       );
-      final _counterFinder = find.byKey(const Key('value_data'));
-      expect(_counterFinder, findsOneWidget);
+      final counterFinder = find.byKey(const Key('value_data'));
+      expect(counterFinder, findsOneWidget);
 
-      final _counterText = _counterFinder.evaluate().first.widget as Text;
-      expect(_counterText.data, '0');
+      final counterText = counterFinder.evaluate().first.widget as Text;
+      expect(counterText.data, '0');
     });
   });
 }
