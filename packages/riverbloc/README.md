@@ -2,9 +2,7 @@
 
 ![Banner](https://raw.githubusercontent.com/kranfix/riverbloc/master/resources/riverbloc_banner.png)
 
-An implementation of `BlocProvider` based on #[riverpod](https://pub.dev/packages/riverpod) providers.
-The goal of this package is to make easy the migration from `flutter_bloc` to
-`flutter_riverpod`.
+An implementation of the [BLoC](https://pub.dev/packages/bloc) pattern based on [riverpod](https://pub.dev/packages/riverpod).
 
 If you are interested in `hooks` with `bloc`, see also
 [flutter_hooks_bloc](https://pub.dev/packages/flutter_hooks_bloc)
