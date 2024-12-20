@@ -60,8 +60,7 @@ typedef BlocBuilderCondition<S> = bool Function(S previous, S current);
 ///)
 /// ```
 /// {@endtemplate}
-class BlocBuilder<B extends BlocBase<S>, S extends Object>
-    extends BlocWidget<B, S> {
+class BlocBuilder<B extends StateStreamable<S>, S> extends BlocWidget<B, S> {
   ///The [BlocBuilder] constuctor builds a widget when a `bloc` state change.
   const BlocBuilder({
     required this.builder,

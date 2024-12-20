@@ -2,10 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' show BuildContext;
-import 'package:flutter_hooks/flutter_hooks.dart';
-
-import 'package:flutter_hooks_bloc/src/flutter_bloc.dart'
-    show Bloc, BlocBase, Cubit, ReadContext;
+import 'package:flutter_hooks_bloc/flutter_hooks_bloc.dart';
 
 /// Signature for the `listener` function which takes the `BuildContext` along
 /// with the `current` and `previous` state and is responsible for executing in
@@ -20,8 +17,7 @@ typedef BlocHookListener<S> = bool Function(
 /// The [BlocWidget] is the base for every reimplementation of `flutter_bloc`'s
 /// widgets based on `Hook`s.
 /// {@endtemplate}
-abstract class BlocWidget<B extends BlocBase<S>, S extends Object>
-    extends HookWidget {
+abstract class BlocWidget<B extends StateStreamable<S>, S> extends HookWidget {
   /// {@macro BlocWidget}
   const BlocWidget({
     Key? key,
@@ -78,7 +74,7 @@ abstract class BlocWidget<B extends BlocBase<S>, S extends Object>
 ///  * [Cubit]
 ///  * [Bloc]
 ///  * [BlocBase]
-S useBloc<B extends BlocBase<S>, S extends Object>({
+S useBloc<B extends StateStreamable<S>, S>({
   B? bloc,
   BlocHookListener<S>? onEmitted,
 }) {
@@ -89,7 +85,7 @@ S useBloc<B extends BlocBase<S>, S extends Object>({
 class _BlocHook<S> extends Hook<S> {
   const _BlocHook(this.bloc, this.onEmitted);
 
-  final BlocBase<S> bloc;
+  final StateStreamable<S> bloc;
   final BlocHookListener<S>? onEmitted;
 
   @override

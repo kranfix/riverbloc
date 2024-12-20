@@ -61,7 +61,7 @@ import 'package:flutter_hooks_bloc/src/bloc_listener.dart';
 /// )
 /// ```
 /// {@endtemplate}
-class BlocConsumer<B extends BlocBase<S>, S extends Object>
+class BlocConsumer<B extends StateStreamable<S>, S extends Object>
     extends BlocListenerBase<B, S> {
   /// The [BlocConsumer] constuctor listen and rebuilds a widget
   /// when a `bloc` state change.
