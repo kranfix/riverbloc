@@ -47,8 +47,9 @@ extension ProviderListenableWhenable<S> on ProviderListenable<S> {
 }
 
 /// {@macro riverbloc.ProviderListenableWhenable.when}
-extension AlwaysAliveProviderListenableWhenable<S>
-    on AlwaysAliveProviderListenable<S> {
+extension AlwaysAliveProviderListenableWhenable<S> on
+    // ignore: deprecated_member_use
+    AlwaysAliveProviderListenable<S> {
   /// {@macro riverbloc.ProviderListenableWhenable.when}
   ///
   /// ```dart
@@ -71,6 +72,7 @@ extension AlwaysAliveProviderListenableWhenable<S>
   ///   return _counter;
   /// });
   /// ```
+  // ignore: deprecated_member_use
   AlwaysAliveProviderListenable<S> when(ListenWhen<S> filter) {
     _Ref<S>? val;
     return select((curr) {

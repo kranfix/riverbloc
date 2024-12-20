@@ -3,7 +3,7 @@
 part of 'framework.dart';
 
 /// {@macro riverpod.providerrefbase}
-abstract class AutoDisposeBlocProviderRef<B extends StateStreamable<S>, S>
+abstract class AutoDisposeBlocProviderRef<B extends BlocBase<S>, S>
     extends BlocProviderRef<B, S> {}
 
 // ignore: subtype_of_sealed_class

@@ -295,15 +295,18 @@ part of 'framework.dart';
 /// ```
 /// {@endtemplate}
 class BlocProvider<B extends BlocBase<S>, S> extends _BlocProviderBase<B, S>
-    with AlwaysAliveProviderBase<S> {
+    with
+        // ignore: deprecated_member_use
+        AlwaysAliveProviderBase<S> {
   /// {@macro riverpod.statenotifierprovider}
   BlocProvider(
     this._createFn, {
     super.name,
     super.dependencies,
-    @Deprecated('Will be removed in 3.0.0') super.from,
-    @Deprecated('Will be removed in 3.0.0') super.argument,
-    @Deprecated('Will be removed in 3.0.0') super.debugGetCreateSourceHash,
+    @Deprecated('Will be removed in riverpod 3.0.0') super.from,
+    @Deprecated('Will be removed in riverpod 3.0.0') super.argument,
+    @Deprecated('Will be removed in riverpod 3.0.0')
+    super.debugGetCreateSourceHash,
   }) : super(
           allTransitiveDependencies:
               computeAllTransitiveDependencies(dependencies),
@@ -347,7 +350,7 @@ class BlocProvider<B extends BlocBase<S>, S> extends _BlocProviderBase<B, S>
   }
 
   @override
-  late final AlwaysAliveRefreshable<B> bloc = _notifier(this);
+  late final Refreshable<B> bloc = _notifier(this);
 
   /// {@macro riverpod.overridewith}
   Override overrideWith(Create<B, BlocProviderRef<B, S>> create) {
