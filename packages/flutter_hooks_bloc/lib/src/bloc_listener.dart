@@ -73,7 +73,7 @@ typedef BlocListenerCondition<S> = bool Function(S previous, S current);
 /// )
 /// ```
 /// {@endtemplate}
-class BlocListener<B extends BlocBase<S>, S extends Object>
+class BlocListener<B extends StateStreamable<S>, S extends Object>
     extends BlocListenerBase<B, S> implements NestableBlocListener {
   /// {@macro bloc_listener}
   const BlocListener({
@@ -115,7 +115,7 @@ class BlocListener<B extends BlocBase<S>, S extends Object>
 /// The type of the state and what happens with each state change
 /// is defined by sub-classes.
 /// {@endtemplate}
-abstract class BlocListenerBase<B extends BlocBase<S>, S extends Object>
+abstract class BlocListenerBase<B extends StateStreamable<S>, S extends Object>
     extends BlocWidget<B, S> {
   /// {@macro bloc_listener_base}
   const BlocListenerBase({

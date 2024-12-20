@@ -18,7 +18,7 @@ The `useBloc` hook function allows to listen state changes and rebuild
 the widget if necessary.
 
 ```dart
-S useBloc<B extends BlocBase<S>, S>({
+S useBloc<B extends StateStreamable<S>, S>({
   /// bloc or cubit to subscribe. if it is null, it will be infered
   B? bloc,
 
@@ -49,7 +49,7 @@ HookBuilder(builder: (ctx) {
 And also into a widget that extends a HookWidget:
 
 ```dart
-class BlocBuilder<B extends BlocBase<S>, S> extends BlocWidget<B, S> {
+class BlocBuilder<B extends StateStreamable<S>, S> extends BlocWidget<B, S> {
   const BlocBuilder({
     Key? key,
     this.bloc,
@@ -83,7 +83,7 @@ class BlocBuilder<B extends BlocBase<S>, S> extends BlocWidget<B, S> {
 And a `BlocWidget<B, S>` y defined as following:
 
 ```dart
-abstract class BlocWidget<B extends BlocBase<S>, S extends Object>
+abstract class BlocWidget<B extends StateStreamable<S>, S extends Object>
     extends HookWidget {}
 ```
 

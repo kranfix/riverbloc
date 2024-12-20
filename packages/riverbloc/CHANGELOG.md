@@ -1,3 +1,11 @@
+## [2.4.0] - 2024-12-19
+
+- Migrate to Riverpod 2.6.1
+
+## [2.3.0] - 2024-06-02
+
+- Migrated to Riverpod 2.5.1
+
 ## [2.2.0] - 2023-02-25
 
 - Migrated to Riverpod 2.3.2

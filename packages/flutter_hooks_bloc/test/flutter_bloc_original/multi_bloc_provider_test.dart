@@ -148,7 +148,7 @@ void main() {
         MultiBlocProvider(
           providers: [
             BlocProvider<CounterCubit>(create: (_) => CounterCubit()),
-            BlocProvider<ThemeCubit>(create: (_) => ThemeCubit())
+            BlocProvider<ThemeCubit>(create: (_) => ThemeCubit()),
           ],
           child: const MyApp(),
         ),
@@ -170,7 +170,7 @@ void main() {
         MultiBlocProvider(
           providers: [
             BlocProvider(create: (_) => CounterCubit()),
-            BlocProvider(create: (_) => ThemeCubit())
+            BlocProvider(create: (_) => ThemeCubit()),
           ],
           child: const MyApp(),
         ),

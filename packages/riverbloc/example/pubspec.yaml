@@ -8,18 +8,18 @@ environment:
   sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
-  cupertino_icons: ^1.0.5
+  cupertino_icons: ^1.0.8
   flutter:
     sdk: flutter
-  flutter_hooks: ^0.18.0
-  hooks_riverpod: ^2.3.6
+  flutter_hooks: ^0.20.5
+  hooks_riverpod: ^2.6.1
   riverbloc:
     path: ../
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  very_good_analysis: ^5.0.0+1
+  very_good_analysis: ^6.0.0
 
 flutter:
   uses-material-design: true
