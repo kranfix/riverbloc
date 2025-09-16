@@ -9,7 +9,7 @@ class CounterCubit extends Cubit<int> {
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key? key, this.onListenerCalled}) : super(key: key);
+  const MyApp({super.key, this.onListenerCalled});
 
   final BlocWidgetListener<int>? onListenerCalled;
 

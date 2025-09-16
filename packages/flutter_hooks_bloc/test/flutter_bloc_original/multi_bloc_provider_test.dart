@@ -3,18 +3,18 @@ import 'package:flutter_hooks_bloc/flutter_hooks_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class MyAppWithNavigation extends MaterialApp {
-  MyAppWithNavigation({required Widget child, Key? key})
-      : super(key: key, home: Scaffold(body: child));
+  MyAppWithNavigation({required Widget child, super.key})
+      : super(home: Scaffold(body: child));
 }
 
 class HomePage extends StatelessWidget {
   const HomePage({
-    Key? key,
+    super.key,
     this.onCounterCubitClosed,
     this.onThemeCubitClosed,
     this.counterCubitValue,
     this.themeCubitValue,
-  }) : super(key: key);
+  });
 
   final VoidCallback? onCounterCubitClosed;
   final VoidCallback? onThemeCubitClosed;
@@ -75,7 +75,7 @@ class HomePage extends StatelessWidget {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeCubit, ThemeData>(
@@ -88,7 +88,7 @@ class MyApp extends StatelessWidget {
 }
 
 class CounterPage extends StatelessWidget {
-  const CounterPage({Key? key}) : super(key: key);
+  const CounterPage({super.key});
   @override
   Widget build(BuildContext context) {
     final counterCubit = BlocProvider.of<CounterCubit>(context);

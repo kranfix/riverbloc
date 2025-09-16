@@ -3,7 +3,7 @@ import 'package:flutter_hooks_bloc/flutter_hooks_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class MockCubit<S> extends Cubit<S> {
-  MockCubit(S state) : super(state);
+  MockCubit(super.state);
 
   // @override
   // StreamSubscription<S> listen(
@@ -24,13 +24,12 @@ class MockCubit<S> extends Cubit<S> {
 class MyApp extends StatelessWidget {
   const MyApp({
     required Widget child,
-    Key? key,
+    super.key,
     CounterCubit Function(BuildContext context)? create,
     CounterCubit? value,
   })  : _create = create,
         _value = value,
-        _child = child,
-        super(key: key);
+        _child = child;
 
   final CounterCubit Function(BuildContext context)? _create;
   final CounterCubit? _value;
@@ -41,7 +40,7 @@ class MyApp extends StatelessWidget {
     if (_value != null) {
       return MaterialApp(
         home: BlocProvider<CounterCubit>.value(
-          value: _value!,
+          value: _value,
           child: _child,
         ),
       );
@@ -58,8 +57,8 @@ class MyApp extends StatelessWidget {
 class MyStatefulApp extends StatefulWidget {
   const MyStatefulApp({
     required this.child,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final Widget child;
 
@@ -109,13 +108,13 @@ class _MyStatefulAppState extends State<MyStatefulApp> {
 
 class MyAppNoProvider extends MaterialApp {
   const MyAppNoProvider({
-    required Widget home,
-    Key? key,
-  }) : super(key: key, home: home);
+    required Widget super.home,
+    super.key,
+  });
 }
 
 class CounterPage extends StatelessWidget {
-  const CounterPage({Key? key, this.onBuild}) : super(key: key);
+  const CounterPage({super.key, this.onBuild});
 
   final VoidCallback? onBuild;
 
@@ -136,7 +135,7 @@ class CounterPage extends StatelessWidget {
 }
 
 class RoutePage extends StatelessWidget {
-  const RoutePage({Key? key}) : super(key: key);
+  const RoutePage({super.key});
 
   @override
   Widget build(BuildContext context) {

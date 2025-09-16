@@ -77,18 +77,12 @@ class BlocListener<B extends StateStreamable<S>, S extends Object>
     extends BlocListenerBase<B, S> implements NestableBlocListener {
   /// {@macro bloc_listener}
   const BlocListener({
-    required BlocWidgetListener<S> listener,
-    Key? key,
-    B? bloc,
-    BlocListenerCondition<S>? listenWhen,
-    Widget? child,
-  }) : super(
-          key: key,
-          bloc: bloc,
-          listenWhen: listenWhen,
-          listener: listener,
-          child: child,
-        );
+    required super.listener,
+    super.key,
+    super.bloc,
+    super.listenWhen,
+    super.child,
+  });
 
   /// Helps to subscribe to a [bloc]
   @override
@@ -120,11 +114,11 @@ abstract class BlocListenerBase<B extends StateStreamable<S>, S extends Object>
   /// {@macro bloc_listener_base}
   const BlocListenerBase({
     required this.listener,
-    Key? key,
-    B? bloc,
+    super.key,
+    super.bloc,
     this.listenWhen,
     this.child,
-  }) : super(key: key, bloc: bloc);
+  });
 
   /// Takes the previous `state` and the current `state` and is responsible for
   /// returning a [bool] which determines whether or not to call [listener]

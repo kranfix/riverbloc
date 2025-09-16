@@ -6,10 +6,9 @@ class MyThemeApp extends StatefulWidget {
   const MyThemeApp({
     required Cubit<ThemeData> themeCubit,
     required VoidCallback onBuild,
-    Key? key,
+    super.key,
   })  : _themeCubit = themeCubit,
-        _onBuild = onBuild,
-        super(key: key);
+        _onBuild = onBuild;
 
   final Cubit<ThemeData> _themeCubit;
   final VoidCallback _onBuild;
@@ -70,7 +69,7 @@ class DarkThemeCubit extends Cubit<ThemeData> {
 }
 
 class MyCounterApp extends StatefulWidget {
-  const MyCounterApp({Key? key}) : super(key: key);
+  const MyCounterApp({super.key});
   @override
   State<StatefulWidget> createState() => MyCounterAppState();
 }

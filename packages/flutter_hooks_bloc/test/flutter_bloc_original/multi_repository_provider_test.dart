@@ -3,11 +3,11 @@ import 'package:flutter_hooks_bloc/flutter_hooks_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class MyApp extends MaterialApp {
-  const MyApp({Key? key}) : super(key: key, home: const CounterPage());
+  const MyApp({super.key}) : super(home: const CounterPage());
 }
 
 class CounterPage extends StatelessWidget {
-  const CounterPage({Key? key}) : super(key: key);
+  const CounterPage({super.key});
   @override
   Widget build(BuildContext context) {
     final repositoryA = RepositoryProvider.of<RepositoryA>(context);

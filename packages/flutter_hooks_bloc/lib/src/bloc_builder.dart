@@ -64,14 +64,14 @@ class BlocBuilder<B extends StateStreamable<S>, S> extends BlocWidget<B, S> {
   ///The [BlocBuilder] constuctor builds a widget when a `bloc` state change.
   const BlocBuilder({
     required this.builder,
-    Key? key,
+    super.key,
 
     /// The [bloc] that the [BlocBuilder] will interact with.
     /// If omitted, [BlocBuilder] will automatically perform a lookup using
     /// the current `BuildContext`.
-    B? bloc,
+    super.bloc,
     this.buildWhen,
-  }) : super(key: key, bloc: bloc);
+  });
 
   /// The [builder] function which will be invoked on each widget build.
   /// The [builder] takes the `BuildContext` and current `state` and
