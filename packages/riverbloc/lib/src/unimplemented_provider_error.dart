@@ -1,5 +1,4 @@
-// ignore: implementation_imports
-import 'package:riverpod/src/framework.dart';
+import 'package:riverpod/misc.dart';
 
 /// {@template unimplemented_provider_error}
 /// Error that will be throw when the provider is not

@@ -20,9 +20,9 @@ typedef BlocHookListener<S> = bool Function(
 abstract class BlocWidget<B extends StateStreamable<S>, S> extends HookWidget {
   /// {@macro BlocWidget}
   const BlocWidget({
-    Key? key,
+    super.key,
     this.bloc,
-  }) : super(key: key);
+  });
 
   /// `bloc` that has the state. If it's null, it will be infered from
   /// [BuildContext]

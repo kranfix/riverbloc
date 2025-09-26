@@ -11,15 +11,15 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter:
     sdk: flutter
-  flutter_hooks: ^0.20.5
-  hooks_riverpod: ^2.6.1
+  flutter_hooks: ^0.21.3
+  hooks_riverpod: ^3.0.0
   riverbloc:
     path: ../
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  very_good_analysis: ^6.0.0
+  very_good_analysis: ^10.0.0
 
 flutter:
   uses-material-design: true

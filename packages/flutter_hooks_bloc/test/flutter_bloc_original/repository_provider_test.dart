@@ -6,9 +6,9 @@ class MyApp extends StatelessWidget {
   const MyApp({
     required this.repository,
     required this.child,
-    Key? key,
+    super.key,
     this.useValueProvider = false,
-  }) : super(key: key);
+  });
 
   final Repository repository;
   final Widget child;
@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyStatefulApp extends StatefulWidget {
-  const MyStatefulApp({required this.child, Key? key}) : super(key: key);
+  const MyStatefulApp({required this.child, super.key});
 
   final Widget child;
 
@@ -76,12 +76,12 @@ class _MyStatefulAppState extends State<MyStatefulApp> {
 }
 
 class MyAppNoProvider extends MaterialApp {
-  const MyAppNoProvider({required Widget child, Key? key})
-      : super(key: key, home: child);
+  const MyAppNoProvider({required Widget child, super.key})
+      : super(home: child);
 }
 
 class CounterPage extends StatelessWidget {
-  const CounterPage({Key? key, this.onBuild}) : super(key: key);
+  const CounterPage({super.key, this.onBuild});
 
   final VoidCallback? onBuild;
 
@@ -97,7 +97,7 @@ class CounterPage extends StatelessWidget {
 }
 
 class RoutePage extends StatelessWidget {
-  const RoutePage({Key? key}) : super(key: key);
+  const RoutePage({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -9,7 +9,7 @@ class CounterCubit extends Cubit<int> {
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key? key, this.onListenerCalled}) : super(key: key);
+  const MyApp({super.key, this.onListenerCalled});
 
   final BlocWidgetListener<int>? onListenerCalled;
 
@@ -54,7 +54,7 @@ class _MyAppState extends State<MyApp> {
                 key: const Key('cubit_listener_noop_button'),
                 child: const SizedBox(),
                 onPressed: () {
-                  setState(() => _counterCubit = _counterCubit);
+                  setState(() {});
                 },
               ),
               ElevatedButton(

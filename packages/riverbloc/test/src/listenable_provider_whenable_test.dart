@@ -1,5 +1,7 @@
 import 'package:mocktail/mocktail.dart';
 import 'package:riverbloc/riverbloc.dart';
+import 'package:riverpod/legacy.dart';
+import 'package:riverpod/misc.dart';
 import 'package:test/test.dart';
 
 import '../helpers/helpers.dart';
@@ -14,7 +16,7 @@ final doubleOddPrevProvider = Provider((ref) {
 });
 
 final counterProvider1 = StateProvider.autoDispose((ref) => 0);
-final doubleOddPrevProvider1 = Provider.autoDispose((ref) {
+final doubleOddPrevProvider1 = Provider.autoDispose<int>((ref) {
   final when = counterProvider1.when((prev, curr) => prev.isOdd);
   return ref.watch(when.select((value) => 2 * value));
 });
@@ -71,7 +73,7 @@ void _test({
   required ControllerGetter<int> getController,
   required StateGetter<int> getState,
 }) {
-  final container = ProviderContainer();
+  final container = ProviderContainer.test();
   addTearDown(container.dispose);
 
   final listener = Listener<int>();

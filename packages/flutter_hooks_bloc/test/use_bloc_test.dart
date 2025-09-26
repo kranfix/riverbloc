@@ -3,7 +3,7 @@ import 'package:flutter_hooks_bloc/flutter_hooks_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class CounterCubit extends Cubit<int> {
-  CounterCubit(int state) : super(state);
+  CounterCubit(super.state);
 
   void increment() => emit(state + 1);
 
@@ -11,7 +11,7 @@ class CounterCubit extends Cubit<int> {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends HookWidget {
-  const MyHomePage({required this.title, Key? key}) : super(key: key);
+  const MyHomePage({required this.title, super.key});
 
   final String title;
 

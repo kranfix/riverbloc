@@ -1,9 +1,9 @@
 import 'package:mocktail/mocktail.dart';
 import 'package:riverbloc/riverbloc.dart';
 
+export 'expect_scoped.dart';
+
 typedef BlocProv<B extends BlocBase<int>> = BlocProvider<B, int>;
-typedef AutoDisposeBlocProv<B extends BlocBase<int>>
-    = AutoDisposeBlocProvider<B, int>;
 
 class Listener<T> extends Mock {
   void call(T? prev, T value);
@@ -16,7 +16,7 @@ class Incremented extends CounterEvent {}
 class Decremented extends CounterEvent {}
 
 class CounterBloc extends Bloc<CounterEvent, int> {
-  CounterBloc(super.state, {this.onClose}) {
+  CounterBloc(super.initialState, {this.onClose}) {
     on<Incremented>(_onIncrement);
     on<Decremented>(_onDecrement);
   }
@@ -34,7 +34,7 @@ class CounterBloc extends Bloc<CounterEvent, int> {
 }
 
 class CounterCubit extends Cubit<int> {
-  CounterCubit(super.state, {this.onClose});
+  CounterCubit(super.initialState, {this.onClose});
 
   void Function()? onClose;
 

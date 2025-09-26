@@ -13,7 +13,7 @@ void main() {
     test(
         'in the same cycle of event-loop without listen '
         'must create different blocs', () async {
-      final container = ProviderContainer();
+      final container = ProviderContainer.test();
 
       final counterProvider1 = counterProviderFamily(1);
       expect(counterProvider1, equals(counterProviderFamily(1)));
@@ -28,7 +28,7 @@ void main() {
     test(
         'without listen should create different blocs '
         'after a cycle of event-loop', () async {
-      final container = ProviderContainer();
+      final container = ProviderContainer.test();
 
       final counterProvider = counterProviderFamily(1);
 
@@ -53,7 +53,7 @@ void main() {
     });
 
     test('with listen should create only one bloc', () async {
-      final container = ProviderContainer();
+      final container = ProviderContainer.test();
 
       final listener = Listener<int>();
 
@@ -85,40 +85,25 @@ void main() {
   });
 
   group('Override AutoDisposeBlocProviderFamily', () {
-    final family = AutoDisposeBlocProviderFamily<CounterCubit, int, int>.scoped(
+    final family =
+        BlocProvider.autoDispose.family.scoped<CounterCubit, int, int>(
       'someName',
     );
 
     test('reads with error', () {
-      final container = ProviderContainer();
+      final container = ProviderContainer.test();
 
       final x = FutureProvider((_) => 1);
       final y = x.selectAsync((int val) => 2 * val);
       container.listen<Future<int>>(y, (previous, next) {});
 
-      family(1);
-      expect(
-        () => container.read(family(1)),
-        throwsA(isA<UnimplementedProviderError>()),
-      );
-
-      try {
-        container.read(family(1).bloc);
-      } catch (e) {
-        if (e is UnimplementedProviderError) {
-          expect(e.name, 'someName');
-        } else {
-          fail('unexpected exception $e');
-        }
-      }
+      expectScoped(container, family(1));
     });
 
     test('reads with success', () {
-      final container = ProviderContainer(
+      final container = ProviderContainer.test(
         overrides: [
-          family.overrideWithProvider((arg) {
-            return AutoDisposeBlocProvider((ref) => CounterCubit(arg));
-          }),
+          family.overrideWith((ref, arg) => CounterCubit(arg)),
         ],
       );
 
@@ -127,14 +112,14 @@ void main() {
   });
 
   group('AutoDisposeBlocProviderFamily overrides itself', () {
-    final family = AutoDisposeBlocProviderFamily<CounterCubit, int, int>(
+    final family = BlocProvider.autoDispose.family<CounterCubit, int, int>(
       (ref, int arg) => CounterCubit(arg),
     );
 
     test('without overrideWithProvider', () async {
-      final container1 = ProviderContainer();
+      final container1 = ProviderContainer.test();
 
-      final container2 = ProviderContainer(
+      final container2 = ProviderContainer.test(
         parent: container1,
         overrides: [family],
       );

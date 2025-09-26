@@ -3,10 +3,8 @@
 ///
 /// Providers:
 /// - [BlocProvider]
-/// - [AutoDisposeBlocProvider]
 /// - [BlocProviderFamily]
-/// - [AutoDisposeBlocProviderFamily]
-library riverbloc;
+library;
 
 import 'package:bloc/bloc.dart';
 import 'package:riverbloc/src/framework.dart';

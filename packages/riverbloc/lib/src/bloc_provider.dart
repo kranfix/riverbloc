@@ -1,8 +1,8 @@
+// To implement this, it is necessary to use riverpod inner classes
 // ignore_for_file: invalid_use_of_internal_member
 
 part of 'framework.dart';
 
-// ignore: subtype_of_sealed_class
 /// {@template bloc_provider}
 /// # BlocProvider
 ///
@@ -27,7 +27,7 @@ part of 'framework.dart';
 ///   Widget build(BuildContext context, WidgetRef ref) {
 ///     // Rebuilds the widget if the cubit/bloc changes.
 ///     // But does not rebuild if the state changes with the same cubit/bloc
-///     final counterCubit = ref.watch(counterCubitProvider.notifier);
+///     final counterCubit = ref.watch(counterCubitProvider.bloc);
 ///     return Scaffold(
 ///       appBar: AppBar(
 ///         title: Text(title),
@@ -52,7 +52,7 @@ part of 'framework.dart';
 ///       ),
 ///       floatingActionButton: FloatingActionButton(
 ///         onPressed: () {
-///           ref.read(counterCubitProvider.notifier).increment();
+///           ref.read(counterCubitProvider.bloc).increment();
 ///         }
 ///         tooltip: 'Increment',
 ///         child: Icon(Icons.add),
@@ -60,26 +60,6 @@ part of 'framework.dart';
 ///     );
 ///   }
 /// }
-/// ```
-/// {@endtemplate}
-///
-/// {@template bloc_provider_notifier}
-/// ## `BlocProvider.notifier`
-/// `BlocBase` object getter, it can be either `Bloc`
-/// or `Cubit`.
-///
-/// Usage:
-///
-/// ```dart
-/// Consumer(builder: (context, ref, __) {
-///   return ElevatedButton(
-///     style: style,
-///     onPressed: () {
-///       ref.read(counterBlocProvider.notifier).increment();
-///     },
-///     child: const Text('Press me'),
-///   );
-/// }),
 /// ```
 /// {@endtemplate}
 ///
@@ -294,34 +274,34 @@ part of 'framework.dart';
 /// );
 /// ```
 /// {@endtemplate}
-class BlocProvider<B extends BlocBase<S>, S> extends _BlocProviderBase<B, S>
-    with
-        // ignore: deprecated_member_use
-        AlwaysAliveProviderBase<S> {
+final class BlocProvider<B extends StateStreamableSource<S>, S>
+    extends $FunctionalProvider<S, S, B> with LegacyProviderMixin<S> {
   /// {@macro riverpod.statenotifierprovider}
   BlocProvider(
-    this._createFn, {
+    this._create, {
     super.name,
     super.dependencies,
-    @Deprecated('Will be removed in riverpod 3.0.0') super.from,
-    @Deprecated('Will be removed in riverpod 3.0.0') super.argument,
-    @Deprecated('Will be removed in riverpod 3.0.0')
-    super.debugGetCreateSourceHash,
+    super.isAutoDispose = false,
+    super.retry,
   }) : super(
-          allTransitiveDependencies:
-              computeAllTransitiveDependencies(dependencies),
+          $allTransitiveDependencies: computeAllTransitiveDependencies(
+            dependencies,
+          ),
+          from: null,
+          argument: null,
         );
 
   /// An implementation detail of Riverpod
   @internal
   BlocProvider.internal(
-    this._createFn, {
+    this._create, {
     required super.name,
     required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    super.from,
-    super.argument,
+    required super.$allTransitiveDependencies,
+    required super.from,
+    required super.argument,
+    required super.isAutoDispose,
+    required super.retry,
   });
 
   /// {@macro bloc_provider_scoped}
@@ -332,39 +312,91 @@ class BlocProvider<B extends BlocBase<S>, S> extends _BlocProviderBase<B, S>
         );
 
   /// {@macro riverpod.autoDispose}
-  static const autoDispose = AutoDisposeBlocProviderBuilder();
+  static const autoDispose = AutoDisposeBlocProviderBuilder._();
 
   /// {@macro riverpod.family}
   static const family = BlocProviderFamilyBuilder();
 
-  final B Function(BlocProviderRef<B, S> ref) _createFn;
+  final B Function(Ref ref) _create;
 
   @override
-  B _create(BlocProviderElement<B, S> ref) {
-    return _createFn(ref);
+  $FunctionalProviderElement<S, S, B> $createElement($ProviderPointer pointer) {
+    return _BlocProviderElement._(pointer);
   }
 
   @override
-  BlocProviderElement<B, S> createElement() {
-    return BlocProviderElement<B, S>._(this);
-  }
+  B create(Ref ref) => _create(ref);
+
+  /// Obtains the [Bloc] associated with this provider, without listening
+  /// to state changes.
+  ///
+  /// This is typically used to invoke methods on a [Bloc]. For example:
+  ///
+  /// ```dart
+  /// Button(
+  ///   onTap: () => ref.read(blocProvider.bloc).increment(),
+  /// )
+  /// ```
+  ///
+  /// This listenable will notify its notifiers if the [Bloc] instance
+  /// changes.
+  /// This may happen if the provider is refreshed or one of its dependencies
+  /// has changes.
+  Refreshable<B> get bloc => ProviderElementProxy<B, S>(this, (element) {
+        return (element as _BlocProviderElement<B, S>)._blocNotifier;
+      });
+}
+
+/// The element of [BlocProvider].
+class _BlocProviderElement<B extends StateStreamableSource<S>, S>
+    extends $FunctionalProviderElement<S, S, B> with SyncProviderElement<S> {
+  _BlocProviderElement._(super.pointer);
+
+  final _blocNotifier = $Observable<B>();
+
+  StreamSubscription<S>? _subscription;
 
   @override
-  late final Refreshable<B> bloc = _notifier(this);
-
-  /// {@macro riverpod.overridewith}
-  Override overrideWith(Create<B, BlocProviderRef<B, S>> create) {
-    return ProviderOverride(
-      origin: this,
-      override: BlocProvider<B, S>.internal(
-        create,
-        from: from,
-        argument: argument,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        name: null,
-      ),
+  WhenComplete create(Ref ref) {
+    final notifier = _blocNotifier.result = $Result.guard(
+      () => provider.create(ref),
     );
+
+    final bloc = notifier.valueOrRawException;
+
+    value = AsyncData(bloc.state);
+
+    _subscription = bloc.stream.listen(
+      (newState) => value = AsyncData(newState),
+    );
+
+    return null;
+  }
+
+  @override
+  bool updateShouldNotify(S previous, S next) {
+    //return _notifierNotifier.result!.valueOrProviderException
+    //    .updateShouldNotify(previous, next);
+    return previous != next;
+  }
+
+  @override
+  void runOnDispose() {
+    super.runOnDispose();
+
+    unawaited(_subscription?.cancel());
+    _subscription = null;
+
+    final bloc = _blocNotifier.result?.value;
+    if (bloc != null) {
+      container.runGuarded(bloc.close);
+    }
+    _blocNotifier.result = null;
+  }
+
+  @override
+  void visitListenables(void Function($Observable element) listenableVisitor) {
+    super.visitListenables(listenableVisitor);
+    listenableVisitor(_blocNotifier);
   }
 }

@@ -1,3 +1,9 @@
+## [3.0.0] - 2025-09-26
+
+- Migrate to Riverpod 3.0.0
+- Migrate to Bloc 9.0.0
+- Removed ref.bloc to have compatibility with riverpod 3
+
 ## [2.4.0] - 2024-12-19
 
 - Migrate to Riverpod 2.6.1

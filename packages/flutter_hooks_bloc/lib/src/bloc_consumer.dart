@@ -66,22 +66,17 @@ class BlocConsumer<B extends StateStreamable<S>, S extends Object>
   /// The [BlocConsumer] constuctor listen and rebuilds a widget
   /// when a `bloc` state change.
   const BlocConsumer({
-    required BlocWidgetListener<S> listener,
+    required super.listener,
     required this.builder,
-    Key? key,
+    super.key,
 
     /// The [bloc] that the [BlocConsumer] will interact with.
     /// If omitted, [BlocConsumer] will automatically perform a lookup using
     /// `BlocProvider` and the current `BuildContext`.
-    B? bloc,
-    BlocListenerCondition<S>? listenWhen,
+    super.bloc,
+    super.listenWhen,
     this.buildWhen,
-  }) : super(
-          key: key,
-          bloc: bloc,
-          listenWhen: listenWhen,
-          listener: listener,
-        );
+  });
 
   /// Takes the previous `state` and the current `state` and is responsible for
   /// returning a [bool] which determines whether or not to call [listener] of
