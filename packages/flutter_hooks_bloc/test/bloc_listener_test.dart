@@ -57,7 +57,7 @@ class _MyAppState extends State<MyApp> {
                 ElevatedButton(
                   key: const Key('cubit_listener_noop_button'),
                   onPressed: () {
-                    setState(() => _counterCubit = _counterCubit);
+                    setState(() {});
                   },
                   child: null,
                 ),

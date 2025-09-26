@@ -6,8 +6,8 @@ import 'helpers/helpers.dart';
 
 void main() {
   group('AutoDispose Provider names', () {
-    test('AutoDisposeBlocProvider.bloc with no name', () {
-      final counterBlocProvider = AutoDisposeBlocProvider<CounterBloc, int>(
+    test('AutoDispose BlocProvider.bloc with no name', () {
+      final counterBlocProvider = BlocProvider.autoDispose<CounterBloc, int>(
         (ref) => CounterBloc(0),
       );
       expect(counterBlocProvider.name, isNull);
@@ -35,38 +35,12 @@ void main() {
 
   group('AutoDisposeBlocProvider.scoped', () {
     test('direct usage must throw UnimplementedProviderError', () {
+      final container = ProviderContainer.test();
+
       final provider =
-          AutoDisposeBlocProvider<CounterBloc, int>.scoped('someName');
-      final container = ProviderContainer();
-      expect(
-        () => container.read(provider.bloc),
-        throwsA(isA<UnimplementedProviderError>()),
-      );
+          BlocProvider.autoDispose.scoped<CounterBloc, int>('someName');
 
-      try {
-        container.read(provider.bloc);
-      } catch (e) {
-        if (e is UnimplementedProviderError) {
-          expect(e.name, 'someName');
-        } else {
-          fail('unexpected exception $e');
-        }
-      }
-    });
-  });
-
-  group('ref.bloc', () {
-    test('ref.bloc is same than created bloc', () {
-      late CounterCubit Function() getBloc;
-      final counterCubitProvider = AutoDisposeBlocProv<CounterCubit>((ref) {
-        getBloc = () => ref.bloc;
-        return CounterCubit(0);
-      });
-
-      final container = ProviderContainer();
-
-      final bloc = container.read(counterCubitProvider.bloc);
-      expect(getBloc(), same(bloc));
+      expectScoped(container, provider);
     });
   });
 
@@ -74,9 +48,8 @@ void main() {
     test(
         'Reading the same provider twice synchronously must return '
         'the same blocs', () {
-      final container = ProviderContainer();
-      final counterCubitProvider =
-          AutoDisposeBlocProv((ref) => CounterCubit(0));
+      final container = ProviderContainer.test();
+      final counterCubitProvider = BlocProv((ref) => CounterCubit(0));
       final bloc1 = container.read(counterCubitProvider.bloc);
       final bloc2 = container.read(counterCubitProvider.bloc);
       expect(bloc1, same(bloc2));
@@ -85,9 +58,9 @@ void main() {
     test(
         'Reading the same provider twice asynchronously must return '
         'different blocs', () async {
-      final container = ProviderContainer();
+      final container = ProviderContainer.test();
       final counterCubitProvider =
-          AutoDisposeBlocProv((ref) => CounterCubit(0));
+          BlocProv.autoDispose<CounterCubit, int>((ref) => CounterCubit(0));
       final bloc1 = container.read(counterCubitProvider.bloc);
 
       await Future(() {});
@@ -96,9 +69,9 @@ void main() {
     });
 
     test('listening the provider must refresh the bloc', () async {
-      final container = ProviderContainer();
+      final container = ProviderContainer.test();
       final counterCubitProvider =
-          AutoDisposeBlocProv((ref) => CounterCubit(0));
+          BlocProv.autoDispose<CounterCubit, int>((ref) => CounterCubit(0));
 
       final listener = Listener<CounterCubit>();
 
@@ -136,7 +109,7 @@ void main() {
         (ref) => CounterCubit(0, onClose: onClose2),
       );
 
-      final container = ProviderContainer();
+      final container = ProviderContainer.test();
 
       final sub1 = container.listen<int>(counterProvider1, listener1.call);
 
@@ -186,17 +159,17 @@ void main() {
     });
   });
 
-  group('AutoDisposeBlocProvider override', () {
+  group('AutoDispose BlocProvider override', () {
     test('Override with provider', () async {
       var closeCounter1 = 0;
       var closeCounter2 = 0;
       void onClose1() => closeCounter1++;
       void onClose2() => closeCounter2++;
-      final counterProvider1 = AutoDisposeBlocProvider<CounterCubit, int>(
+      final counterProvider1 = BlocProvider.autoDispose<CounterCubit, int>(
         (ref) => CounterCubit(0, onClose: onClose1),
       );
 
-      final container = ProviderContainer(
+      final container = ProviderContainer.test(
         overrides: [
           counterProvider1
               .overrideWith((ref) => CounterCubit(5, onClose: onClose2)),
@@ -226,7 +199,7 @@ void main() {
     );
 
     test('BlocProvider.bloc get BlocBase Object', () {
-      final container = ProviderContainer();
+      final container = ProviderContainer.test();
       final counterCubit = container.read(counterCubitProvider.bloc);
 
       expect(counterCubit, isA<BlocBase<int>>());
@@ -234,13 +207,13 @@ void main() {
   });
 
   group('AutoDisposeBlocProvider overrides itself', () {
-    final counterProvider = AutoDisposeBlocProvider<CounterBloc, int>(
+    final counterProvider = BlocProvider.autoDispose<CounterBloc, int>(
       (ref) => CounterBloc(0),
     );
     test('without overrideWithProvider', () async {
-      final container1 = ProviderContainer();
+      final container1 = ProviderContainer.test();
 
-      final container2 = ProviderContainer(
+      final container2 = ProviderContainer.test(
         parent: container1,
         overrides: [counterProvider],
       );

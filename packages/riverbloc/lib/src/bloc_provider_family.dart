@@ -1,8 +1,8 @@
+// To implement this package, it is necessary to use riverpod's inner classes
 // ignore_for_file: invalid_use_of_internal_member
 
 part of 'framework.dart';
 
-// ignore: subtype_of_sealed_class
 /// {@template bloc_provider_family}
 /// A class that allows building a [BlocProvider] from an external
 /// parameter.
@@ -13,19 +13,24 @@ part of 'framework.dart';
 /// Creates a [BlocProvider] that will be scoped and must be overridden.
 /// Otherwise, it will throw an [UnimplementedProviderError].
 /// {@endtemplate}
-@sealed
-class BlocProviderFamily<B extends BlocBase<S>, S, Arg>
-    extends FamilyBase<BlocProviderRef<B, S>, S, Arg, B, BlocProvider<B, S>> {
-  /// The [Family] of [BlocProvider].
+
+/// The [Family] of [BlocProvider].
+final class BlocProviderFamily<B extends StateStreamableSource<S>, S, ArgT>
+    extends FunctionalFamily<S, S, ArgT, B, BlocProvider<B, S>> {
+  /// The [Family] of [StateNotifierProvider].
+  /// @nodoc
+  @internal
   BlocProviderFamily(
-    super.create, {
+    super._createFn, {
     super.name,
     super.dependencies,
+    super.isAutoDispose = false,
+    super.retry,
   }) : super(
           providerFactory: BlocProvider.internal,
-          allTransitiveDependencies:
-              computeAllTransitiveDependencies(dependencies),
-          debugGetCreateSourceHash: null,
+          $allTransitiveDependencies: computeAllTransitiveDependencies(
+            dependencies,
+          ),
         );
 
   /// {@macro bloc_provider_family_scoped}

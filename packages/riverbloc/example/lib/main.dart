@@ -1,3 +1,4 @@
+// Ignored because this is an example
 // ignore_for_file: public_member_api_docs
 
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ void main() {
 }
 
 class CounterCubit extends Cubit<int> {
-  CounterCubit(super.state);
+  CounterCubit(super.initialState);
 
   void increment() => emit(state + 1);
 }

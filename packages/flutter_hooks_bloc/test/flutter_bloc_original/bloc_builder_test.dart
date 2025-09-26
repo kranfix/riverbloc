@@ -43,7 +43,7 @@ class MyThemeAppState extends State<MyThemeApp> {
                 key: const Key('raised_button_2'),
                 child: const SizedBox(),
                 onPressed: () {
-                  setState(() => _themeCubit = _themeCubit);
+                  setState(() {});
                 },
               ),
             ],

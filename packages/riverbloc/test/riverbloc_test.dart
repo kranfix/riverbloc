@@ -25,46 +25,20 @@ void main() {
 
   group('BlocProvider.scoped', () {
     test('direct usage must throw UnimplementedProviderError', () {
-      final provider = BlocProvider<CounterBloc, int>.scoped('someName');
-      final container = ProviderContainer();
-      expect(
-        () => container.read(provider.bloc),
-        throwsA(isA<UnimplementedProviderError>()),
-      );
+      final container = ProviderContainer.test();
 
-      try {
-        container.read(provider.bloc);
-      } catch (e) {
-        if (e is UnimplementedProviderError) {
-          expect(e.name, 'someName');
-        } else {
-          fail('unexpected exception $e');
-        }
-      }
+      final provider = BlocProvider<CounterBloc, int>.scoped('someName');
+
+      expectScoped(container, provider);
     });
   });
 
   group('BlocProvider.bloc', () {
     test('BlocProvider.bloc gets BlocBase Object', () {
-      final container = ProviderContainer();
+      final container = ProviderContainer.test();
       final counterCubit = container.read(counterCubitProvider.bloc);
 
       expect(counterCubit, isA<CounterCubit>());
-    });
-  });
-
-  group('ref.bloc', () {
-    test('ref.bloc is same than created bloc', () {
-      late CounterCubit Function() getBloc;
-      final counterCubitProvider = BlocProv<CounterCubit>((ref) {
-        getBloc = () => ref.bloc;
-        return CounterCubit(0);
-      });
-
-      final container = ProviderContainer();
-
-      final bloc = container.read(counterCubitProvider.bloc);
-      expect(getBloc(), same(bloc));
     });
   });
 
@@ -72,7 +46,7 @@ void main() {
     test(
         'reads bloc with default state 0 and applies increments and decrements',
         () async {
-      final container = ProviderContainer();
+      final container = ProviderContainer.test();
 
       final counterBloc = container.read(counterProvider.bloc);
 
@@ -93,7 +67,7 @@ void main() {
     });
 
     test('defaults to 0 and notify listeners when value changes', () async {
-      final container = ProviderContainer();
+      final container = ProviderContainer.test();
       final counterBloc = container.read(counterProvider.bloc);
 
       expect(counterBloc.state, 0);
@@ -109,7 +83,7 @@ void main() {
     });
 
     test('bloc resubscribe', () async {
-      final container = ProviderContainer();
+      final container = ProviderContainer.test();
       final counterBloc = container.read(counterProvider.bloc);
 
       expect(counterBloc.state, 0);
@@ -139,7 +113,7 @@ void main() {
         return CounterCubit(0);
       });
 
-      final container = ProviderContainer();
+      final container = ProviderContainer.test();
 
       final firstBloc = container.read(counterProvider.bloc);
       expect(times, 1);
@@ -151,7 +125,7 @@ void main() {
     });
 
     test('BlocProvider with auto dispose', () async {
-      final container = ProviderContainer();
+      final container = ProviderContainer.test();
 
       var isBlocClosed = false;
 
@@ -173,7 +147,7 @@ void main() {
 
     test('BlocProvider override with provider', () async {
       final counterBloc = CounterBloc(3);
-      final container = ProviderContainer(
+      final container = ProviderContainer.test(
         overrides: [
           counterProvider.overrideWith((ref) => counterBloc),
         ],
@@ -198,7 +172,7 @@ void main() {
 
   group('Cubit test', () {
     test('reads cubit with default state 0 and increments it', () {
-      final container = ProviderContainer();
+      final container = ProviderContainer.test();
 
       final counterCubit = container.read(counterCubitProvider.bloc);
 
@@ -210,7 +184,7 @@ void main() {
     });
 
     test('defaults to 0 and notify listeners when value changes', () async {
-      final container = ProviderContainer();
+      final container = ProviderContainer.test();
 
       final counterCubit = container.read(counterCubitProvider.bloc);
 
@@ -227,7 +201,7 @@ void main() {
     });
 
     test('cubit resubscribe', () async {
-      final container = ProviderContainer();
+      final container = ProviderContainer.test();
       final counterCubit = container.read(counterCubitProvider.bloc);
 
       expect(counterCubit.state, 0);
@@ -274,7 +248,7 @@ void main() {
 
     test('Cubit<T>.stream with non-null T', () async {
       final pod = BlocProvider<CounterCubit, int>((ref) => CounterCubit(5));
-      final container = ProviderContainer();
+      final container = ProviderContainer.test();
 
       container.read(pod.bloc).increment();
       await Future(() {});
@@ -286,7 +260,7 @@ void main() {
       final pod = BlocProvider<NullCounterCubit, int?>(
         (ref) => NullCounterCubit(),
       );
-      final container = ProviderContainer();
+      final container = ProviderContainer.test();
 
       expect(container.read(pod), isNull);
 
@@ -298,7 +272,7 @@ void main() {
 
     test('BlocProvider overridden with value', () {
       final counterCubit = CounterCubit(5);
-      final container = ProviderContainer(
+      final container = ProviderContainer.test(
         overrides: [
           counterCubitProvider.overrideWith((ref) => counterCubit),
         ],
@@ -310,9 +284,9 @@ void main() {
 
   group('BlocProvider overrides itself', () {
     test('without overrideWithProvider', () async {
-      final container1 = ProviderContainer();
+      final container1 = ProviderContainer.test();
 
-      final container2 = ProviderContainer(
+      final container2 = ProviderContainer.test(
         parent: container1,
         overrides: [counterProvider],
       );
@@ -327,7 +301,7 @@ void main() {
   /*
   group('BlocProvider.when', () {
     test('rebuilds when current is even', () async {
-      final container = ProviderContainer();
+      final container = ProviderContainer.test();
 
       final rawListener = Listener<int>();
       final conditionedListener = Listener<int>();
@@ -341,17 +315,17 @@ void main() {
 
       final sub1 = container.listen<int>(
         counterCubitProvider,
-        rawListener,
+        rawListener.call,
         fireImmediately: true,
       );
       final sub2 = container.listen<int>(
         conditionedProvider,
-        conditionedListener,
+        conditionedListener.call,
         fireImmediately: true,
       );
       final sub3 = container.listen<int>(
         conditionedSelectorProvider,
-        conditionedSelectorListener,
+        conditionedSelectorListener.call,
         fireImmediately: true,
       );
 
@@ -378,8 +352,8 @@ void main() {
         if (coditionedValue == 0) {
           expect(sub2.read(), currenteConditionedValue);
           expect(sub3.read(), 2 * currenteConditionedValue);
-          verifyNever(() => conditionedListener(any()));
-          verifyNever(() => conditionedSelectorListener(any()));
+          verifyNever(() => conditionedListener(any(), any()));
+          verifyNever(() => conditionedSelectorListener(any(), any()));
         } else {
           currenteConditionedValue = coditionedValue;
           expect(sub2.read(), coditionedValue);

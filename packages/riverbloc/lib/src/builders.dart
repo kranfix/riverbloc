@@ -1,3 +1,4 @@
+// To implement this package, it is necessary to use riverpod's inner classes
 // ignore_for_file: invalid_use_of_internal_member
 
 part of 'framework.dart';
@@ -8,63 +9,95 @@ class BlocProviderFamilyBuilder {
   const BlocProviderFamilyBuilder();
 
   /// {@macro riverpod.family}
-  BlocProviderFamily<B, S, Arg> call<B extends BlocBase<S>, S, Arg>(
-    FamilyCreate<B, BlocProviderRef<B, S>, Arg> create, {
+  BlocProviderFamily<B, S, ArgT>
+      call<B extends StateStreamableSource<S>, S, ArgT>(
+    B Function(Ref ref, ArgT param) create, {
     String? name,
-    List<ProviderOrFamily>? dependencies,
+    Iterable<ProviderOrFamily>? dependencies,
+    Retry? retry,
+    bool isAutoDispose = false,
   }) {
-    return BlocProviderFamily(
+    return BlocProviderFamily<B, S, ArgT>(
       create,
       name: name,
+      isAutoDispose: isAutoDispose,
       dependencies: dependencies,
+      retry: retry,
     );
   }
 
   /// {@macro riverpod.autoDispose}
   AutoDisposeBlocProviderFamilyBuilder get autoDispose {
-    return const AutoDisposeBlocProviderFamilyBuilder();
+    return const AutoDisposeBlocProviderFamilyBuilder._();
   }
 }
 
-/// Builds a [AutoDisposeBlocProvider].
-class AutoDisposeBlocProviderBuilder {
-  /// Builds a [AutoDisposeBlocProvider].
-  const AutoDisposeBlocProviderBuilder();
+/// Builds a auto-dispose [BlocProvider].
+final class AutoDisposeBlocProviderBuilder {
+  const AutoDisposeBlocProviderBuilder._();
 
-  /// {@macro riverpod.autoDispose}
-  AutoDisposeBlocProvider<B, S> call<B extends BlocBase<S>, S>(
-    Create<B, AutoDisposeBlocProviderRef<B, S>> create, {
+  /// {@macro riverpod.family}
+  BlocProvider<B, S> call<B extends StateStreamableSource<S>, S>(
+    B Function(Ref ref) create, {
     String? name,
-    List<ProviderOrFamily>? dependencies,
+    Iterable<ProviderOrFamily>? dependencies,
+    Retry? retry,
   }) {
-    return AutoDisposeBlocProvider<B, S>(
+    return BlocProvider<B, S>(
       create,
       name: name,
+      isAutoDispose: true,
       dependencies: dependencies,
+      retry: retry,
+    );
+  }
+
+  /// {@macro bloc_provider_scoped}
+  BlocProvider<B, S> scoped<B extends StateStreamableSource<S>, S>(
+    String name,
+  ) {
+    return BlocProvider<B, S>(
+      (_) => throw UnimplementedProviderError(name),
+      name: name,
+      isAutoDispose: true,
     );
   }
 
   /// {@macro riverpod.family}
-  AutoDisposeBlocProviderFamilyBuilder get family {
-    return const AutoDisposeBlocProviderFamilyBuilder();
-  }
+  AutoDisposeBlocProviderFamilyBuilder get family =>
+      const AutoDisposeBlocProviderFamilyBuilder._();
 }
 
-/// The [Family] of [AutoDisposeBlocProvider].
-class AutoDisposeBlocProviderFamilyBuilder {
-  /// Builds a [AutoDisposeBlocProviderFamily].
-  const AutoDisposeBlocProviderFamilyBuilder();
+/// The [Family] of auto-dispose [BlocProvider].
+final class AutoDisposeBlocProviderFamilyBuilder {
+  const AutoDisposeBlocProviderFamilyBuilder._();
 
   /// {@macro riverpod.family}
-  AutoDisposeBlocProviderFamily<B, S, Arg> call<B extends BlocBase<S>, S, Arg>(
-    FamilyCreate<B, AutoDisposeBlocProviderRef<B, S>, Arg> create, {
+  BlocProviderFamily<B, S, ArgT>
+      call<B extends StateStreamableSource<S>, S, ArgT>(
+    B Function(Ref ref, ArgT param) create, {
     String? name,
-    List<ProviderOrFamily>? dependencies,
+    Iterable<ProviderOrFamily>? dependencies,
+    Retry? retry,
   }) {
-    return AutoDisposeBlocProviderFamily<B, S, Arg>(
+    return BlocProviderFamily<B, S, ArgT>(
       create,
       name: name,
+      isAutoDispose: true,
       dependencies: dependencies,
+      retry: retry,
+    );
+  }
+
+  /// {@macro bloc_provider_scoped}
+  BlocProviderFamily<B, S, ArgT>
+      scoped<B extends StateStreamableSource<S>, S, ArgT>(
+    String name,
+  ) {
+    return BlocProviderFamily<B, S, ArgT>(
+      (_, __) => throw UnimplementedProviderError(name),
+      name: name,
+      isAutoDispose: true,
     );
   }
 }

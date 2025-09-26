@@ -2,7 +2,7 @@ name: riverbloc
 description: >-
   BlocProvider implementation with riverpod as alternative to provider,
   similar to StateNotifierProvider
-version: 2.4.0
+version: 3.0.0
 homepage: https://github.com/kranfix/riverbloc/tree/master/packages/riverbloc
 repository: https://github.com/kranfix/riverbloc
 
@@ -10,14 +10,14 @@ environment:
   sdk: ">=3.2.0 <4.0.0"
 
 dependencies:
-  bloc: ">=9.0.0"
+  bloc: "^9.0.0"
   meta: ">=1.15.0 <2.0.0"
   riverpod: ^3.0.0
 
 dev_dependencies:
   mocktail: ^1.0.4
   test: ^1.25.0
-  very_good_analysis: ^6.0.0
+  very_good_analysis: ^10.0.0
   #flutter_coverage_badge: ^0.0.1+1
 
 flutter:
