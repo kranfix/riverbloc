@@ -3,11 +3,9 @@ import 'package:flutter_hooks_bloc/flutter_hooks_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class CounterCubit extends Cubit<int> {
-  CounterCubit(super.state);
+  CounterCubit(super.initialState);
 
   void increment() => emit(state + 1);
-
-  void decrement() => emit(state - 1);
 }
 
 class MyApp extends StatelessWidget {

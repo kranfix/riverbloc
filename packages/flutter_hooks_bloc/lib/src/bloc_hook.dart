@@ -93,6 +93,7 @@ class _BlocHook<S> extends Hook<S> {
 }
 
 class _BlocHookState<S> extends HookState<S, _BlocHook<S>> {
+  /// The cancel method is called in [_unsubscribe]
   // ignore: cancel_subscriptions
   StreamSubscription<S>? _subscription;
 
@@ -144,9 +145,10 @@ class _BlocHookState<S> extends HookState<S, _BlocHook<S>> {
   }
 
   void _unsubscribe() {
-    if (_subscription != null) {
-      _subscription!.cancel();
-      _subscription = null;
+    final subscription = _subscription;
+    _subscription = null;
+    if (subscription != null) {
+      unawaited(subscription.cancel());
     }
   }
 }

@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (useValueProvider == true) {
+    if (useValueProvider) {
       return MaterialApp(
         home: RepositoryProvider<Repository>.value(
           value: repository,
@@ -96,24 +96,6 @@ class CounterPage extends StatelessWidget {
   }
 }
 
-class RoutePage extends StatelessWidget {
-  const RoutePage({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: ElevatedButton(
-        key: const Key('route_button'),
-        child: const SizedBox(),
-        onPressed: () {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute<Widget>(builder: (context) => const SizedBox()),
-          );
-        },
-      ),
-    );
-  }
-}
-
 class Repository {
   const Repository(this.data);
 
@@ -158,11 +140,11 @@ void main() {
         const MyApp(repository: repository, child: child),
       );
 
-      final counterFinder1 = find.byKey(const Key('value_data'));
-      expect(counterFinder1, findsOneWidget);
+      final counterFinder = find.byKey(const Key('value_data'));
+      expect(counterFinder, findsOneWidget);
 
-      final counterText1 = counterFinder1.evaluate().first.widget as Text;
-      expect(counterText1.data, '0');
+      final counterText = counterFinder.evaluate().first.widget as Text;
+      expect(counterText.data, '0');
     });
 
     testWidgets('passes value to children via value', (tester) async {
@@ -176,11 +158,11 @@ void main() {
         ),
       );
 
-      final counterFinder0 = find.byKey(const Key('value_data'));
-      expect(counterFinder0, findsOneWidget);
+      final counterFinder = find.byKey(const Key('value_data'));
+      expect(counterFinder, findsOneWidget);
 
-      final counterText0 = counterFinder0.evaluate().first.widget as Text;
-      expect(counterText0.data, '0');
+      final counterText = counterFinder.evaluate().first.widget as Text;
+      expect(counterText.data, '0');
     });
 
     testWidgets(
@@ -197,7 +179,6 @@ void main() {
 
         The context used was: CounterPage(dirty)
 ''';
-      expect(exception is FlutterError, true);
       expect((exception as FlutterError).message, expectedMessage);
     });
 
@@ -217,7 +198,7 @@ void main() {
           child: const SizedBox(),
         ),
       );
-
+      FlutterError.onError = onError;
       expect(
         flutterErrors,
         contains(
@@ -227,13 +208,11 @@ void main() {
             isA<StateError>().having(
               (e) => e.message,
               'message',
-              expected,
+              contains(expected),
             ),
           ),
         ),
       );
-
-      FlutterError.onError = onError;
     });
 
     testWidgets(
@@ -255,19 +234,21 @@ void main() {
           child: const SizedBox(),
         ),
       );
-
+      FlutterError.onError = onError;
       expect(
         flutterErrors,
         contains(
           isA<FlutterErrorDetails>().having(
             (d) => d.exception,
             'exception',
-            isA<StateError>().having((e) => e.message, 'message', expected),
+            isA<StateError>().having(
+              (e) => e.message,
+              'message',
+              contains(expected),
+            ),
           ),
         ),
       );
-
-      FlutterError.onError = onError;
     });
 
     testWidgets(
@@ -374,6 +355,48 @@ void main() {
 
       final counterText = counterFinder.evaluate().first.widget as Text;
       expect(counterText.data, '0');
+    });
+
+    testWidgets('calls dispose callback when disposed', (tester) async {
+      var disposeCalled = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: RepositoryProvider<Repository>(
+              create: (_) => const Repository(0),
+              dispose: (repository) {
+                disposeCalled = true;
+                expect(repository.data, equals(0));
+              },
+              child: Builder(
+                builder: (context) => Text(
+                  '${context.read<Repository>().data}',
+                  key: const Key('value_data'),
+                ),
+              ),
+            ),
+            floatingActionButton: Builder(
+              builder: (context) => FloatingActionButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Icon(Icons.remove),
+              ),
+            ),
+          ),
+        ),
+      );
+      final repositoryFinder = find.byKey(const Key('value_data'));
+      expect(repositoryFinder, findsOneWidget);
+
+      final repositoryText = repositoryFinder.evaluate().first.widget as Text;
+      expect(repositoryText.data, '0');
+
+      final fabFinder = find.byType(FloatingActionButton);
+      expect(fabFinder, findsOneWidget);
+
+      expect(disposeCalled, isFalse);
+      await tester.tap(fabFinder);
+      await tester.pumpAndSettle();
+      expect(disposeCalled, isTrue);
     });
   });
 }

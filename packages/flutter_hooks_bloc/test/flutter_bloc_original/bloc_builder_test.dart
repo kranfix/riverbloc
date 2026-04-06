@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks_bloc/flutter_hooks_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -5,21 +6,30 @@ import 'package:flutter_test/flutter_test.dart';
 class MyThemeApp extends StatefulWidget {
   const MyThemeApp({
     required Cubit<ThemeData> themeCubit,
-    required VoidCallback onBuild,
+    required void Function() onBuild,
     super.key,
   })  : _themeCubit = themeCubit,
         _onBuild = onBuild;
 
   final Cubit<ThemeData> _themeCubit;
-  final VoidCallback _onBuild;
+  final void Function() _onBuild;
 
   @override
   State<MyThemeApp> createState() => MyThemeAppState();
 }
 
 class MyThemeAppState extends State<MyThemeApp> {
-  late Cubit<ThemeData> _themeCubit = widget._themeCubit;
-  VoidCallback get _onBuild => widget._onBuild;
+  MyThemeAppState();
+
+  @override
+  void initState() {
+    super.initState();
+    _themeCubit = widget._themeCubit;
+    _onBuild = widget._onBuild;
+  }
+
+  late Cubit<ThemeData> _themeCubit;
+  late final void Function() _onBuild;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +53,10 @@ class MyThemeAppState extends State<MyThemeApp> {
                 key: const Key('raised_button_2'),
                 child: const SizedBox(),
                 onPressed: () {
-                  setState(() {});
+                  // Self-assignment used to trigger setState
+                  // without changing value.
+                  // ignore: no_self_assignments
+                  setState(() => _themeCubit = _themeCubit);
                 },
               ),
             ],
@@ -64,12 +77,12 @@ class ThemeCubit extends Cubit<ThemeData> {
 class DarkThemeCubit extends Cubit<ThemeData> {
   DarkThemeCubit() : super(ThemeData.dark());
 
-  void setDarkTheme() => emit(ThemeData.dark());
   void setLightTheme() => emit(ThemeData.light());
 }
 
 class MyCounterApp extends StatefulWidget {
   const MyCounterApp({super.key});
+
   @override
   State<StatefulWidget> createState() => MyCounterAppState();
 }
@@ -118,10 +131,9 @@ class MyCounterAppState extends State<MyCounterApp> {
 }
 
 class CounterCubit extends Cubit<int> {
-  CounterCubit() : super(0);
+  CounterCubit({int seed = 0}) : super(seed);
 
   void increment() => emit(state + 1);
-  void decrement() => emit(state - 1);
 }
 
 void main() {
@@ -466,7 +478,7 @@ void main() {
 
     testWidgets('rebuilds when provided bloc is changed', (tester) async {
       final firstCounterCubit = CounterCubit();
-      final secondCounterCubit = CounterCubit()..emit(100);
+      final secondCounterCubit = CounterCubit(seed: 100);
 
       await tester.pumpWidget(
         Directionality(
@@ -506,6 +518,30 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Count 101'), findsOneWidget);
+    });
+
+    testWidgets('overrides debugFillProperties', (tester) async {
+      final builder = DiagnosticPropertiesBuilder();
+
+      BlocBuilder(
+        bloc: CounterCubit(),
+        builder: (context, state) => const SizedBox(),
+        buildWhen: (previous, current) => previous != current,
+      ).debugFillProperties(builder);
+
+      final description = builder.properties
+          .where((node) => !node.isFiltered(DiagnosticLevel.info))
+          .map((node) => node.toString())
+          .toList();
+
+      expect(
+        description,
+        <String>[
+          'has buildWhen',
+          "bloc: Instance of 'CounterCubit'",
+          'has builder',
+        ],
+      );
     });
   });
 }

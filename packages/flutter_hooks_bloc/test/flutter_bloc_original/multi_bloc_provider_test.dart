@@ -1,3 +1,7 @@
+// This file uses a non-conventional naming to match flutter_bloc test files.
+// ignore_for_file: prefer_file_naming_conventions
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks_bloc/flutter_hooks_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -23,25 +27,40 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        if (counterCubitValue != null)
+    List<BlocProvider<StateStreamableSource<Object?>>> getProviders() {
+      final providers = <BlocProvider>[];
+      if (counterCubitValue != null) {
+        providers.add(
           BlocProvider<CounterCubit>.value(
             value: counterCubitValue!,
-          )
-        else
+          ),
+        );
+      } else {
+        providers.add(
           BlocProvider<CounterCubit>(
             create: (_) => CounterCubit(onClose: onCounterCubitClosed),
           ),
-        if (themeCubitValue != null)
+        );
+      }
+
+      if (themeCubitValue != null) {
+        providers.add(
           BlocProvider<ThemeCubit>.value(
             value: themeCubitValue!,
-          )
-        else
+          ),
+        );
+      } else {
+        providers.add(
           BlocProvider<ThemeCubit>(
             create: (_) => ThemeCubit(onClose: onThemeCubitClosed),
           ),
-      ],
+        );
+      }
+      return providers;
+    }
+
+    return MultiBlocProvider(
+      providers: getProviders(),
       child: Builder(
         builder: (context) {
           return Column(
@@ -50,8 +69,12 @@ class HomePage extends StatelessWidget {
                 key: const Key('pop_button'),
                 child: const SizedBox(),
                 onPressed: () {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute<void>(builder: (_) => const SizedBox()),
+                  unawaited(
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute<void>(
+                        builder: (_) => const SizedBox(),
+                      ),
+                    ),
                   );
                 },
               ),
@@ -76,6 +99,7 @@ class HomePage extends StatelessWidget {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeCubit, ThemeData>(
@@ -89,6 +113,7 @@ class MyApp extends StatelessWidget {
 
 class CounterPage extends StatelessWidget {
   const CounterPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final counterCubit = BlocProvider.of<CounterCubit>(context);
@@ -111,24 +136,28 @@ class CounterPage extends StatelessWidget {
 }
 
 class CounterCubit extends Cubit<int> {
-  CounterCubit({this.onClose}) : super(0);
+  CounterCubit({VoidCallback? onClose})
+      : _onClose = onClose,
+        super(0);
 
-  final VoidCallback? onClose;
+  final VoidCallback? _onClose;
 
   void increment() => emit(state + 1);
   void decrement() => emit(state - 1);
 
   @override
   Future<void> close() {
-    onClose?.call();
+    _onClose?.call();
     return super.close();
   }
 }
 
 class ThemeCubit extends Cubit<ThemeData> {
-  ThemeCubit({this.onClose}) : super(ThemeData.light());
+  ThemeCubit({VoidCallback? onClose})
+      : _onClose = onClose,
+        super(ThemeData.light());
 
-  final VoidCallback? onClose;
+  final VoidCallback? _onClose;
 
   void toggle() {
     emit(state == ThemeData.dark() ? ThemeData.light() : ThemeData.dark());
@@ -136,7 +165,7 @@ class ThemeCubit extends Cubit<ThemeData> {
 
   @override
   Future<void> close() {
-    onClose?.call();
+    _onClose?.call();
     return super.close();
   }
 }

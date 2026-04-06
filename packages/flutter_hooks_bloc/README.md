@@ -2,7 +2,7 @@
 
 ![Coverage](https://raw.githubusercontent.com/kranfix/riverbloc/master/packages/flutter_hooks_bloc/coverage_badge.svg?sanitize=true)
 
-A flutter_bloc reimplementation based on flutter_hooks for
+A `flutter_bloc` reimplementation based on `flutter_hooks` for
 `BlocBuilder`, `BlocListener`, `BlocConsumer` and `MultiBlocListener`.
 
 ## Usage as flutter_bloc
@@ -12,115 +12,94 @@ A flutter_bloc reimplementation based on flutter_hooks for
 They work exactly the same as the original. See the `flutter_bloc`
 [documentation](https://bloclibrary.dev/#/flutterbloccoreconcepts).
 
-**useBloc**
+## useBloc
 
-The `useBloc` hook function allows to listen state changes and rebuild
-the widget if necessary.
+The `useBloc` hook allows listening to state changes and optionally
+rebuilding the widget.
 
 ```dart
+// BlocHookListener<S> = bool Function(BuildContext context, S previous, S current)
+
 S useBloc<B extends StateStreamable<S>, S>({
-  /// bloc or cubit to subscribe. if it is null, it will be infered
+  /// Bloc or cubit to subscribe to. If null, it is inferred from
+  /// the current BuildContext.
   B? bloc,
 
-  /// If `onEmitted` is not provided or its invocation returns `true`,
-  /// the widget will rebuild.
+  /// Called on every state emission. Return true to trigger a rebuild,
+  /// false to behave like a listener only.
   BlocHookListener<S>? onEmitted,
 });
 ```
 
-It can be used into a HookBuilder:
+It can be used inside a `HookBuilder`:
 
 ```dart
-HookBuilder(builder: (ctx) {
-  print('HookBuilder');
-  final counter = useBloc<CounterCubit, int>(
-    onEmitted: (_, prev, curr) {
-      print('listener: $prev $curr');
-      return true;
-    }
-  );
-  return Text(
-    '$counter',
-    style: Theme.of(context).textTheme.headline4,
-  );
-});
+HookBuilder(
+  builder: (context) {
+    final counter = useBloc<CounterCubit, int>(
+      onEmitted: (context, previous, current) {
+        print('listener: $previous -> $current');
+        return true; // rebuild the widget
+      },
+    );
+    return Text(
+      '$counter',
+      style: Theme.of(context).textTheme.headlineMedium,
+    );
+  },
+);
 ```
 
-And also into a widget that extends a HookWidget:
+Or inside a widget that extends `HookWidget` directly:
 
 ```dart
-class BlocBuilder<B extends StateStreamable<S>, S> extends BlocWidget<B, S> {
-  const BlocBuilder({
-    Key? key,
-    this.bloc,
-    @required this.builder,
-    this.buildWhen,
-  })  : assert(builder != null),
-        super(key: key);
-
-  @override
-  final B? bloc;
-
-  @override
-  final BlocWidgetBuilder<S> builder;
-
-  @override
-  final BlocBuilderCondition<S>? buildWhen;
+class CounterText extends HookWidget {
+  const CounterText({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final state = useBloc<B, S>(
-      bloc: cubit,
-      onEmitted: (context, previous, state) {
-        return buildWhen?.call(previous, state) ?? true;
-      }
-    );
-    return builder(context, state);
+    final count = useBloc<CounterCubit, int>();
+    return Text('$count');
   }
 }
 ```
 
-And a `BlocWidget<B, S>` y defined as following:
+## Alternative to MultiBlocBuilder
 
-```dart
-abstract class BlocWidget<B extends StateStreamable<S>, S extends Object>
-    extends HookWidget {}
-```
-
-# Alternative to MultiBlocBuilder
-
-The issue with `MultiBlocBuilder` is that it could be either type safety or
-have an unliminit number of inputs (expending to much code).
-But with `useBloc` comes to the rescue.
+`flutter_bloc` has no `MultiBlocBuilder` because combining multiple
+bloc states in a type-safe way is hard. `useBloc` solves this naturally:
 
 ```dart
 class MyMultiBlocBuilder extends HookWidget {
-  const MyMultiBlocBuilder({Key? key}) : super(key: key);
+  const MyMultiBlocBuilder({super.key});
 
   @override
-  Widget build(BuildContext context){
-    // onEmitted is called every time that the state is emitter in a cubit/bloc
-    final stateA = useBloc<CubitA, int>(onEmitted: (context, previousState, state){
-      // with true, the widget rebuild, otherwise, it behave like a BlocListener
-      return buildWhenA?.call(previousState, state) ?? true;
-    });
+  Widget build(BuildContext context) {
+    // Rebuilds when CubitA emits
+    final stateA = useBloc<CubitA, int>(
+      onEmitted: (context, previous, current) => true,
+    );
 
-    final stateB = useBloc<BlocB, String>(onEmitted: (context, previousState, state){
-      // If you also want to have a BlocListener behavior, you can add some code here
-      if(listenWhen?.call(previousState, state) ?? true){
-        listener(context, state);
-      }
-      return buildWhenB?.call(previousState, state) ?? true;
-    });
+    // Rebuilds when BlocB emits, and also calls a listener
+    final stateB = useBloc<BlocB, String>(
+      onEmitted: (context, previous, current) {
+        if (current != previous) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(current)),
+          );
+        }
+        return true;
+      },
+    );
 
-    // always rebuild when cubit emits a new state
+    // Always rebuilds when CubitC emits
     final stateC = useBloc<CubitC, double>();
 
     return Column(
       children: [
-        Text('${stateAA}'),
-        Text('${statecB}'),
-        Text('${stateC}'),
+        Text('$stateA'),
+        Text('$stateB'),
+        Text('$stateC'),
       ],
     );
   }
