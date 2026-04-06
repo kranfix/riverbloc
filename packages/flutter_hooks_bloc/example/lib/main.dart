@@ -1,3 +1,4 @@
+// This is an example. There's no need to document public API
 // ignore_for_file: public_member_api_docs
 
 import 'package:flutter/material.dart';
@@ -8,11 +9,9 @@ void main() {
 }
 
 class CounterCubit extends Cubit<int> {
-  CounterCubit(super.state);
+  CounterCubit(super.initialState);
 
   void increment() => emit(state + 1);
-
-  void decrement() => emit(state - 1);
 }
 
 class MyApp extends StatelessWidget {

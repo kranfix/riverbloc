@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:flutter_hooks_bloc/src/bloc_builder.dart';
@@ -63,7 +64,7 @@ import 'package:flutter_hooks_bloc/src/bloc_listener.dart';
 /// {@endtemplate}
 class BlocConsumer<B extends StateStreamable<S>, S extends Object>
     extends BlocListenerBase<B, S> {
-  /// The [BlocConsumer] constuctor listen and rebuilds a widget
+  /// The [BlocConsumer] constructor listens and rebuilds a widget
   /// when a `bloc` state change.
   const BlocConsumer({
     required super.listener,
@@ -79,7 +80,7 @@ class BlocConsumer<B extends StateStreamable<S>, S extends Object>
   });
 
   /// Takes the previous `state` and the current `state` and is responsible for
-  /// returning a [bool] which determines whether or not to call [listener] of
+  /// returning a [bool] which determines whether or not to rebuild
   /// [BlocConsumer] with the current `state`.
   final BlocBuilderCondition<S>? buildWhen;
 
@@ -89,9 +90,6 @@ class BlocConsumer<B extends StateStreamable<S>, S extends Object>
   /// This is analogous to the [builder] function in [StreamBuilder].
   final BlocWidgetBuilder<S> builder;
 
-  /// Takes the previous `state` and the current `state` and is responsible
-  /// for returning a [bool] which determines whether or not to trigger
-  /// [builder] with the current `state`.
   @override
   Widget build(BuildContext context) {
     final state = $use();
@@ -102,5 +100,26 @@ class BlocConsumer<B extends StateStreamable<S>, S extends Object>
   bool onStateEmitted(BuildContext context, S previous, S state) {
     super.onStateEmitted(context, previous, state);
     return buildWhen?.call(previous, state) ?? true;
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty<B?>('bloc', bloc))
+      ..add(ObjectFlagProperty<BlocWidgetBuilder<S>>.has('builder', builder))
+      ..add(ObjectFlagProperty<BlocWidgetListener<S>>.has('listener', listener))
+      ..add(
+        ObjectFlagProperty<BlocBuilderCondition<S>?>.has(
+          'buildWhen',
+          buildWhen,
+        ),
+      )
+      ..add(
+        ObjectFlagProperty<BlocListenerCondition<S>?>.has(
+          'listenWhen',
+          listenWhen,
+        ),
+      );
   }
 }

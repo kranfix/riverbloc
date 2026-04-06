@@ -1,9 +1,14 @@
+// This file uses a non-conventional naming to match flutter_bloc test files.
+// ignore_for_file: prefer_file_naming_conventions
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks_bloc/flutter_hooks_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class CounterCubit extends Cubit<int> {
-  CounterCubit() : super(0);
+  CounterCubit({int seed = 0}) : super(seed);
 
   void increment() => emit(state + 1);
 }
@@ -28,7 +33,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void dispose() {
-    _counterCubit.close();
+    unawaited(_counterCubit.close());
     super.dispose();
   }
 
@@ -54,7 +59,10 @@ class _MyAppState extends State<MyApp> {
                 key: const Key('cubit_listener_noop_button'),
                 child: const SizedBox(),
                 onPressed: () {
-                  setState(() {});
+                  // Self-assignment used to trigger setState
+                  // without changing value.
+                  // ignore: no_self_assignments
+                  setState(() => _counterCubit = _counterCubit);
                 },
               ),
               ElevatedButton(
@@ -72,7 +80,17 @@ class _MyAppState extends State<MyApp> {
 
 void main() {
   group('BlocListener', () {
-    testWidgets('renders child properly', (tester) async {
+    testWidgets('does nothing when child is not specified', (tester) async {
+      await tester.pumpWidget(
+        BlocListener<CounterCubit, int>(
+          bloc: CounterCubit(),
+          listener: (context, state) {},
+        ),
+      );
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('renders child when specified', (tester) async {
       const targetKey = Key('cubit_listener_container');
       await tester.pumpWidget(
         BlocListener<CounterCubit, int>(
@@ -91,10 +109,7 @@ void main() {
       await tester.pumpWidget(
         BlocListener<CounterCubit, int>(
           bloc: counterCubit,
-          listener: (_, state) {
-            states.add(state);
-          },
-          child: const SizedBox(),
+          listener: (_, state) => states.add(state),
         ),
       );
       counterCubit.increment();
@@ -109,10 +124,7 @@ void main() {
       await tester.pumpWidget(
         BlocListener<CounterCubit, int>(
           bloc: counterCubit,
-          listener: (_, state) {
-            states.add(state);
-          },
-          child: const SizedBox(),
+          listener: (_, state) => states.add(state),
         ),
       );
       counterCubit.increment();
@@ -216,7 +228,6 @@ void main() {
             return true;
           },
           listener: (_, __) {},
-          child: const SizedBox(),
         ),
       );
       counterCubit.increment();
@@ -248,7 +259,6 @@ void main() {
             return false;
           },
           listener: (_, __) {},
-          child: const SizedBox(),
         ),
       );
       counterCubit
@@ -280,7 +290,6 @@ void main() {
             return false;
           },
           listener: (_, state) => states.add(state),
-          child: const SizedBox(),
         ),
       );
       counterCubit
@@ -313,7 +322,6 @@ void main() {
               return true;
             },
             listener: (context, state) {},
-            child: const SizedBox(),
           ),
         ),
       );
@@ -343,7 +351,6 @@ void main() {
             return true;
           },
           listener: (_, __) {},
-          child: const SizedBox(),
         ),
       );
       await tester.pump();
@@ -368,7 +375,6 @@ void main() {
           bloc: counterCubit,
           listenWhen: (_, __) => false,
           listener: (_, state) => states.add(state),
-          child: const SizedBox(),
         ),
       );
       counterCubit.increment();
@@ -388,7 +394,6 @@ void main() {
           bloc: counterCubit,
           listenWhen: (_, __) => true,
           listener: (_, state) => states.add(state),
-          child: const SizedBox(),
         ),
       );
       counterCubit.increment();
@@ -408,7 +413,6 @@ void main() {
           bloc: counterCubit,
           listenWhen: (_, __) => false,
           listener: (_, state) => states.add(state),
-          child: const SizedBox(),
         ),
       );
       counterCubit.increment();
@@ -434,7 +438,6 @@ void main() {
           bloc: counterCubit,
           listenWhen: (_, __) => true,
           listener: (_, state) => states.add(state),
-          child: const SizedBox(),
         ),
       );
       counterCubit.increment();
@@ -453,7 +456,7 @@ void main() {
         'updates subscription '
         'when provided bloc is changed', (tester) async {
       final firstCounterCubit = CounterCubit();
-      final secondCounterCubit = CounterCubit()..emit(100);
+      final secondCounterCubit = CounterCubit(seed: 100);
 
       final states = <int>[];
       const expectedStates = [1, 101];
@@ -463,7 +466,6 @@ void main() {
           value: firstCounterCubit,
           child: BlocListener<CounterCubit, int>(
             listener: (_, state) => states.add(state),
-            child: const SizedBox(),
           ),
         ),
       );
@@ -475,7 +477,6 @@ void main() {
           value: secondCounterCubit,
           child: BlocListener<CounterCubit, int>(
             listener: (_, state) => states.add(state),
-            child: const SizedBox(),
           ),
         ),
       );
@@ -486,6 +487,30 @@ void main() {
       await tester.pump();
 
       expect(states, expectedStates);
+    });
+
+    testWidgets('overrides debugFillProperties', (tester) async {
+      final builder = DiagnosticPropertiesBuilder();
+
+      BlocListener(
+        bloc: CounterCubit(),
+        listener: (context, state) {},
+        listenWhen: (previous, current) => previous != current,
+      ).debugFillProperties(builder);
+
+      final description = builder.properties
+          .where((node) => !node.isFiltered(DiagnosticLevel.info))
+          .map((node) => node.toString())
+          .toList();
+
+      expect(
+        description,
+        <String>[
+          "bloc: Instance of 'CounterCubit'",
+          'has listener',
+          'has listenWhen',
+        ],
+      );
     });
   });
 }

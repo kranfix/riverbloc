@@ -5,8 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 
 class CounterCubit extends Cubit<int> {
   CounterCubit() : super(0);
-
-  void increment() => emit(state + 1);
 }
 
 mixin _DecrementerMixin on CounterCubit {
@@ -26,7 +24,7 @@ void main() {
             child: const SizedBox(),
           ),
         );
-      } catch (error) {
+      } on Object catch (error) {
         expect(error, isAssertionError);
       }
     });
@@ -38,9 +36,9 @@ void main() {
         await tester.pumpWidget(
           MultiBlocListener(
             listeners: [
-              BlocListener(
+              BlocListener<CounterCubit, int>(
                 bloc: counterCubit,
-                listener: (BuildContext context, int state) {},
+                listener: (context, state) {},
                 child: const SizedBox(),
               ),
             ],
@@ -48,7 +46,7 @@ void main() {
           ),
         );
         fail('should throw AssertionError');
-      } catch (error) {
+      } on Object catch (error) {
         expect(error, isAssertionError);
       }
     });

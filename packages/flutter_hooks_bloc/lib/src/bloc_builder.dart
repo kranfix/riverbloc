@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks_bloc/src/bloc_hook.dart';
 import 'package:flutter_hooks_bloc/src/flutter_bloc.dart' hide BlocProvider;
@@ -30,7 +31,7 @@ typedef BlocBuilderCondition<S> = bool Function(S previous, S current);
 ///
 /// ```dart
 /// BlocBuilder<BlocA, BlocAState>(
-///   cubit: blocA,
+///   bloc: blocA,
 ///   builder: (context, state) {
 ///   // return widget here based on BlocA's state
 ///   }
@@ -61,7 +62,7 @@ typedef BlocBuilderCondition<S> = bool Function(S previous, S current);
 /// ```
 /// {@endtemplate}
 class BlocBuilder<B extends StateStreamable<S>, S> extends BlocWidget<B, S> {
-  ///The [BlocBuilder] constuctor builds a widget when a `bloc` state change.
+  /// The [BlocBuilder] constructor builds a widget when a `bloc` state changes.
   const BlocBuilder({
     required this.builder,
     super.key,
@@ -91,5 +92,19 @@ class BlocBuilder<B extends StateStreamable<S>, S> extends BlocWidget<B, S> {
   @override
   bool onStateEmitted(BuildContext context, S previous, S state) {
     return buildWhen?.call(previous, state) ?? true;
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(
+        ObjectFlagProperty<BlocBuilderCondition<S>?>.has(
+          'buildWhen',
+          buildWhen,
+        ),
+      )
+      ..add(DiagnosticsProperty<B?>('bloc', bloc))
+      ..add(ObjectFlagProperty<BlocWidgetBuilder<S>>.has('builder', builder));
   }
 }

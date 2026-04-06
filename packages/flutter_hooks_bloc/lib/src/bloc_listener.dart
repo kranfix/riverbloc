@@ -100,6 +100,20 @@ class BlocListener<B extends StateStreamable<S>, S extends Object>
       showSeparator: bloc?.state != null,
     );
   }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty<B?>('bloc', bloc))
+      ..add(ObjectFlagProperty<BlocWidgetListener<S>>.has('listener', listener))
+      ..add(
+        ObjectFlagProperty<BlocListenerCondition<S>?>.has(
+          'listenWhen',
+          listenWhen,
+        ),
+      );
+  }
 }
 
 /// {@template bloc_listener_base}
@@ -135,7 +149,10 @@ abstract class BlocListenerBase<B extends StateStreamable<S>, S extends Object>
   @override
   Widget build(BuildContext context) {
     $use();
-    return child!;
+    return switch (child) {
+      final Widget child => child,
+      null => const Offstage(),
+    };
   }
 
   @override
@@ -144,18 +161,5 @@ abstract class BlocListenerBase<B extends StateStreamable<S>, S extends Object>
       listener.call(context, state);
     }
     return false;
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(
-      DiagnosticsProperty<S>(
-        'state',
-        bloc?.state,
-        ifNull: '<null>',
-        showSeparator: bloc?.state != null,
-      ),
-    );
   }
 }

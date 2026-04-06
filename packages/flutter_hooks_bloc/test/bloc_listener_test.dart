@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks_bloc/flutter_hooks_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -6,6 +8,11 @@ class CounterCubit extends Cubit<int> {
   CounterCubit() : super(0);
 
   void increment() => emit(state + 1);
+
+  @override
+  String toString() {
+    return 'CounterCubit($state)';
+  }
 }
 
 class MyApp extends StatefulWidget {
@@ -28,7 +35,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void dispose() {
-    _counterCubit.close();
+    unawaited(_counterCubit.close());
     super.dispose();
   }
 
@@ -447,14 +454,16 @@ void main() {
 
       expect(
         blocListener.toDiagnosticsNode().toStringDeep(),
-        'BlocListener<CounterCubit, int>(state: 0)\n',
+        'BlocListener<CounterCubit, int>(bloc: CounterCubit(0),'
+        ' has listener)\n',
       );
 
       cubit.increment();
 
       expect(
         blocListener.toDiagnosticsNode().toStringDeep(),
-        'BlocListener<CounterCubit, int>(state: 1)\n',
+        'BlocListener<CounterCubit, int>(bloc: CounterCubit(1),'
+        ' has listener)\n',
       );
     });
   });

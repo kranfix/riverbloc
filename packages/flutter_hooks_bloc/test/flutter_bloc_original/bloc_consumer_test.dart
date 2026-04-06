@@ -1,9 +1,12 @@
+// This file uses a non-conventional naming to match flutter_bloc test files.
+// ignore_for_file: prefer_file_naming_conventions
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks_bloc/flutter_hooks_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class CounterCubit extends Cubit<int> {
-  CounterCubit() : super(0);
+  CounterCubit({int seed = 0}) : super(seed);
 
   void increment() => emit(state + 1);
 }
@@ -351,7 +354,7 @@ void main() {
         'rebuilds and updates subscription '
         'when provided bloc is changed', (tester) async {
       final firstCounterCubit = CounterCubit();
-      final secondCounterCubit = CounterCubit()..emit(100);
+      final secondCounterCubit = CounterCubit(seed: 100);
 
       final states = <int>[];
       const expectedStates = [1, 101];
@@ -398,6 +401,34 @@ void main() {
 
       expect(find.text('Count 101'), findsOneWidget);
       expect(states, expectedStates);
+    });
+
+    testWidgets('overrides debugFillProperties', (tester) async {
+      final builder = DiagnosticPropertiesBuilder();
+
+      BlocConsumer(
+        bloc: CounterCubit(),
+        buildWhen: (previous, current) => previous != current,
+        builder: (context, state) => const SizedBox(),
+        listener: (context, state) {},
+        listenWhen: (previous, current) => previous != current,
+      ).debugFillProperties(builder);
+
+      final description = builder.properties
+          .where((node) => !node.isFiltered(DiagnosticLevel.info))
+          .map((node) => node.toString())
+          .toList();
+
+      expect(
+        description,
+        <String>[
+          "bloc: Instance of 'CounterCubit'",
+          'has builder',
+          'has listener',
+          'has buildWhen',
+          'has listenWhen',
+        ],
+      );
     });
   });
 }

@@ -1,6 +1,6 @@
-/// A flutter_bloc implementation based on flutte_hooks,
+/// A flutter_bloc implementation based on flutter_hooks,
 /// offering better dev-tools in the widget tree
-library flutter_hooks_bloc;
+library;
 
 export 'package:flutter_hooks/flutter_hooks.dart';
 

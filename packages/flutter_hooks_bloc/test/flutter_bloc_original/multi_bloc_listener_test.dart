@@ -1,3 +1,5 @@
+// This file uses a non-conventional naming to match flutter_bloc test files.
+// ignore_for_file: prefer_file_naming_conventions
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks_bloc/flutter_hooks_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -62,13 +64,13 @@ void main() {
       await tester.pumpWidget(
         MultiBlocListener(
           listeners: [
-            BlocListener(
+            BlocListener<CounterCubit, int>(
               bloc: counterCubitA,
-              listener: (BuildContext context, int state) => statesA.add(state),
+              listener: (context, state) => statesA.add(state),
             ),
-            BlocListener(
+            BlocListener<CounterCubit, int>(
               bloc: counterCubitB,
-              listener: (BuildContext context, int state) => statesB.add(state),
+              listener: (context, state) => statesB.add(state),
             ),
           ],
           child: const SizedBox(key: Key('multiCubitListener_child')),

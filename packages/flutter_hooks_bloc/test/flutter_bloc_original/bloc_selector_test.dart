@@ -1,9 +1,12 @@
+// This file uses a non-conventional naming to match flutter_bloc test files.
+// ignore_for_file: prefer_file_naming_conventions
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks_bloc/flutter_hooks_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class CounterCubit extends Cubit<int> {
-  CounterCubit() : super(0);
+  CounterCubit({int seed = 0}) : super(seed);
 
   void increment() => emit(state + 1);
 }
@@ -95,7 +98,7 @@ void main() {
 
     testWidgets('rebuilds when provided bloc is changed', (tester) async {
       final firstCounterCubit = CounterCubit();
-      final secondCounterCubit = CounterCubit()..emit(100);
+      final secondCounterCubit = CounterCubit(seed: 100);
 
       await tester.pumpWidget(
         Directionality(
@@ -142,7 +145,7 @@ void main() {
 
     testWidgets('rebuilds when bloc is changed at runtime', (tester) async {
       final firstCounterCubit = CounterCubit();
-      final secondCounterCubit = CounterCubit()..emit(100);
+      final secondCounterCubit = CounterCubit(seed: 100);
 
       await tester.pumpWidget(
         Directionality(
@@ -181,6 +184,62 @@ void main() {
 
       expect(find.text('isEven: false'), findsOneWidget);
       expect(find.text('isEven: true'), findsNothing);
+    });
+
+    testWidgets('rebuilds when selector changes', (tester) async {
+      final counterCubit = CounterCubit();
+      var selector = (int state) => state.isEven;
+
+      Widget buildWidget() {
+        return Directionality(
+          textDirection: TextDirection.ltr,
+          child: BlocSelector<CounterCubit, int, bool>(
+            bloc: counterCubit,
+            selector: selector,
+            builder: (context, state) => Text('Selected: $state'),
+          ),
+        );
+      }
+
+      await tester.pumpWidget(buildWidget());
+      expect(find.text('Selected: true'), findsOneWidget);
+
+      counterCubit.increment();
+      await tester.pumpAndSettle();
+      expect(find.text('Selected: false'), findsOneWidget);
+
+      selector = (state) => state.isOdd;
+
+      await tester.pumpWidget(buildWidget());
+      expect(find.text('Selected: true'), findsOneWidget);
+
+      counterCubit.increment();
+      await tester.pumpAndSettle();
+      expect(find.text('Selected: false'), findsOneWidget);
+    });
+
+    testWidgets('overrides debugFillProperties', (tester) async {
+      final builder = DiagnosticPropertiesBuilder();
+
+      BlocSelector(
+        bloc: CounterCubit(),
+        builder: (context, state) => const SizedBox(),
+        selector: (state) => state,
+      ).debugFillProperties(builder);
+
+      final description = builder.properties
+          .where((node) => !node.isFiltered(DiagnosticLevel.info))
+          .map((node) => node.toString())
+          .toList();
+
+      expect(
+        description,
+        <String>[
+          "bloc: Instance of 'CounterCubit'",
+          'has builder',
+          'has selector',
+        ],
+      );
     });
   });
 }
